@@ -5,9 +5,10 @@ public class ChemicalDataTest {
     public static void main(String[] args) {
         ChemicalDataAccessObject chemicals = new ChemicalDataAccessObjectImpl();
 
-        FireDiamond fd = new FireDiamond(1, 2, 3, "Dangerous");
-        Chemical chemical = new Chemical("Hydrochloric Acid", fd);
-        chemicals.addChemical(chemical);
+        chemicals.getAllChemicals();
+        //FireDiamond fd = new FireDiamond(1, 2, 3, "Dangerous");
+        //Chemical chemical = new Chemical("Hydrochloric Acid", fd);
+        //chemicals.addChemical(chemical);
         //// print all chemicals
         //for (Chemical c : chemicals.getAllChemicals()) {
             //System.out.println("Chemical: " + c.getName());

@@ -15,9 +15,10 @@ import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.model.PutItemRequest;
 import com.amazonaws.services.dynamodbv2.model.PutItemResult;
+import com.amazonaws.services.dynamodbv2.model.ScanRequest;
+import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.document.Item;
-//import com.amazonaws.services.dynamodbv2.
 
 public class ChemicalDataAccessObjectImpl implements ChemicalDataAccessObject {
 
@@ -35,10 +36,6 @@ public class ChemicalDataAccessObjectImpl implements ChemicalDataAccessObject {
         }
 
         chemicals = new ArrayList<Chemical>();
-
-        //Chemical testChemical = new Chemical("Hydrochloric Acid");
-        //Chemical testChemical2 = new Chemical("Ethanol");
-        //chemicals.add(testChemical);
     }
 
     public void initializeDBConnection() throws Exception {
@@ -54,14 +51,19 @@ public class ChemicalDataAccessObjectImpl implements ChemicalDataAccessObject {
         dynamoDB = new AmazonDynamoDBClient(credentials);
         Region usWest2 = Region.getRegion(Regions.US_WEST_2);
         dynamoDB.setRegion(usWest2);
-
-        //chemicalTable = dynamoDB.getTable(CHEMICALS_TABLE_NAME);
     }
 
     @Override
     public List<Chemical> getAllChemicals() {
-        // Call Gateway here
-        return chemicals;
+        ScanRequest scanRequest = new ScanRequest()
+            .withTableName(CHEMICALS_TABLE_NAME);
+
+        ScanResult result = dynamoDB.scan(scanRequest);
+        System.out.println(result.toString());
+        //for (Map<String , AttributeValue> item : result.getItems()) {
+            //System.out.println("GOT: " + item)
+        //}
+        return null; // TODO: replace this with proper list
     }
 
     @Override
@@ -97,7 +99,6 @@ public class ChemicalDataAccessObjectImpl implements ChemicalDataAccessObject {
         Map<String, AttributeValue> item = convertChemicalToItem(chemical);
         PutItemRequest putItemRequest = new PutItemRequest(CHEMICALS_TABLE_NAME, item);
         PutItemResult putItemResult = dynamoDB.putItem(putItemRequest);
-        //PutItemOutcome outcome = table.putItem(item);
     }
 
     private Map<String, AttributeValue> convertChemicalToItem(final Chemical chemical) {
