@@ -1,5 +1,6 @@
 <%--<%com.amazonaws.samples.S3Sample.main(null);%>--%>
 <%--<%com.amazonaws.samples.AmazonDynamoDBSample.main(null);%>--%>
+<%com.chemicaltracker.database.ChemicalDataTest.main(null);%>
 <html>
 <body>
 <h2>Hello World!</h2>
