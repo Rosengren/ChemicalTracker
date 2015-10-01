@@ -5,7 +5,8 @@ import java.util.List;
 public interface ChemicalDataAccessObject {
 
     public List<Chemical> getAllChemicals();
-    public Chemical getChemical(String name);
-    public void updateChemical(Chemical chemical);
-    public void deleteChemical(Chemical chemical);
+    public Chemical getChemical(final String name);
+    public void addChemical(final Chemical chemical);
+    public void updateChemical(final Chemical chemical);
+    public void deleteChemical(final Chemical chemical);
 }

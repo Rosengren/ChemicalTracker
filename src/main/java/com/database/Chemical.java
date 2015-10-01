@@ -9,6 +9,11 @@ public class Chemical {
         this.name = name;
     }
 
+    public Chemical(String name, FireDiamond fireDiamond) {
+        this.name = name;
+        this.fireDiamond = fireDiamond;
+    }
+
     public String getName() {
         return name;
     }

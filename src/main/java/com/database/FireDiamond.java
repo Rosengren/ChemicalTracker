@@ -1,5 +1,8 @@
 package com.chemicaltracker.database;
 
+import java.util.Map;
+import java.util.HashMap;
+
 public class FireDiamond {
 
     private int flammability;
