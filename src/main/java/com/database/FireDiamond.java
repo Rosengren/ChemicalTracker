@@ -5,6 +5,12 @@ import java.util.HashMap;
 
 public class FireDiamond {
 
+
+    public static final String FLAMMABILITY = "Flammability";
+    public static final String HEALTH = "Health";
+    public static final String INSTABILITY = "Instability";
+    public static final String NOTICE = "Notice";
+
     private int flammability;
     private int health;
     private int instability;

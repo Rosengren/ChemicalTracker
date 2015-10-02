@@ -15,6 +15,10 @@ import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.model.PutItemRequest;
 import com.amazonaws.services.dynamodbv2.model.PutItemResult;
+import com.amazonaws.services.dynamodbv2.model.DeleteItemRequest;
+import com.amazonaws.services.dynamodbv2.model.DeleteItemResult;
+import com.amazonaws.services.dynamodbv2.model.GetItemRequest;
+import com.amazonaws.services.dynamodbv2.model.GetItemResult;
 import com.amazonaws.services.dynamodbv2.model.ScanRequest;
 import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.amazonaws.services.dynamodbv2.document.Table;
@@ -23,9 +27,10 @@ import com.amazonaws.services.dynamodbv2.document.Item;
 public class ChemicalDataAccessObjectImpl implements ChemicalDataAccessObject {
 
     private static final String CHEMICALS_TABLE_NAME = "Chemicals";
+    private static final String CHEMICALS_TABLE_INDEX = "Name";
+
     private AmazonDynamoDBClient dynamoDB;
 
-    private List<Chemical> chemicals;
     private Table chemicalTable;
 
     public ChemicalDataAccessObjectImpl() {
@@ -34,8 +39,6 @@ public class ChemicalDataAccessObjectImpl implements ChemicalDataAccessObject {
         } catch (Exception e) {
             System.out.println("Error occured while initializing DB Connection");
         }
-
-        chemicals = new ArrayList<Chemical>();
     }
 
     public void initializeDBConnection() throws Exception {
@@ -49,69 +52,83 @@ public class ChemicalDataAccessObjectImpl implements ChemicalDataAccessObject {
         }
 
         dynamoDB = new AmazonDynamoDBClient(credentials);
-        Region usWest2 = Region.getRegion(Regions.US_WEST_2);
+        final Region usWest2 = Region.getRegion(Regions.US_WEST_2);
         dynamoDB.setRegion(usWest2);
     }
 
     @Override
     public List<Chemical> getAllChemicals() {
-        ScanRequest scanRequest = new ScanRequest()
+        // TODO: may need a more efficient way of converting these values instead of looping
+        final ScanRequest scanRequest = new ScanRequest()
             .withTableName(CHEMICALS_TABLE_NAME);
 
-        ScanResult result = dynamoDB.scan(scanRequest);
-        System.out.println(result.toString());
-        //for (Map<String , AttributeValue> item : result.getItems()) {
-            //System.out.println("GOT: " + item)
-        //}
-        return null; // TODO: replace this with proper list
+        final ScanResult result = dynamoDB.scan(scanRequest);
+        final List<Chemical> chemicals = new ArrayList<Chemical>();
+        for (Map<String, AttributeValue> item : result.getItems()) {
+            chemicals.add(convertItemToChemical(item));
+        }
+
+        return chemicals;
     }
 
     @Override
     public Chemical getChemical(final String name) {
-        for (Chemical c : chemicals) {
-            if (c.getName().equals(name)) {
-                return c;
-            }
-        }
-        return null; // TODO: should add an exception here
+        final Map<String, AttributeValue> item = new HashMap<String, AttributeValue>();
+        item.put(CHEMICALS_TABLE_INDEX, new AttributeValue().withS(name));
+
+        final GetItemRequest request = new GetItemRequest(CHEMICALS_TABLE_NAME, item);
+        final GetItemResult result  = dynamoDB.getItem(request);
+        return convertItemToChemical(result.getItem());
     }
 
     @Override
     public void updateChemical(final Chemical chemical) {
-        for (int i = 0; i < chemicals.size(); i++) {
-            if (chemicals.get(i).getName().equals(chemical.getName())) {
-                chemicals.set(i, chemical);
-            }
-        }
+        addChemical(chemical);
     }
 
     @Override
     public void deleteChemical(final Chemical chemical) {
-        for (int i = 0; i < chemicals.size(); i++) {
-            if (chemicals.get(i).getName().equals(chemical.getName())) {
-                chemicals.remove(i);
-            }
-        }
+        //Map<String, AttributeValue> item = convertChemicalToItem(chemical);
+        //DeleteItemRequest deleteItemRequest = new DeleteItemRequest(CHEMICALS_TABLE_NAME, item);
+        //DeleteItemResult result = dynamoDB.deleteItem(deleteItemRequest);
     }
 
     @Override
     public void addChemical(final Chemical chemical) {
-        Map<String, AttributeValue> item = convertChemicalToItem(chemical);
-        PutItemRequest putItemRequest = new PutItemRequest(CHEMICALS_TABLE_NAME, item);
-        PutItemResult putItemResult = dynamoDB.putItem(putItemRequest);
+        // TODO: add check that chemical was correctly added
+        final Map<String, AttributeValue> item = convertChemicalToItem(chemical);
+        final PutItemRequest putItemRequest = new PutItemRequest(CHEMICALS_TABLE_NAME, item);
+        final PutItemResult putItemResult = dynamoDB.putItem(putItemRequest);
     }
 
+    // TODO: move this into a new class which handles the conversion
     private Map<String, AttributeValue> convertChemicalToItem(final Chemical chemical) {
-        FireDiamond fireDiamond = chemical.getFireDiamond();
+        final FireDiamond fireDiamond = chemical.getFireDiamond();
+        final Map<String, AttributeValue> item = new HashMap<String, AttributeValue>();
 
-        Map<String, AttributeValue> item = new HashMap<String, AttributeValue>();
-
-        item.put("Name", new AttributeValue(chemical.getName()));
-        item.put("Flamability", new AttributeValue().withN(Integer.toString(fireDiamond.getFlammability())));
-        item.put("Health", new AttributeValue().withN(Integer.toString(fireDiamond.getHealth())));
-        item.put("Instability", new AttributeValue().withN(Integer.toString(fireDiamond.getInstability())));
-        item.put("Notice", new AttributeValue(fireDiamond.getNotice()));
+        item.put(CHEMICALS_TABLE_INDEX, new AttributeValue(chemical.getName()));
+        item.put(FireDiamond.FLAMMABILITY, new AttributeValue().withN(Integer.toString(fireDiamond.getFlammability())));
+        item.put(fireDiamond.HEALTH, new AttributeValue().withN(Integer.toString(fireDiamond.getHealth())));
+        item.put(fireDiamond.INSTABILITY, new AttributeValue().withN(Integer.toString(fireDiamond.getInstability())));
+        item.put(fireDiamond.NOTICE, new AttributeValue(fireDiamond.getNotice()));
 
         return item;
+    }
+
+    private Chemical convertItemToChemical(final Map<String, AttributeValue> item) {
+        // TODO: add Exception
+        if (item == null) {
+            System.out.println("ITEM IS NULL??");
+            // throw exception
+            return null;
+        }
+
+        final FireDiamond fireDiamond = new FireDiamond(
+                Integer.parseInt(item.get(FireDiamond.FLAMMABILITY).getN()),
+                Integer.parseInt(item.get(FireDiamond.HEALTH).getN()),
+                Integer.parseInt(item.get(FireDiamond.INSTABILITY).getN()),
+                item.get(FireDiamond.NOTICE).getS());
+
+        return new Chemical(item.get("Name").getS(), fireDiamond);
     }
 }

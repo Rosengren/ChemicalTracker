@@ -6,14 +6,12 @@ public class ChemicalDataTest {
         ChemicalDataAccessObject chemicals = new ChemicalDataAccessObjectImpl();
 
         chemicals.getAllChemicals();
-        //FireDiamond fd = new FireDiamond(1, 2, 3, "Dangerous");
-        //Chemical chemical = new Chemical("Hydrochloric Acid", fd);
-        //chemicals.addChemical(chemical);
-        //// print all chemicals
-        //for (Chemical c : chemicals.getAllChemicals()) {
-            //System.out.println("Chemical: " + c.getName());
-        //}
-
+        FireDiamond fd = new FireDiamond(4, 4, 4, "Dangerous");
+        Chemical chemical = new Chemical("Hydrochloric Acid", fd);
+        chemicals.addChemical(chemical);
+        //chemicals.updateChemical(chemical);
+        //chemicals.deleteChemical(chemical);
+        chemicals.getChemical("Hydrochloric Acid");
         //// update chemical
         //Chemical chemical = chemicals.getAllChemicals().get(0);
         //chemical.setName("Something else");
