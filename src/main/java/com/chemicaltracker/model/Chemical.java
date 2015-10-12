@@ -1,4 +1,4 @@
-package com.chemicaltracker.database;
+package com.chemicaltracker.model;
 
 public class Chemical {
 

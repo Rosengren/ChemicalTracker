@@ -1,4 +1,4 @@
-package com.chemicaltracker.database;
+package com.chemicaltracker.model;
 
 import java.util.Map;
 import java.util.HashMap;

@@ -1,5 +1,7 @@
 package com.chemicaltracker.persistence;
 
+import com.chemicaltracker.model.Chemical;
+
 import java.util.List;
 
 public interface ChemicalDataAccessObject {

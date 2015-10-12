@@ -1,5 +1,8 @@
 package com.chemicaltracker.persistence;
 
+import com.chemicaltracker.model.FireDiamond;
+import com.chemicaltracker.model.Chemical;
+
 import java.util.Map;
 import java.util.HashMap;
 

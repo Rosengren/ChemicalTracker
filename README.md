@@ -35,7 +35,7 @@ Build the source files by running Maven
 
 To start the local server, run
 
-    mvn tomcat:run
+    mvn spring-boot:run
 
 The local server should be running at
 
