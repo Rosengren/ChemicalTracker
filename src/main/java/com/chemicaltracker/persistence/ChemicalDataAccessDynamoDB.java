@@ -34,8 +34,6 @@ public class ChemicalDataAccessDynamoDB implements ChemicalDataAccessObject {
 
     private AmazonDynamoDBClient dynamoDB;
 
-    private Table chemicalTable;
-
     public ChemicalDataAccessDynamoDB() {
         try {
             initializeDBConnection();
@@ -121,7 +119,6 @@ public class ChemicalDataAccessDynamoDB implements ChemicalDataAccessObject {
     private Chemical convertItemToChemical(final Map<String, AttributeValue> item) {
         // TODO: add Exception
         if (item == null) {
-            System.out.println("ITEM IS NULL??");
             // throw exception
             return null;
         }

@@ -1,7 +1,6 @@
 package com.chemicaltracker.controller;
 
 import com.chemicaltracker.model.Chemical;
-//import com.chemicaltracker.model.FireDiamond;
 
 import com.chemicaltracker.persistence.ChemicalDataAccessObject;
 import com.chemicaltracker.persistence.ChemicalDataAccessDynamoDB;
