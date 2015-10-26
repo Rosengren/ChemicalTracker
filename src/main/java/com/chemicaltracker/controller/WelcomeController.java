@@ -3,6 +3,8 @@ package com.chemicaltracker.controller;
 import java.util.Date;
 import java.util.Map;
 
+import java.security.Principal;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -21,11 +23,17 @@ public class WelcomeController {
     public String welcome(Map<String, Object> model) {
         model.put("time", new Date());
         model.put("message", this.message);
-        return "homepage";
+        return "welcome";
+    }
+
+    @RequestMapping("/addChemical")
+    public String addChemical(Map<String, Object> model) {
+        return "addChemical";
     }
 
     @RequestMapping("/hello")
-    public String hello(Map<String, Object> model) {
+    public String hello(Map<String, Object> model, Principal principal) {
+        System.out.println(model.toString());
         return "hello";
     }
 

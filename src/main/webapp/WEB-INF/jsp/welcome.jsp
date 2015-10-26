@@ -3,11 +3,8 @@
 <body>
     <%@include file="templates/navbar.jsp" %>
     <div class="wrapper wrapper-fluid">
-        <h2>Add Chemical Here!</h2>
-        <p>TODO: make the form dynamic</p>
-        <form action="/addChemical" method="post">
-            <label>Chemical Name</label>
-        </form>
+        <h3>Home page under construction</h3>
+        <a href="/home">Go To User Homepage</a>
     </div>
 </body>
 
