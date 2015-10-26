@@ -21,7 +21,18 @@ public class WelcomeController {
     public String welcome(Map<String, Object> model) {
         model.put("time", new Date());
         model.put("message", this.message);
-        return "welcome";
+        return "homepage";
+    }
+
+    @RequestMapping("/hello")
+    public String hello(Map<String, Object> model) {
+        return "hello";
+    }
+
+    @RequestMapping("/login")
+    public String login(Map<String, Object> model) {
+        System.out.println("DEBUG: at LOGIN");
+        return "login";
     }
 
     @RequestMapping("/fail")
