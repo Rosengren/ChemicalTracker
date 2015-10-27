@@ -32,14 +32,14 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-public class UsersDataAccessDynamoDB implements UserDetailsService {
+public class UserDataAccessDynamoDB implements UserDetailsService {
 
     private static final String USERS_TABLE_NAME = "Users";
     private static final String USERS_TABLE_INDEX = "Username";
 
     private AmazonDynamoDBClient dynamoDB;
 
-    public UsersDataAccessDynamoDB() {
+    public UserDataAccessDynamoDB() {
         try {
             initializeDBConnection();
         } catch (Exception e) {

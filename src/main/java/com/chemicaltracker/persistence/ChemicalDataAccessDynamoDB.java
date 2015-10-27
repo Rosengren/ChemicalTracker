@@ -102,6 +102,18 @@ public class ChemicalDataAccessDynamoDB implements ChemicalDataAccessObject {
         final PutItemResult putItemResult = dynamoDB.putItem(putItemRequest);
     }
 
+    @Override
+    public List<Chemical> batchGetChemicals(final List<String> names) {
+        final List<Chemical> chemicals = new ArrayList<Chemical>();
+
+        // TODO: create more effecient batch method
+        for (String name : names) {
+            chemicals.add(getChemical(name));
+        }
+
+        return chemicals;
+    }
+
     // TODO: move this into a new class which handles the conversion
     private Map<String, AttributeValue> convertChemicalToItem(final Chemical chemical) {
         final FireDiamond fireDiamond = chemical.getFireDiamond();

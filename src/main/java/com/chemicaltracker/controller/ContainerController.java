@@ -1,9 +1,12 @@
 package com.chemicaltracker.controller;
 
-import com.chemicaltracker.model.Chemical;
+import com.chemicaltracker.model.Container;
 
 import com.chemicaltracker.persistence.ChemicalDataAccessObject;
 import com.chemicaltracker.persistence.ChemicalDataAccessDynamoDB;
+
+import com.chemicaltracker.persistence.ContainerDataAccessObject;
+import com.chemicaltracker.persistence.ContainerDataAccessDynamoDB;
 
 import org.springframework.ui.Model;
 import java.security.Principal;
@@ -23,28 +26,39 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
-@RequestMapping("/chemicals")
-public class ChemicalController {
+@RequestMapping("/containers")
+public class ContainerController {
 
-    private ChemicalDataAccessObject database = new ChemicalDataAccessDynamoDB();
+    private ContainerDataAccessObject containerDB = new ContainerDataAccessDynamoDB();
+    private ChemicalDataAccessObject chemicalDB = new ChemicalDataAccessDynamoDB();
 
     @RequestMapping(value = "/new", method=GET)
-    public String initChemicalForm(Model model) {
-        model.addAttribute("chemical", new Chemical());
-        return "chemicals/addChemical";
+    public String initContainerForm(Model model, Principal principal) {
+        model = addAttributes(model, principal, new Container());
+        return "containers/createContainer";
     }
 
     @RequestMapping(value = "/new", method=POST)
-    public String processChemicalForm(@ModelAttribute Chemical chemical, BindingResult result, Model model) {
-        model.addAttribute("chemical", chemical);
+    public String processChemicalForm(@ModelAttribute Container container, 
+            BindingResult result, Model model, Principal principal) {
+
+        model = addAttributes(model, principal, container);
+
         if (result.hasErrors()) {
             model.addAttribute("success", false);
         } else {
             model.addAttribute("success", true);
-            database.addChemical(chemical);
+            containerDB.addContainer(container);
         }
 
-        return "chemicals/addChemical";
+        return "containers/createContainer";
+    }
+
+    private Model addAttributes(Model model, Principal principal, Container container) {
+        model.addAttribute("container", container);
+        model.addAttribute("username", principal.getName());
+        model.addAttribute("chemicals", chemicalDB.getAllChemicals());
+        return model;
     }
 
     //@RequestMapping(value="/addChemical", method=POST)
