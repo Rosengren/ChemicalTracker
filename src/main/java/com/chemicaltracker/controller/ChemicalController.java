@@ -1,6 +1,7 @@
 package com.chemicaltracker.controller;
 
 import com.chemicaltracker.model.Chemical;
+import com.chemicaltracker.model.FireDiamond;
 
 import com.chemicaltracker.persistence.ChemicalDataAccessObject;
 import com.chemicaltracker.persistence.ChemicalDataAccessDynamoDB;
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.validation.BindingResult;
 
+import org.springframework.web.bind.annotation.PathVariable;
+
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -26,7 +29,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RequestMapping("/chemicals")
 public class ChemicalController {
 
-    private ChemicalDataAccessObject database = new ChemicalDataAccessDynamoDB();
+    private ChemicalDataAccessObject chemicalDB = new ChemicalDataAccessDynamoDB();
 
     @RequestMapping(value = "/new", method=GET)
     public String initChemicalForm(Model model) {
@@ -41,11 +44,21 @@ public class ChemicalController {
             model.addAttribute("success", false);
         } else {
             model.addAttribute("success", true);
-            database.addChemical(chemical);
+            chemicalDB.addChemical(chemical);
         }
 
         return "chemicals/addChemical";
     }
+
+    @RequestMapping(value="/view/{chemicalName}", method=GET)
+    public String viewChemical(@PathVariable("chemicalName") String chemicalName, Model model, Principal principal) {
+        Chemical chemical = chemicalDB.getChemical(chemicalName);
+        model.addAttribute("chemical", chemical);
+        model.addAttribute("fireDiamond", chemical.getFireDiamond());
+        return "chemicals/viewChemical";
+    }
+
+
 
     //@RequestMapping(value="/addChemical", method=POST)
     //public String addChemical(Model model) {
@@ -60,7 +73,7 @@ public class ChemicalController {
 
     //@RequestMapping(value="/chemical", method=GET)
     //public Chemical chemical(@RequestParam(value="name") String name) {
-        //return database.getChemical(name);
+        //return chemicalDB.getChemical(name);
     //}
 
     //@RequestMapping(value="/chemical")

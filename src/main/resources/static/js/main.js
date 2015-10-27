@@ -1,5 +1,4 @@
-
-// TODO: create ajax request template
-function ajaxRequest(request, callbacks) {
-
-}
+$(".clickableContainer").click(function() {
+    window.location = $(this).find("a").attr("href"); 
+    return false;
+});

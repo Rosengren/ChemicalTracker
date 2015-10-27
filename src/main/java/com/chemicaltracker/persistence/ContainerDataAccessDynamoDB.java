@@ -32,9 +32,9 @@ import com.amazonaws.services.dynamodbv2.document.ItemCollection;
 
 import com.amazonaws.services.dynamodbv2.model.Condition;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-//import com.amazonaws.services.dynamodbv2.document.QueryOutcome;
+import com.amazonaws.services.dynamodbv2.document.QueryOutcome;
 
-//import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
+import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
 import com.amazonaws.services.dynamodbv2.document.KeyAttribute;
 
 public class ContainerDataAccessDynamoDB implements ContainerDataAccessObject {
@@ -71,18 +71,15 @@ public class ContainerDataAccessDynamoDB implements ContainerDataAccessObject {
     @Override
     public List<Container> getAllContainersForUser(final String username) {
         // TODO: may need a more efficient way of converting these values instead of looping
-        //final QuerySpec spec = new QuerySpec()
-            //.withHashKey(CONTAINERS_TABLE_HASH_KEY, username);
-        //final Condition condition = new Condition()
-            //.withAttributeValueList(new AttributeValue(username));
+        final Map<String, AttributeValue> attributes = new HashMap<String, AttributeValue>();
+        attributes.put(":hashval", new AttributeValue(username));
 
         final QueryRequest request = new QueryRequest()
-            .withKeyConditionExpression(CONTAINERS_TABLE_HASH_KEY + " = " + username);
+            .withTableName(CONTAINERS_TABLE_NAME)
+            .withKeyConditionExpression(CONTAINERS_TABLE_HASH_KEY + " = :hashval")
+            .withExpressionAttributeValues(attributes);
 
-        request.setTableName(CONTAINERS_TABLE_NAME);
-        //final ItemCollection<QueryOutcome> items = dynamoDB.query(request);
         final QueryResult result = dynamoDB.query(request);
-
         final List<Container> containers = new ArrayList<Container>();
         for (Map<String, AttributeValue> item : result.getItems()) {
             containers.add(convertItemToContainer(item));
@@ -143,8 +140,8 @@ public class ContainerDataAccessDynamoDB implements ContainerDataAccessObject {
 
         item.put(CONTAINERS_TABLE_HASH_KEY, new AttributeValue(container.getUsername()));
         item.put(CONTAINERS_TABLE_RANGE_KEY, new AttributeValue(container.getContainerName()));
-        item.put("description", new AttributeValue(container.getDescription()));
-        item.put("chemicalNames", new AttributeValue(container.getChemicalNames()));
+        item.put("Description", new AttributeValue(container.getDescription()));
+        item.put("Chemical Names", new AttributeValue(container.getChemicalNames()));
 
         return item;
     }
@@ -158,9 +155,9 @@ public class ContainerDataAccessDynamoDB implements ContainerDataAccessObject {
         }
 
         return new Container(
-                item.get("username").getS(),
-                item.get("containerName").getS(),
-                item.get("description").getS(),
-                item.get("chemicalNames").getSS());
+                item.get(CONTAINERS_TABLE_HASH_KEY).getS(),
+                item.get(CONTAINERS_TABLE_RANGE_KEY).getS(),
+                item.get("Description").getS(),
+                item.get("Chemical Names").getSS()); // TODO: replace with constants
     }
 }

@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.validation.BindingResult;
 
+import org.springframework.web.bind.annotation.PathVariable;
+
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -59,6 +61,13 @@ public class ContainerController {
         model.addAttribute("username", principal.getName());
         model.addAttribute("chemicals", chemicalDB.getAllChemicals());
         return model;
+    }
+
+    @RequestMapping(value="/view/{containerName}", method=GET)
+    public String viewContainer(@PathVariable("containerName") String containerName, Model model, Principal principal) {
+        Container container = containerDB.getContainer(principal.getName(), containerName);
+        model = addAttributes(model, principal, container);
+        return "containers/viewContainer";
     }
 
     //@RequestMapping(value="/addChemical", method=POST)

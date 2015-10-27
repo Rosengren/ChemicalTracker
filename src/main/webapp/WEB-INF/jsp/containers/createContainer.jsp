@@ -37,7 +37,7 @@
             </div>
 
             <div class="form_group row">
-                <button class="button button-green button-large col-left-9" type="submit">Submit</button>
+                <button class="button button-green button-large col-left-12" type="submit">Submit</button>
             </div>
             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
         </form:form>

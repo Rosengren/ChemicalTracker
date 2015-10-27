@@ -1,7 +1,7 @@
-<div class="navbar navbar-fluid">
+<div class="navbar navbar-dark navbar-fluid">
     <nav>
         <ul>
-            <li><a href="/">ChemicalTracker</a></li>
+            <li><a href="/home">ChemicalTracker</a></li>
         </ul>
         <ul>
             <li><a href="/containers/new">Create Container</a></li>
