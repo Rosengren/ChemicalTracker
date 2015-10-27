@@ -5,6 +5,7 @@
     <div class="wrapper wrapper-fluid">
         <h3>Home page under construction</h3>
         <a href="/home">Go To User Homepage</a>
+        <br/>
     </div>
 </body>
 

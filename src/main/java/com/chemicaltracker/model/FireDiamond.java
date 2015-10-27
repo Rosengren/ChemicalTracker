@@ -11,13 +11,18 @@ public class FireDiamond {
     public static final String INSTABILITY = "Instability";
     public static final String NOTICE = "Notice";
 
+    public static final Integer DEFAULT_VALUE = 0;
+
     private int flammability;
     private int health;
     private int instability;
     private String notice;
 
     public FireDiamond() {
-
+        flammability = DEFAULT_VALUE;
+        health = DEFAULT_VALUE;
+        instability = DEFAULT_VALUE;
+        notice = "";
     }
 
     public FireDiamond(int flammability, int health, int instability, String notice) {

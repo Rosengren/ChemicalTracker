@@ -1,7 +1,5 @@
 package com.chemicaltracker.persistence;
 
-import com.chemicaltracker.model.Login;
-
 import java.util.Map;
 import java.util.HashMap;
 
