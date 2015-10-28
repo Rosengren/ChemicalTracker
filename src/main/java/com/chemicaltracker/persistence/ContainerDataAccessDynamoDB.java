@@ -107,7 +107,6 @@ public class ContainerDataAccessDynamoDB implements ContainerDataAccessObject {
 
     @Override
     public void deleteContainer(final String username, final String containerName) {
-        // TODO: implement this
         final Map<String, AttributeValue> item = new HashMap<String, AttributeValue>();
         item.put(CONTAINERS_TABLE_HASH_KEY, new AttributeValue().withS(username));
         item.put(CONTAINERS_TABLE_RANGE_KEY, new AttributeValue().withS(containerName));

@@ -91,9 +91,11 @@ public class ChemicalDataAccessDynamoDB implements ChemicalDataAccessObject {
 
     @Override
     public void deleteChemical(final Chemical chemical) {
-        //Map<String, AttributeValue> item = convertChemicalToItem(chemical);
-        //DeleteItemRequest deleteItemRequest = new DeleteItemRequest(CHEMICALS_TABLE_NAME, item);
-        //DeleteItemResult result = dynamoDB.deleteItem(deleteItemRequest);
+        final Map<String, AttributeValue> item = new HashMap<String, AttributeValue>();
+        item.put(CHEMICALS_TABLE_INDEX, new AttributeValue().withS(chemical.getName()));
+
+        final DeleteItemRequest deleteItemRequest = new DeleteItemRequest(CHEMICALS_TABLE_NAME, item);
+        final DeleteItemResult result = dynamoDB.deleteItem(deleteItemRequest);
     }
 
     @Override
