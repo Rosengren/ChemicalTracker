@@ -59,7 +59,12 @@ public class ContainerController {
     private Model addAttributes(Model model, Principal principal, Container container) {
         model.addAttribute("container", container);
         model.addAttribute("username", principal.getName());
-        model.addAttribute("chemicals", chemicalDB.batchGetChemicals(container.getChemicalNames()));
+
+        if (container.getChemicalNames().isEmpty()) {
+            model.addAttribute("chemicals", chemicalDB.getAllChemicals());
+        } else {
+            model.addAttribute("chemicals", chemicalDB.batchGetChemicals(container.getChemicalNames()));
+        }
         return model;
     }
 
@@ -70,24 +75,8 @@ public class ContainerController {
         return "containers/viewContainer";
     }
 
-    //@RequestMapping(value="/addChemical", method=POST)
-    //public String addChemical(Model model) {
-        //System.out.println(model.toString());
-        //return "addChemical";
-    //}
-
-    //@RequestMapping(value="/addChemical")
-    //public String addChemicalForm(Model model) {
-        //return "addChemical";
-    //}
-
-    //@RequestMapping(value="/chemical", method=GET)
-    //public Chemical chemical(@RequestParam(value="name") String name) {
-        //return database.getChemical(name);
-    //}
-
-    //@RequestMapping(value="/chemical")
-    //public String showChemical(Model model) {
-        //return "showChemical";
-    //}
+    @RequestMapping(value="/delete/{containerName}", method=GET)
+    public String deleteContainer(@PathVariable("containerName") String containerName, Model model, Principal principal) {
+        return "";
+    }
 }

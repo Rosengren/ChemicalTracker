@@ -106,11 +106,14 @@ public class ContainerDataAccessDynamoDB implements ContainerDataAccessObject {
     }
 
     @Override
-    public void deleteContainer(final Container container) {
+    public void deleteContainer(final String username, final String containerName) {
         // TODO: implement this
-        //Map<String, AttributeValue> item = convertContainerToItem(container);
-        //DeleteItemRequest deleteItemRequest = new DeleteItemRequest(CONTAINERS_TABLE_NAME, item);
-        //DeleteItemResult result = dynamoDB.deleteItem(deleteItemRequest);
+        final Map<String, AttributeValue> item = new HashMap<String, AttributeValue>();
+        item.put(CONTAINERS_TABLE_HASH_KEY, new AttributeValue().withS(username));
+        item.put(CONTAINERS_TABLE_RANGE_KEY, new AttributeValue().withS(containerName));
+
+        final DeleteItemRequest deleteItemRequest = new DeleteItemRequest(CONTAINERS_TABLE_NAME, item);
+        final DeleteItemResult result = dynamoDB.deleteItem(deleteItemRequest);
     }
 
     @Override
@@ -153,8 +156,7 @@ public class ContainerDataAccessDynamoDB implements ContainerDataAccessObject {
             // throw exception
             return null;
         }
-        System.out.println("CONTAINER:");
-        System.out.println(item.get("Chemical Names").getSS().toString());
+
         return new Container(
                 item.get(CONTAINERS_TABLE_HASH_KEY).getS(),
                 item.get(CONTAINERS_TABLE_RANGE_KEY).getS(),

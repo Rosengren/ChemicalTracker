@@ -11,5 +11,5 @@ public interface ContainerDataAccessObject {
     public List<Container> batchGetContainers(final String username, final List<String> containerNames);
     public void addContainer(final Container container);
     public void updateContainer(final Container container);
-    public void deleteContainer(final Container container);
+    public void deleteContainer(final String username, final String containerName);
 }

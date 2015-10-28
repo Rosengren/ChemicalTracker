@@ -64,27 +64,4 @@ public class ChemicalController {
         model.addAttribute("fireDiamond", chemical.getFireDiamond());
         return "chemicals/viewChemical";
     }
-
-
-
-    //@RequestMapping(value="/addChemical", method=POST)
-    //public String addChemical(Model model) {
-        //System.out.println(model.toString());
-        //return "addChemical";
-    //}
-
-    //@RequestMapping(value="/addChemical")
-    //public String addChemicalForm(Model model) {
-        //return "addChemical";
-    //}
-
-    //@RequestMapping(value="/chemical", method=GET)
-    //public Chemical chemical(@RequestParam(value="name") String name) {
-        //return chemicalDB.getChemical(name);
-    //}
-
-    //@RequestMapping(value="/chemical")
-    //public String showChemical(Model model) {
-        //return "showChemical";
-    //}
 }

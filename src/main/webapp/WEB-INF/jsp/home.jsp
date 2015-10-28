@@ -6,6 +6,10 @@
         <h3>Welcome, ${username}!</h3>
         <div>
             <h4>Containers</h4>
+            <c:if test="${empty containers}">
+                <p>You currently have no containers. Click on the <em>Create Container</em> tab to make
+                a new container.</p>
+            </c:if>
             <c:forEach items="${containers}" var="container">
                 <div class="container container-blue clickableContainer">
                     <header>${container.containerName}</header>

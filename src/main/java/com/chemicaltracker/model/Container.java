@@ -13,7 +13,7 @@ public class Container {
 
     // Used in the create container page
     public Container() {
-
+        chemicalNames = new ArrayList<String>();
     }
 
     public Container(final String username, final String containerName, final String description) {

@@ -30,6 +30,10 @@
                 <a href="/chemicals/view/${chemical.name}"></a>
             </div>
         </c:forEach>
+        <div class="">
+            <button class="button button-red button-large" type="submit">Delete Container</button>
+        </div>
+        <br/>
     </div>
 </body>
 
