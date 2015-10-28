@@ -18,7 +18,15 @@
                 </ul>
             </div>
         </section>
-        More Details will be added here
+            <c:forEach items="${chemical.properties}" var="chemicalProperties">
+                <h4>${chemicalProperties.key}</h4>
+                <c:forEach items="${chemicalProperties.value}" var="subProperties">
+                    <div class="form_group row">
+                        <h5 class="col-12">${subProperties.key}</h5>
+                        <p class="col-12">${subProperties.value}</p>
+                    </div>
+                </c:forEach>
+            </c:forEach>
         <br/>
     </div>
 </body>

@@ -59,7 +59,7 @@ public class ContainerController {
     private Model addAttributes(Model model, Principal principal, Container container) {
         model.addAttribute("container", container);
         model.addAttribute("username", principal.getName());
-        model.addAttribute("chemicals", chemicalDB.getAllChemicals());
+        model.addAttribute("chemicals", chemicalDB.batchGetChemicals(container.getChemicalNames()));
         return model;
     }
 

@@ -27,6 +27,8 @@ import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.document.Item;
 
+import com.amazonaws.AmazonServiceException;
+
 public class ChemicalDataAccessDynamoDB implements ChemicalDataAccessObject {
 
     private static final String CHEMICALS_TABLE_NAME = "Chemicals";
@@ -83,7 +85,7 @@ public class ChemicalDataAccessDynamoDB implements ChemicalDataAccessObject {
     }
 
     @Override
-    public void updateChemical(final Chemical chemical) {
+    public void updateChemical(final Chemical chemical) throws Exception {
         addChemical(chemical);
     }
 
@@ -95,11 +97,14 @@ public class ChemicalDataAccessDynamoDB implements ChemicalDataAccessObject {
     }
 
     @Override
-    public void addChemical(final Chemical chemical) {
-        // TODO: add check that chemical was correctly added
-        final Map<String, AttributeValue> item = convertChemicalToItem(chemical);
-        final PutItemRequest putItemRequest = new PutItemRequest(CHEMICALS_TABLE_NAME, item);
-        final PutItemResult putItemResult = dynamoDB.putItem(putItemRequest);
+    public void addChemical(final Chemical chemical) throws Exception {
+        try {
+            final Map<String, AttributeValue> item = convertChemicalToItem(chemical);
+            final PutItemRequest putItemRequest = new PutItemRequest(CHEMICALS_TABLE_NAME, item);
+            final PutItemResult putItemResult = dynamoDB.putItem(putItemRequest);
+        } catch (AmazonServiceException e) {
+            throw new Exception(e);
+        }
     }
 
     @Override
@@ -125,6 +130,16 @@ public class ChemicalDataAccessDynamoDB implements ChemicalDataAccessObject {
         item.put(fireDiamond.INSTABILITY, new AttributeValue().withN(Integer.toString(fireDiamond.getInstability())));
         item.put(fireDiamond.NOTICE, new AttributeValue(fireDiamond.getNotice()));
 
+        for (Map.Entry<String, Map<String, String>> entry : chemical.getProperties().entrySet()) {
+            Map<String, AttributeValue> properties = new HashMap<String, AttributeValue>();
+
+            for (Map.Entry<String, String> entry2 : entry.getValue().entrySet()) {
+                properties.put(entry2.getKey(), new AttributeValue(entry2.getValue()));
+            }
+
+            item.put(entry.getKey(), new AttributeValue().withM(properties));
+        }
+
         return item;
     }
 
@@ -141,6 +156,24 @@ public class ChemicalDataAccessDynamoDB implements ChemicalDataAccessObject {
                 Integer.parseInt(item.get(FireDiamond.INSTABILITY).getN()),
                 item.get(FireDiamond.NOTICE).getS());
 
-        return new Chemical(item.get("Name").getS(), fireDiamond);
+        final Map<String, Map<String, String>> properties = new HashMap<String, Map<String, String>>();
+
+        final Chemical chemical = new Chemical(item.get("Name").getS(), fireDiamond);
+
+        for (Map.Entry<String, Map<String, String>> entry : chemical.getProperties().entrySet()) {
+
+            Map<String, String> subProperties = new HashMap<String, String>();
+
+            for (Map.Entry<String, AttributeValue> entry2 : item.get(entry.getKey()).getM().entrySet()) {
+                subProperties.put(entry2.getKey(), entry2.getValue().getS());
+            }
+
+            properties.put(entry.getKey(), subProperties);
+        }
+
+        chemical.setProperties(properties);
+
+        //return new Chemical(item.get("Name").getS(), fireDiamond);
+        return chemical;
     }
 }

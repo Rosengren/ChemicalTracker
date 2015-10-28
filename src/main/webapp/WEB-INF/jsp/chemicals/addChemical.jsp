@@ -4,16 +4,18 @@
     <%@include file="../templates/navbar.jsp" %>
     <div class="wrapper wrapper-fluid">
     <c:if test="${not empty success}">
-        <div class="alert">
         <c:choose>
             <c:when test="${success}">
-                <p>Successfully added chemical!</p>
+                <div class="alert">
+                    <p>Successfully added chemical!</p>
+                </div>
             </c:when>
             <c:otherwise>
-                <p>Error: did not successfully add chemical!</p>
+                <div class="alert alert-red">
+                    <p>Error: did not successfully add chemical!</p>
+                </div>
             </c:otherwise>
         </c:choose>
-        </div>
     </c:if>
         <h2>Add New Chemical</h2>
         <form:form method="post" action="/chemicals/new" modelAttribute="chemical">
@@ -54,9 +56,9 @@
             <c:forEach items="${chemical.properties}" var="chemicalProperties">
                 <h5>${chemicalProperties.key}</h5>
                 <c:forEach items="${chemicalProperties.value}" var="subProperties">
-                    <div class="form_group">
-                        <label>${subProperties.key}</label>
-                        <textarea name="${subProperties.value}"></textarea>
+                    <div class="form_group row">
+                        <label class="col-12">${subProperties.key}</label>
+                        <textarea class="col-12" name="properties['${chemicalProperties.key}']['${subProperties.key}']"></textarea>
                     </div>
                 </c:forEach>
             </c:forEach>

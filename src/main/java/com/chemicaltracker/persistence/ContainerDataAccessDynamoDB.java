@@ -153,7 +153,8 @@ public class ContainerDataAccessDynamoDB implements ContainerDataAccessObject {
             // throw exception
             return null;
         }
-
+        System.out.println("CONTAINER:");
+        System.out.println(item.get("Chemical Names").getSS().toString());
         return new Container(
                 item.get(CONTAINERS_TABLE_HASH_KEY).getS(),
                 item.get(CONTAINERS_TABLE_RANGE_KEY).getS(),

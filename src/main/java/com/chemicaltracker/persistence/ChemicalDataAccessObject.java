@@ -8,8 +8,8 @@ public interface ChemicalDataAccessObject {
 
     public List<Chemical> getAllChemicals();
     public Chemical getChemical(final String name);
-    public void addChemical(final Chemical chemical);
-    public void updateChemical(final Chemical chemical);
+    public void addChemical(final Chemical chemical) throws Exception;
+    public void updateChemical(final Chemical chemical) throws Exception;
     public void deleteChemical(final Chemical chemical);
 
     public List<Chemical> batchGetChemicals(final List<String> names);

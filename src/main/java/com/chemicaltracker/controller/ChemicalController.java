@@ -43,8 +43,15 @@ public class ChemicalController {
         if (result.hasErrors()) {
             model.addAttribute("success", false);
         } else {
+            try {
+                chemicalDB.addChemical(chemical);
+            } catch (Exception e) {
+                System.out.println("Error adding chemical to Database");
+                e.printStackTrace();
+                model.addAttribute("success", false);
+                return "chemicals/addChemical";
+            }
             model.addAttribute("success", true);
-            chemicalDB.addChemical(chemical);
         }
 
         return "chemicals/addChemical";

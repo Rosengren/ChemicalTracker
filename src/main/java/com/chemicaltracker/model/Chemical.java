@@ -38,7 +38,7 @@ public class Chemical {
 
     private String name;
     private FireDiamond fireDiamond;
-    private Map<String, Object> properties;
+    private Map<String, Map<String, String>> properties;
 
     public Chemical() {
         initProperties();
@@ -57,21 +57,21 @@ public class Chemical {
         this.fireDiamond = fireDiamond;
     }
 
-    public Chemical(String name, FireDiamond fireDiamond, Map<String, Object> properties) {
+    public Chemical(String name, FireDiamond fireDiamond, Map<String, Map<String, String>> properties) {
         this.name = name;
         this.fireDiamond = fireDiamond;
         this.properties = properties;
     }
 
-    public Map<String, Object> getProperties() {
+    public Map<String, Map<String, String>> getProperties() {
         return this.properties;
     }
 
-    public void setProperties(Map<String, Object> properties) {
+    public void setProperties(Map<String, Map<String, String>> properties) {
         this.properties = properties;
     }
 
-    public void addProperty(String name, Object property) {
+    public void addProperty(String name, Map<String, String> property) {
         properties.put(name, property);
     }
 
@@ -104,15 +104,21 @@ public class Chemical {
         physicalAndChemicalProperties.put("BoilingPoint", "");
         physicalAndChemicalProperties.put("MeltingPoint", "");
 
+        Map<String, String> firstAidMeasures = new HashMap<String, String>();
+        firstAidMeasures.put("EyeContact", "");
+        firstAidMeasures.put("SkinContact", "");
+        firstAidMeasures.put("Inhalation", "");
+        firstAidMeasures.put("Ingestion", "");
+
         Map<String, String> otherProperties = new HashMap<String, String>();
         otherProperties.put("PotentialHealthEffects", "");
-        otherProperties.put("FirstAidMeasures", "");
         otherProperties.put("ExposureControls", "");
 
-        properties = new HashMap<String, Object>();
+        properties = new HashMap<String, Map<String, String>>();
         properties.put("FireAndExplosionData", fireAndExplosionData);
         properties.put("HandlingAndStorage", handlingAndStorage);
         properties.put("PhysicalAndChemicalProperties", physicalAndChemicalProperties);
+        properties.put("FirstAidMeasures", firstAidMeasures);
         properties.put("OtherProperties", otherProperties);
     }
 }
