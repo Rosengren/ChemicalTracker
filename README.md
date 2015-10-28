@@ -7,6 +7,8 @@ Potential use cases include giviing first responders the ability to identify haz
 allowing laboratory auditors to inventory chemicals that are found in labs; or providing users
 with information about chemicals.
 
+MSDS information was taken from [here](http://www.sciencelab.com/msdsList.php)
+
 ##Software Requirements
 
 * [Git](https://git-scm.com)
@@ -16,6 +18,12 @@ with information about chemicals.
 
 * [AWS Account](https://aws.amazon.com/)
 * [AWS Credentials](http://docs.aws.amazon.com/general/latest/gr/aws-security-credentials.html)
+
+##Libraries Used
+
+* [jQuery](https://jquery.com/)
+* [KickStart](http://getkickstart.com/)
+* [Spring MVC](http://spring.io/)
 
 ##Setup
 
@@ -109,3 +117,43 @@ the code and generate a new chemicaltracker.war file.
 ChemicalTracker/Tracker/ directory.
 
 6. After a few minutes, the online version should be updated.
+
+##Backlog
+
+###General
+- Move chemical properties out of chemical object to make it easier to modify
+    - Look into streamlining changes to the Chemical schema
+- Add option for bulk uploading chemicals (maybe use csv with data pipelines)
+- Create Rest APIs for Android (JSON or XML or Both)
+- Create css/js MSDS diamond for chemical page
+- Make containers editable
+- Make containers deletable
+- When chemical is improperly added, refill fields with user data
+    - Also highlight missing fields
+- Add ability to Sign Up/Sign Out
+- Replace Maps with Data Access Objects with AWS objects
+
+###Testing
+- Add unit testing
+- Add Integration tests (stubs & drivers)
+- Use [Travis CI](https://travis-ci.org/getting_started) for Continuous Integration
+- Use Mock framework like jmock
+- Look into Hamcrest
+- Use Checkstyle
+
+###Command Line Tools
+- Look into [SAWS](https://github.com/donnemartin/saws)
+- Look into [EB CLI](http://docs.aws.amazon.com/elasticbeanstalk/latest/dg/eb-cli3-install.html)
+- Deploy from GitHub to AWS [here](http://docs.aws.amazon.com/codedeploy/latest/userguide/github-integ-tutorial.html)
+
+###Documentation
+- Create Object Diagrams
+- Create Sequence Diagrams
+- Document chemical schema
+- Document all Table schemas (user & container)
+- Add details about spring MVC
+
+###Misc
+- Find interesting ways of using the data
+    - Graphs about overall dangers in a container
+    - Statistics about chemicals
