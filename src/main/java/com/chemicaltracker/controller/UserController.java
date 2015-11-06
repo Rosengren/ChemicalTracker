@@ -26,11 +26,4 @@ public class UserController {
     public String login(Model model) {
         return "login";
     }
-
-    @RequestMapping("/home")
-    public String home(Model model, Principal principal) {
-        model.addAttribute("username", principal.getName());
-        model.addAttribute("cabinets", cabinetDB.getAllStoragesForUser(principal.getName()));
-        return "home";
-    }
 }

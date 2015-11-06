@@ -1,6 +1,7 @@
 package com.chemicaltracker.controller;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import com.chemicaltracker.model.Storage;
 
@@ -62,7 +63,7 @@ public class CabinetController {
         model.addAttribute("cabinet", cabinet);
         model.addAttribute("username", principal.getName());
 
-        List<String> chemicalNames = cabinet.getStoredItemNames();
+        List<String> chemicalNames = new ArrayList<String>(cabinet.getStoredItemIDs().keySet());
         if (chemicalNames.isEmpty()) {
             model.addAttribute("chemicals", chemicalDB.getAllChemicals());
         } else {

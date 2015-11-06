@@ -21,8 +21,8 @@
                         <p>
                             <b>Contains:</b>
                             <br/>
-                            <c:forEach items="${cabinet.storedItemNames}" var="chemicalName">
-                                ${chemicalName},
+                            <c:forEach items="${cabinet.storedItemIDs}" var="chemicalID">
+                                ${chemicalID},
                             </c:forEach>
                         </p>
                     </main>

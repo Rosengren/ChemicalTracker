@@ -96,10 +96,10 @@ public class StorageDataAccessDynamoDB implements StorageDataAccessObject {
     }
 
     @Override
-    public Storage getStorage(final String username, final String storageName) {
+    public Storage getStorage(final String username, final String storageID) {
         final Map<String, AttributeValue> item = new HashMap<String, AttributeValue>();
         item.put(tableHashKey, new AttributeValue().withS(username));
-        item.put(tableRangeKey, new AttributeValue().withS(storageName));
+        item.put(tableRangeKey, new AttributeValue().withS(storageID));
 
         final GetItemRequest request = new GetItemRequest(tableName, item);
         final GetItemResult result = dynamoDB.getItem(request);
@@ -113,10 +113,10 @@ public class StorageDataAccessDynamoDB implements StorageDataAccessObject {
     }
 
     @Override
-    public void deleteStorage(final String username, final String storageName) {
+    public void deleteStorage(final String username, final String storageID) {
         final Map<String, AttributeValue> item = new HashMap<String, AttributeValue>();
         item.put(tableHashKey, new AttributeValue().withS(username));
-        item.put(tableRangeKey, new AttributeValue().withS(storageName));
+        item.put(tableRangeKey, new AttributeValue().withS(storageID));
 
         final DeleteItemRequest deleteItemRequest = new DeleteItemRequest(tableName, item);
         final DeleteItemResult result = dynamoDB.deleteItem(deleteItemRequest);
@@ -131,12 +131,12 @@ public class StorageDataAccessDynamoDB implements StorageDataAccessObject {
     }
 
     @Override
-    public List<Storage> batchGetStorages(final String username, final List<String> storageNames) {
+    public List<Storage> batchGetStorages(final String username, final List<String> storageIDs) {
         final List<Storage> storages = new ArrayList<Storage>();
 
         // TODO: create more efficient batch method
-        for (String name : storageNames) {
-            storages.add(getStorage(username, name));
+        for (String id : storageIDs) {
+            storages.add(getStorage(username, id));
         }
 
         return storages;
@@ -148,10 +148,18 @@ public class StorageDataAccessDynamoDB implements StorageDataAccessObject {
         final Map<String, AttributeValue> item = new HashMap<String, AttributeValue>();
 
         item.put(tableHashKey, new AttributeValue(storage.getUsername()));
-        item.put(tableRangeKey, new AttributeValue(storage.getName()));
+        item.put("Name", new AttributeValue(storage.getName()));
+        item.put(tableRangeKey, new AttributeValue(storage.getID()));
         item.put("Description", new AttributeValue(storage.getDescription()));
-        item.put(storedItemTitle, new AttributeValue(storage.getStoredItemNames()));
-        System.out.println(item.toString());
+
+        final Map<String, AttributeValue> storedItems = new HashMap<String, AttributeValue>();
+        for (Map.Entry<String, String> storedItem : storage.getStoredItemIDs().entrySet()) {
+            storedItems.put(storedItem.getKey(), new AttributeValue(storedItem.getValue()));
+        }
+
+        item.put(storedItemTitle, new AttributeValue().withM(storedItems));
+        //item.put(storedItemTitle, new AttributeValue(storage.getStoredItemIDs()));
+        System.out.println("ITEM: " + item.toString());
         return item;
     }
 
@@ -163,10 +171,17 @@ public class StorageDataAccessDynamoDB implements StorageDataAccessObject {
             return null;
         }
 
+        final Map<String, String> storedItems = new HashMap<String, String>();
+        for (Map.Entry<String, AttributeValue> storedItem : item.get(storedItemTitle).getM().entrySet()) {
+            storedItems.put(storedItem.getKey(), storedItem.getValue().getS());
+        }
+
         return new Storage(
                 item.get(tableHashKey).getS(),
+                item.get("Name").getS(),
                 item.get(tableRangeKey).getS(),
                 item.get("Description").getS(),
-                item.get(storedItemTitle).getSS()); // TODO: replace with constants
+                storedItems);
+                //item.get(storedItemTitle).getM()); // TODO: replace with constants
     }
 }

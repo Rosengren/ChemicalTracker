@@ -1,7 +1,7 @@
 package com.chemicaltracker.model;
 
-import java.util.List;
-import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 
 import org.json.simple.JSONObject;
 
@@ -14,31 +14,41 @@ public class Storage {
     // TODO: maybe add a field to determine if this is a new storage an existing storage
     private String username;
     private String name;
+    private String id;
     private String description;
-    private List<String> storedItemNames;
+    private Map<String, String> storedItemIDs;
 
     public Storage() {
-        storedItemNames = new ArrayList<String>();
+        storedItemIDs = new HashMap<String, String>();
     }
 
-    public Storage(final String username, final String name, final String description,
-            final List<String> storedItemNames) {
+    public Storage(final String username, final String name, final String id, final String description,
+            final Map<String, String> storedItemIDs) {
         this.username = username;
         this.name = name;
+        this.id = id;
         this.description = description;
-        this.storedItemNames = storedItemNames;
+        this.storedItemIDs = storedItemIDs;
     }
 
-    public void setStoredItemNames(final List<String> storedItemNames) {
-        this.storedItemNames = storedItemNames;
+    public void setID(final String id) {
+        this.id = id;
     }
 
-    public void addStoredItemName(final String storedItemName) {
-        this.storedItemNames.add(storedItemName);
+    public String getID() {
+        return this.id;
     }
 
-    public List<String> getStoredItemNames() {
-        return this.storedItemNames;
+    public void setStoredItemIDs(final Map<String, String> storedItemIDs) {
+        this.storedItemIDs = storedItemIDs;
+    }
+
+    public void addStoredItemID(final String storedItemID, final String storedItemName) {
+        this.storedItemIDs.put(storedItemID, storedItemName);
+    }
+
+    public Map<String, String> getStoredItemIDs() {
+        return this.storedItemIDs;
     }
 
     public void setUsername(final String username) {
@@ -70,7 +80,7 @@ public class Storage {
 
         json.put("name", this.name);
         json.put("description", this.description);
-        json.put("storedItemNames", this.storedItemNames);
+        json.put("storedItemIDs", this.storedItemIDs);
 
         return json.toString();
     }

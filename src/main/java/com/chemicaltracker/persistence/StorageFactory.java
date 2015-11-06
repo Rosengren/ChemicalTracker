@@ -9,11 +9,11 @@ public class StorageFactory {
         }
 
         if (storageName.equalsIgnoreCase("CABINETS")) {
-            return new StorageDataAccessDynamoDB("Cabinets", "Username", "Cabinet Name", "Chemical Names");
+            return new StorageDataAccessDynamoDB("Cabinets", "Username", "Cabinet ID", "Chemical Names");
         } else if (storageName.equalsIgnoreCase("ROOMS")) {
-            return new StorageDataAccessDynamoDB("Rooms", "Username", "Room Name", "Cabinet Names");
+            return new StorageDataAccessDynamoDB("Rooms", "Username", "Room ID", "Cabinet Names");
         } else if (storageName.equalsIgnoreCase("LOCATIONS")) {
-            return new StorageDataAccessDynamoDB("Locations", "Username", "Location Name", "Room Names");
+            return new StorageDataAccessDynamoDB("Locations", "Username", "Location ID", "Room Names");
         }
 
         return null;
