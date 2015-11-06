@@ -5,28 +5,28 @@
     <div class="wrapper wrapper-fluid">
         <h3>Welcome, ${username}!</h3>
         <div>
-            <h4>Containers</h4>
-            <c:if test="${empty containers}">
-                <p>You currently have no containers. Click on the <em>Create Container</em> tab to make
-                a new container.</p>
+            <h4>Cabinets</h4>
+            <c:if test="${empty cabinets}">
+                <p>You currently have no cabinets. Click on the <em>Create Cabinet</em> tab to make
+                a new cabinet.</p>
             </c:if>
-            <c:forEach items="${containers}" var="container">
+            <c:forEach items="${cabinets}" var="cabinet">
                 <div class="container container-blue clickableContainer">
-                    <header>${container.containerName}</header>
+                    <header>${cabinet.name}</header>
                     <main>
                         <p>
                             <b>Description:</b>
                             <br/>
-                            ${container.description}</p>
+                            ${cabinet.description}</p>
                         <p>
                             <b>Contains:</b>
                             <br/>
-                            <c:forEach items="${container.chemicalNames}" var="chemicalName">
+                            <c:forEach items="${cabinet.storedItemNames}" var="chemicalName">
                                 ${chemicalName},
                             </c:forEach>
                         </p>
                     </main>
-                    <a href="/containers/view/${container.containerName}"></a>
+                    <a href="/cabinets/view/${cabinet.name}"></a>
                 </div>
             </c:forEach>
         </div>

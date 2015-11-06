@@ -3,8 +3,8 @@ package com.chemicaltracker.controller;
 import org.springframework.ui.Model;
 import java.security.Principal;
 
-import com.chemicaltracker.persistence.ContainerDataAccessObject;
-import com.chemicaltracker.persistence.ContainerDataAccessDynamoDB;
+import com.chemicaltracker.persistence.StorageFactory;
+import com.chemicaltracker.persistence.StorageDataAccessObject;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -20,7 +20,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @Controller
 public class UserController {
 
-    private ContainerDataAccessObject containerDB = new ContainerDataAccessDynamoDB();
+    private StorageDataAccessObject cabinetDB = StorageFactory.getStorage("CABINETS");
 
     @RequestMapping("/login")
     public String login(Model model) {
@@ -30,7 +30,7 @@ public class UserController {
     @RequestMapping("/home")
     public String home(Model model, Principal principal) {
         model.addAttribute("username", principal.getName());
-        model.addAttribute("containers", containerDB.getAllContainersForUser(principal.getName()));
+        model.addAttribute("cabinets", cabinetDB.getAllStoragesForUser(principal.getName()));
         return "home";
     }
 }

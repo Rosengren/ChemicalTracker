@@ -1,7 +1,6 @@
 package com.chemicaltracker.persistence;
 
-import com.chemicaltracker.model.Container;
-import com.chemicaltracker.model.Chemical;
+import com.chemicaltracker.model.Storage;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -37,15 +36,23 @@ import com.amazonaws.services.dynamodbv2.document.QueryOutcome;
 import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
 import com.amazonaws.services.dynamodbv2.document.KeyAttribute;
 
-public class ContainerDataAccessDynamoDB implements ContainerDataAccessObject {
+public class StorageDataAccessDynamoDB implements StorageDataAccessObject {
 
-    private static final String CONTAINERS_TABLE_NAME = "Containers";
-    private static final String CONTAINERS_TABLE_HASH_KEY = "Username";
-    private static final String CONTAINERS_TABLE_RANGE_KEY = "Container Name";
+    private String tableName;
+    private String tableHashKey;
+    private String tableRangeKey;
+    private String storedItemTitle;
 
     private AmazonDynamoDBClient dynamoDB;
 
-    public ContainerDataAccessDynamoDB() {
+    public StorageDataAccessDynamoDB(final String tableName, final String tableHashKey,
+            final String tableRangeKey, final String storedItemTitle) {
+
+        this.tableName = tableName;
+        this.tableHashKey = tableHashKey;
+        this.tableRangeKey = tableRangeKey;
+        this.storedItemTitle = storedItemTitle;
+
         try {
             initializeDBConnection();
         } catch (Exception e) {
@@ -69,86 +76,86 @@ public class ContainerDataAccessDynamoDB implements ContainerDataAccessObject {
     }
 
     @Override
-    public List<Container> getAllContainersForUser(final String username) {
+    public List<Storage> getAllStoragesForUser(final String username) {
         // TODO: may need a more efficient way of converting these values instead of looping
         final Map<String, AttributeValue> attributes = new HashMap<String, AttributeValue>();
         attributes.put(":hashval", new AttributeValue(username));
 
         final QueryRequest request = new QueryRequest()
-            .withTableName(CONTAINERS_TABLE_NAME)
-            .withKeyConditionExpression(CONTAINERS_TABLE_HASH_KEY + " = :hashval")
+            .withTableName(tableName)
+            .withKeyConditionExpression(tableHashKey + " = :hashval")
             .withExpressionAttributeValues(attributes);
 
         final QueryResult result = dynamoDB.query(request);
-        final List<Container> containers = new ArrayList<Container>();
+        final List<Storage> storages = new ArrayList<Storage>();
         for (Map<String, AttributeValue> item : result.getItems()) {
-            containers.add(convertItemToContainer(item));
+            storages.add(convertItemToStorage(item));
         }
 
-        return containers;
+        return storages;
     }
 
     @Override
-    public Container getContainer(final String username, final String containerName) {
+    public Storage getStorage(final String username, final String storageName) {
         final Map<String, AttributeValue> item = new HashMap<String, AttributeValue>();
-        item.put(CONTAINERS_TABLE_HASH_KEY, new AttributeValue().withS(username));
-        item.put(CONTAINERS_TABLE_RANGE_KEY, new AttributeValue().withS(containerName));
+        item.put(tableHashKey, new AttributeValue().withS(username));
+        item.put(tableRangeKey, new AttributeValue().withS(storageName));
 
-        final GetItemRequest request = new GetItemRequest(CONTAINERS_TABLE_NAME, item);
+        final GetItemRequest request = new GetItemRequest(tableName, item);
         final GetItemResult result = dynamoDB.getItem(request);
 
-        return convertItemToContainer(result.getItem());
+        return convertItemToStorage(result.getItem());
     }
 
     @Override
-    public void updateContainer(final Container container) {
-        addContainer(container);
+    public void updateStorage(final Storage storage) {
+        addStorage(storage);
     }
 
     @Override
-    public void deleteContainer(final String username, final String containerName) {
+    public void deleteStorage(final String username, final String storageName) {
         final Map<String, AttributeValue> item = new HashMap<String, AttributeValue>();
-        item.put(CONTAINERS_TABLE_HASH_KEY, new AttributeValue().withS(username));
-        item.put(CONTAINERS_TABLE_RANGE_KEY, new AttributeValue().withS(containerName));
+        item.put(tableHashKey, new AttributeValue().withS(username));
+        item.put(tableRangeKey, new AttributeValue().withS(storageName));
 
-        final DeleteItemRequest deleteItemRequest = new DeleteItemRequest(CONTAINERS_TABLE_NAME, item);
+        final DeleteItemRequest deleteItemRequest = new DeleteItemRequest(tableName, item);
         final DeleteItemResult result = dynamoDB.deleteItem(deleteItemRequest);
     }
 
     @Override
-    public void addContainer(final Container container) {
+    public void addStorage(final Storage storage) {
         // TODO: add check that chemical was correctly added
-        final Map<String, AttributeValue> item = convertContainerToItem(container);
-        final PutItemRequest putItemRequest = new PutItemRequest(CONTAINERS_TABLE_NAME, item);
+        final Map<String, AttributeValue> item = convertStorageToItem(storage);
+        final PutItemRequest putItemRequest = new PutItemRequest(tableName, item);
         final PutItemResult putItemResult = dynamoDB.putItem(putItemRequest);
     }
 
     @Override
-    public List<Container> batchGetContainers(final String username, final List<String> containerNames) {
-        final List<Container> containers = new ArrayList<Container>();
+    public List<Storage> batchGetStorages(final String username, final List<String> storageNames) {
+        final List<Storage> storages = new ArrayList<Storage>();
 
-        // TODO: create more effecient batch method
-        for (String name : containerNames) {
-            containers.add(getContainer(username, name));
+        // TODO: create more efficient batch method
+        for (String name : storageNames) {
+            storages.add(getStorage(username, name));
         }
 
-        return containers;
+        return storages;
     }
 
     // TODO: move this into a new class which handles the conversion
     // TODO: replace Map<> with Item()
-    private Map<String, AttributeValue> convertContainerToItem(final Container container) {
+    private Map<String, AttributeValue> convertStorageToItem(final Storage storage) {
         final Map<String, AttributeValue> item = new HashMap<String, AttributeValue>();
 
-        item.put(CONTAINERS_TABLE_HASH_KEY, new AttributeValue(container.getUsername()));
-        item.put(CONTAINERS_TABLE_RANGE_KEY, new AttributeValue(container.getContainerName()));
-        item.put("Description", new AttributeValue(container.getDescription()));
-        item.put("Chemical Names", new AttributeValue(container.getChemicalNames()));
-
+        item.put(tableHashKey, new AttributeValue(storage.getUsername()));
+        item.put(tableRangeKey, new AttributeValue(storage.getName()));
+        item.put("Description", new AttributeValue(storage.getDescription()));
+        item.put(storedItemTitle, new AttributeValue(storage.getStoredItemNames()));
+        System.out.println(item.toString());
         return item;
     }
 
-    private Container convertItemToContainer(final Map<String, AttributeValue> item) {
+    private Storage convertItemToStorage(final Map<String, AttributeValue> item) {
 
         // TODO: add Exception
         if (item == null) {
@@ -156,10 +163,10 @@ public class ContainerDataAccessDynamoDB implements ContainerDataAccessObject {
             return null;
         }
 
-        return new Container(
-                item.get(CONTAINERS_TABLE_HASH_KEY).getS(),
-                item.get(CONTAINERS_TABLE_RANGE_KEY).getS(),
+        return new Storage(
+                item.get(tableHashKey).getS(),
+                item.get(tableRangeKey).getS(),
                 item.get("Description").getS(),
-                item.get("Chemical Names").getSS()); // TODO: replace with constants
+                item.get(storedItemTitle).getSS()); // TODO: replace with constants
     }
 }

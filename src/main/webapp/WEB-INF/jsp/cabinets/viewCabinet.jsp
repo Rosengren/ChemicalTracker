@@ -3,9 +3,9 @@
 <body>
     <%@include file="../templates/navbar.jsp" %>
     <div class="wrapper wrapper-fluid">
-        <h2>${container.containerName}</h2>
+        <h2>${cabinet.name}</h2>
         <h4>Description</h4>
-        <p>${container.description}</p>
+        <p>${cabinet.description}</p>
         <h4>Chemicals</h4>
         <c:forEach items="${chemicals}" var="chemical">
             <div class="container container-blue clickableContainer">
@@ -31,7 +31,7 @@
             </div>
         </c:forEach>
         <div class="">
-            <button class="button button-red button-large" type="submit">Delete Container</button>
+            <button class="button button-red button-large" type="submit">Delete Cabinet</button>
         </div>
         <br/>
     </div>

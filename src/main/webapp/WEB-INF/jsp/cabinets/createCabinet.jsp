@@ -7,21 +7,21 @@
         <div class="alert">
         <c:choose>
             <c:when test="${success}">
-                <p>Successfully added container!</p>
+                <p>Successfully added cabinet!</p>
             </c:when>
             <c:otherwise>
-                <p>Error: did not successfully add container!</p>
+                <p>Error: did not successfully add cabinet!</p>
             </c:otherwise>
         </c:choose>
         </div>
     </c:if>
-        <h2>Create New Container</h2>
-        <form:form method="post" action="/containers/new" modelAttribute="container">
+        <h2>Create New Cabinet</h2>
+        <form:form method="post" action="/cabinets/new" modelAttribute="storage">
             <input type="hidden" name="username" value="${username}">
 
             <div class="form_group">
-                <label>Container Name</label>
-                <input type="text" name="containerName"/>
+                <label>Cabinet Name</label>
+                <input type="text" name="name"/>
             </div>
 
             <div class="form_group">

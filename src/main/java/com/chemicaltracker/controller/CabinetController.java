@@ -1,12 +1,14 @@
 package com.chemicaltracker.controller;
 
-import com.chemicaltracker.model.Container;
+import java.util.List;
+
+import com.chemicaltracker.model.Storage;
 
 import com.chemicaltracker.persistence.ChemicalDataAccessObject;
 import com.chemicaltracker.persistence.ChemicalDataAccessDynamoDB;
 
-import com.chemicaltracker.persistence.ContainerDataAccessObject;
-import com.chemicaltracker.persistence.ContainerDataAccessDynamoDB;
+import com.chemicaltracker.persistence.StorageFactory;
+import com.chemicaltracker.persistence.StorageDataAccessObject;
 
 import org.springframework.ui.Model;
 import java.security.Principal;
@@ -28,55 +30,57 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
-@RequestMapping("/containers")
-public class ContainerController {
+@RequestMapping("/cabinets")
+public class CabinetController {
 
-    private ContainerDataAccessObject containerDB = new ContainerDataAccessDynamoDB();
+    private StorageDataAccessObject cabinetDB = StorageFactory.getStorage("CABINETS");
     private ChemicalDataAccessObject chemicalDB = new ChemicalDataAccessDynamoDB();
 
     @RequestMapping(value = "/new", method=GET)
-    public String initContainerForm(Model model, Principal principal) {
-        model = addAttributes(model, principal, new Container());
-        return "containers/createContainer";
+    public String initCabinetForm(Model model, Principal principal) {
+        model = addAttributes(model, principal, new Storage());
+        return "cabinets/createCabinet";
     }
 
     @RequestMapping(value = "/new", method=POST)
-    public String processChemicalForm(@ModelAttribute Container container, 
+    public String processChemicalForm(@ModelAttribute Storage cabinet,
             BindingResult result, Model model, Principal principal) {
 
-        model = addAttributes(model, principal, container);
+        model = addAttributes(model, principal, cabinet);
 
         if (result.hasErrors()) {
             model.addAttribute("success", false);
         } else {
             model.addAttribute("success", true);
-            containerDB.addContainer(container);
+            cabinetDB.addStorage(cabinet);
         }
 
-        return "containers/createContainer";
+        return "cabinets/createCabinet";
     }
 
-    private Model addAttributes(Model model, Principal principal, Container container) {
-        model.addAttribute("container", container);
+    private Model addAttributes(Model model, Principal principal, Storage cabinet) {
+        model.addAttribute("cabinet", cabinet);
         model.addAttribute("username", principal.getName());
 
-        if (container.getChemicalNames().isEmpty()) {
+        List<String> chemicalNames = cabinet.getStoredItemNames();
+        if (chemicalNames.isEmpty()) {
             model.addAttribute("chemicals", chemicalDB.getAllChemicals());
         } else {
-            model.addAttribute("chemicals", chemicalDB.batchGetChemicals(container.getChemicalNames()));
+            model.addAttribute("chemicals", chemicalDB.batchGetChemicals(chemicalNames));
         }
         return model;
     }
 
-    @RequestMapping(value="/view/{containerName}", method=GET)
-    public String viewContainer(@PathVariable("containerName") String containerName, Model model, Principal principal) {
-        Container container = containerDB.getContainer(principal.getName(), containerName);
-        model = addAttributes(model, principal, container);
-        return "containers/viewContainer";
+    @RequestMapping(value="/view/{cabinetName}", method=GET)
+    public String viewCabinet(@PathVariable("cabinetName") String cabinetName, Model model, Principal principal) {
+        Storage cabinet = cabinetDB.getStorage(principal.getName(), cabinetName);
+        model = addAttributes(model, principal, cabinet);
+        return "cabinets/viewCabinet";
     }
 
-    @RequestMapping(value="/delete/{containerName}", method=GET)
-    public String deleteContainer(@PathVariable("containerName") String containerName, Model model, Principal principal) {
+    @RequestMapping(value="/delete/{cabinetName}", method=GET)
+    public String deleteCabinet(@PathVariable("cabinetName") String cabinetName, Model model, Principal principal) {
+        // TODO
         return "";
     }
 }
