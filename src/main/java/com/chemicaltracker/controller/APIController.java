@@ -3,7 +3,6 @@ package com.chemicaltracker.controller;
 import java.util.List;
 import java.util.UUID;
 import java.util.HashMap;
-//import org.json.simple.JSONObject;
 
 import com.chemicaltracker.model.Storage;
 
@@ -23,6 +22,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.validation.BindingResult;
@@ -42,13 +42,71 @@ public class APIController {
 
     private ChemicalDataAccessObject chemicalDB = new ChemicalDataAccessDynamoDB();
 
+
+    @RequestMapping(value="/add/location", method=POST)
+    public @ResponseBody String addLocation(@RequestBody final Storage location, BindingResult result,
+            Model model, Principal principal) {
+        location.setID(location.getName());
+        locationDB.addStorage(location);
+        return "success";
+    }
+
+    @RequestMapping(value="/add/room/to/location/{locationName}", method=POST)
+    public @ResponseBody String addRoom(@PathVariable("locationName") final String locationName,
+            @RequestBody final Storage room, BindingResult result, Model model, Principal principal) {
+
+        Storage location = locationDB.getStorage(principal.getName(), locationName);
+
+        String uuid = UUID.randomUUID().toString();
+        room.setID(uuid);
+
+        location.addStoredItemID(room.getName(), uuid);
+        locationDB.addStorage(location);
+
+        roomDB.addStorage(room);
+
+        return "success";
+    }
+
+    @RequestMapping(value="/add/cabinet/to/room/{roomID}")
+    public @ResponseBody String addCabinet(@PathVariable("roomID") final String roomID,
+            @RequestBody final Storage cabinet, BindingResult result, Model model, Principal principal) {
+
+        Storage room = roomDB.getStorage(principal.getName(), roomID);
+
+        String uuid = UUID.randomUUID().toString();
+        cabinet.setID(uuid);
+
+        room.addStoredItemID(cabinet.getName(), uuid);
+        roomDB.addStorage(room);
+
+        cabinetDB.addStorage(cabinet);
+
+        return "success";
+    }
+
+    @RequestMapping(value="/add/chemicals/to/cabinet/{cabinetID}")
+    public @ResponseBody String addChemical(@PathVariable("cabinetID") final String cabinetID,
+            @RequestBody final List<String> chemicalNames, BindingResult result, Model model, Principal principal) {
+
+        Storage cabinet = cabinetDB.getStorage(principal.getName(), cabinetID);
+
+        for (String chemicalName : chemicalNames) {
+            cabinet.addStoredItemID(chemicalName, "0");
+        }
+
+        cabinetDB.addStorage(cabinet);
+
+        return "success";
+    }
+
     @RequestMapping("/testPage")
     public String getTestPage(Model model) {
         return "testPage";
     }
 
     @RequestMapping(value = "/test/user/{username}/addLocation/{locationName}", method=GET)
-    public @ResponseBody String addLocation(@PathVariable("username") String username, @PathVariable("locationName") String locationName, Model model) {
+    public @ResponseBody String addLocationTest(@PathVariable("username") String username, @PathVariable("locationName") String locationName, Model model) {
         // TODO: check DB if storage location already exists
 
         Storage newLocation = new Storage(username, locationName, locationName, "general Description", new HashMap<String, String>());
@@ -113,54 +171,4 @@ public class APIController {
 
 
 
-
-     //CLEAN UP //
-
-    //@RequestMapping(value = "/new", method=GET)
-    //public String initCabinetForm(Model model, Principal principal) {
-        //model = addAttributes(model, principal, new Storage());
-        //return "cabinets/createCabinet";
-    //}
-
-    //@RequestMapping(value = "/new", method=POST)
-    //public String processChemicalForm(@ModelAttribute Storage cabinet,
-            //BindingResult result, Model model, Principal principal) {
-
-        //model = addAttributes(model, principal, cabinet);
-
-        //if (result.hasErrors()) {
-            //model.addAttribute("success", false);
-        //} else {
-            //model.addAttribute("success", true);
-            //cabinetDB.addStorage(cabinet);
-        //}
-
-        //return "cabinets/createCabinet";
-    //}
-
-    //private Model addAttributes(Model model, Principal principal, Storage cabinet) {
-        //model.addAttribute("cabinet", cabinet);
-        //model.addAttribute("username", principal.getName());
-
-        //List<String> chemicalNames = cabinet.getStoredItemNames();
-        //if (chemicalNames.isEmpty()) {
-            //model.addAttribute("chemicals", chemicalDB.getAllChemicals());
-        //} else {
-            //model.addAttribute("chemicals", chemicalDB.batchGetChemicals(chemicalNames));
-        //}
-        //return model;
-    //}
-
-    //@RequestMapping(value="/view/{cabinetName}", method=GET)
-    //public String viewCabinet(@PathVariable("cabinetName") String cabinetName, Model model, Principal principal) {
-        //Storage cabinet = cabinetDB.getStorage(principal.getName(), cabinetName);
-        //model = addAttributes(model, principal, cabinet);
-        //return "cabinets/viewCabinet";
-    //}
-
-    //@RequestMapping(value="/delete/{cabinetName}", method=GET)
-    //public String deleteCabinet(@PathVariable("cabinetName") String cabinetName, Model model, Principal principal) {
-         //TODO
-        //return "";
-    //}
 }

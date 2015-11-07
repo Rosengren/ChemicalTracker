@@ -1,6 +1,32 @@
 <%@include file="templates/header.jsp" %>
 
-<body id="ctrackr" class="index popup pusher storage">
+<body id="ctrackr" class="index popup pusher storage" ontouchstart>
+
+    <div class="ui modal">
+        <div class="header">
+            ${addTooltip}
+        </div>
+        <div class="content">
+            <div class="ui form">
+                <div class="field">
+                    <label>Name</label>
+                    <input type="text" id="newStorageName" placeholder="Name" />
+                </div>
+                <div class="field">
+                    <label>Description</label>
+                    <textarea rows="4" id="newStorageDesc"></textarea>
+                </div>
+            </div>
+        </div> 
+        <div class="actions">
+            <div class="ui black deny button">
+                Cancel
+            </div>
+            <div class="ui positive button" id="submitCreateStorage">
+                Submit
+            </div>
+        </div>
+    </div>
 
     <div class="full height">
         <div class="masthead segment bg1">
@@ -9,47 +35,61 @@
                     <h1 class="ui inverted header">
                         <span class="library">${title}</span>
                         <span class="tagline">${subtitle}</span>
-                        <%--<span class="tagline">List of all the cabinets in room [add room here]</span>--%>
                     </h1>
                     <div class="ui hidden divider"></div>
                 </div>
             </div>
         </div>
+
         <div class="ui container bottom-padding">
-            <div class="ui icon button" title="Add new cabinet">
+            <div class="ui breadcrumb">
+                <c:set var="sectionLink" value="" />
+                <c:forEach items="${breadcrumbs}" var="crumb">
+                <c:set var="sectionLink" value="${sectionLink}/${crumb}" />
+                    <a class="section" href="${sectionLink}">${crumb}</a>
+                    <div class="divider"> / </div>
+                </c:forEach>
+            </div>
+            <div class="ui icon button addModal right floated" title="${addTooltip}">
                 <i class="add icon"></i>
             </div>
-        </div>
-        <div class="ui four column stackable grid container">
+            <div class="ui four column stackable grid container">
 
-            <c:forEach begin="0" end="10" varStatus="loop">
-                <div class="column">
-                    <div class="ui link card" onclick="window.location='${linkToGoTo}'">
-                        <div class="blurring dimmable image">
-                            <div class="ui dimmer">
-                                <div class="content">
-                                    <div class="center">
-                                        <div class="ui inverted button">View Details</div>
+                <c:forEach items="${storages}" var="storage">
+                    <div class="column">
+                        <div class="ui link card" >
+                            <div class="blurring dimmable image"onclick="window.location+='/${storage.name}${subStorageLink}'">
+                                <div class="ui dimmer">
+                                    <div class="content">
+                                        <div class="center">
+                                            <div class="ui inverted button">View Details</div>
+                                        </div>
                                     </div>
                                 </div>
+                                <img src="/img/placeholder.jpg">
                             </div>
-                            <img src="img/placeholder.jpg">
-                        </div>
-                        <div class="content">
-                            <div class="header">Title</div>
-                            <div class="description">One or two sentence description that may go to several lines</div>
-                        </div>
-                        <div class="extra content">
-                          <a class="right floated created">Arbitrary</a>
-                          <a class="friends">
-                            Arbitrary</a>
+                            <div class="content">
+                                <div class="header">${storage.name}</div>
+                                <div class="description">${storage.description}</div>
+                            </div>
+                            <div class="extra content">
+                              <a class="right floated created" onclick="alert('remove')">
+                                  Remove
+                              </a>
+                              <a class="" onclick="alert('todo: add ability to edit')">
+                                  <i class="edit icon"></i>Edit
+                                </a>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </c:forEach>
+                </c:forEach>
 
+            </div>
         </div>
     </div>
 </body>
 
+<div type="hidden" id="csrf" value="${_csrf.token}"></div>
+<div type="hidden" id="username" value="${username}"></div>
+<div type="hidden" id="addURL" value="${addURL}"></div>
 <%@include file="templates/footer.jsp" %>

@@ -18,21 +18,4 @@ public class WelcomeController {
     public String welcome(Model model) {
         return "welcome";
     }
-
-    @RequestMapping("/fail")
-    public String fail() {
-        throw new MyException("Oh dear!");
-    }
-
-    @RequestMapping("/fail2")
-    public String fail2() {
-        throw new IllegalStateException();
-    }
-
-    @ExceptionHandler(MyException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public @ResponseBody MyRestResponse handleMyRuntimeException(MyException exception) {
-        return new MyRestResponse("Some data I want to send back to the client.");
-    }
-
 }

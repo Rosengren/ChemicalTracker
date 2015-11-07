@@ -4,11 +4,14 @@ import java.util.Map;
 import java.util.HashMap;
 
 import org.json.simple.JSONObject;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /*
  * This class is used to represent a general storage object for chemicals 
  * Example: room, cabinet, location, etc.
  */
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Storage {
 
     // TODO: maybe add a field to determine if this is a new storage an existing storage

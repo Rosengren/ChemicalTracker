@@ -11,7 +11,7 @@
                         <span class="tagline">An online interface for managing your chemical containers</span>
                     </h1>
                     <div class="ui hidden divider"></div>
-                    <a href="/home" class="ui huge inverted basic button"> Login</a>
+                    <a href="/locations" class="ui huge inverted basic button"> Login</a>
                     <a href="/signup" class="ui huge inverted basic button">Sign Up</a>
                 </div>
             </div>
