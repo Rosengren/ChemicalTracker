@@ -8,6 +8,11 @@ $(".button").popup({
     position: 'top center',
 });
 
+$(".tooltip").popup({
+    variation: 'inverted',
+    position: 'top center',
+});
+
 $(".addModal").click(function() {
     $('.ui.modal').modal('show');
 });

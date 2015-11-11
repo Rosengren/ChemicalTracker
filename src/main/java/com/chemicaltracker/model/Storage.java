@@ -19,10 +19,22 @@ public class Storage {
     private String name;
     private String id;
     private String description;
+    private String imageURL;
     private Map<String, String> storedItemIDs;
 
     public Storage() {
         storedItemIDs = new HashMap<String, String>();
+        imageURL = "placeholder.jpg";
+    }
+
+    public Storage(final String username, final String name, final String id, final String description,
+            final Map<String, String> storedItemIDs, final String imageURL) {
+        this.username = username;
+        this.name = name;
+        this.id = id;
+        this.description = description;
+        this.storedItemIDs = storedItemIDs;
+        this.imageURL = imageURL;
     }
 
     public Storage(final String username, final String name, final String id, final String description,
@@ -32,6 +44,16 @@ public class Storage {
         this.id = id;
         this.description = description;
         this.storedItemIDs = storedItemIDs;
+        this.imageURL = "placeholder.jpg";
+
+    }
+
+    public void setImageURL(final String imageURL) {
+        this.imageURL = imageURL;
+    }
+
+    public String getImageURL() {
+        return this.imageURL;
     }
 
     public void setID(final String id) {

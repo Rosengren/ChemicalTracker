@@ -10,11 +10,11 @@
             <div class="ui form">
                 <div class="field">
                     <label>Name</label>
-                    <input type="text" id="newStorageName" placeholder="Name" />
+                    <input type="text" id="addChemicalName" placeholder="Name" />
                 </div>
                 <div class="field">
                     <label>Description</label>
-                    <textarea rows="4" id="newStorageDesc"></textarea>
+                    <textarea rows="4" id="addChemicalDesc"></textarea>
                 </div>
             </div>
         </div> 
@@ -22,7 +22,7 @@
             <div class="ui black deny button">
                 Cancel
             </div>
-            <div class="ui positive button" id="submitCreateStorage">
+            <div class="ui positive button" id="submitAddChemical">
                 Submit
             </div>
         </div>
@@ -55,10 +55,10 @@
             </div>
             <div class="ui four column stackable grid container">
 
-                <c:forEach items="${storages}" var="storage">
+                <c:forEach items="${chemicals}" var="chemical">
                     <div class="column">
                         <div class="ui link card" >
-                            <div class="blurring dimmable image"onclick="window.location+='/${storage.name}'">
+                            <div class="blurring dimmable image"onclick="window.location+='/${chemical.name}'">
                                 <div class="ui dimmer">
                                     <div class="content">
                                         <div class="center">
@@ -66,12 +66,12 @@
                                         </div>
                                     </div>
                                 </div>
-                                <img src="/img/${storage.imageURL}">
                                 <%--<img src="/img/placeholder.jpg">--%>
+                                <img src="/img/${chemical.imageURL}">
                             </div>
                             <div class="content">
-                                <div class="header">${storage.name}</div>
-                                <div class="description">${storage.description}</div>
+                                <div class="header">${chemical.name}</div>
+                                <div class="description">description...</div>
                             </div>
                             <div class="extra content">
                               <a class="right floated created" onclick="alert('remove')">

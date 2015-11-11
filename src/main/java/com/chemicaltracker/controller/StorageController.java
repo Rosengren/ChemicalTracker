@@ -4,6 +4,7 @@ import org.springframework.ui.Model;
 import java.security.Principal;
 
 import com.chemicaltracker.model.Storage;
+import com.chemicaltracker.model.Chemical;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -14,6 +15,8 @@ import java.util.ArrayList;
 
 import com.chemicaltracker.persistence.StorageFactory;
 import com.chemicaltracker.persistence.StorageDataAccessObject;
+import com.chemicaltracker.persistence.ChemicalDataAccessObject;
+import com.chemicaltracker.persistence.ChemicalDataAccessDynamoDB;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -29,34 +32,37 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
+@RequestMapping("/home")
 public class StorageController {
 
     private StorageDataAccessObject locationDB = StorageFactory.getStorage("LOCATIONS");
     private StorageDataAccessObject roomDB = StorageFactory.getStorage("ROOMS");
     private StorageDataAccessObject cabinetDB = StorageFactory.getStorage("CABINETS");
 
-    @RequestMapping(value={"/locations"})
+    private ChemicalDataAccessObject chemicalDB = new ChemicalDataAccessDynamoDB();
+
+    @RequestMapping("")
     public String home(Model model, Principal principal) {
 
         String username = principal.getName();
         model = addStorageDetailsToModel(model, username, "Locations",
-                "List of all your locations", "/rooms", "Add new location", "/api/add/location");
+                "List of all your locations", "Add new location", "/api/add/location");
 
         // Get Locations
         model.addAttribute("storages", locationDB.getAllStoragesForUser(username));
 
-        final List<String> breadcrumbs = Arrays.asList(new String[] {"locations"});
+        final List<String> breadcrumbs = Arrays.asList(new String[] {"Home"});
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         return "storageView";
     }
 
-    @RequestMapping("/locations/{locationName}/rooms")
+    @RequestMapping("/{locationName}")
     public String rooms(@PathVariable("locationName") String locationName, Model model, Principal principal) {
 
         String username = principal.getName();
         model = addStorageDetailsToModel(model, username, "Rooms",
-                "List of all the rooms in " + locationName, "/cabinets",
+                "List of all the rooms in " + locationName,
                 "Add new room", "/api/add/room/to/location/" + locationName);
 
         Storage location = locationDB.getStorage(username, locationName);
@@ -69,13 +75,13 @@ public class StorageController {
         model.addAttribute("storages", roomDB.batchGetStorages(username, roomIDs));
 
         // TODO; make more efficient
-        final List<String> breadcrumbs = Arrays.asList(new String[] {"locations", locationName, "rooms"});
+        final List<String> breadcrumbs = Arrays.asList(new String[] {"Home", locationName});
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         return "storageView";
     }
 
-    @RequestMapping("/locations/{locationName}/rooms/{roomName}/cabinets")
+    @RequestMapping("/{locationName}/{roomName}")
     public String cabinets(@PathVariable("locationName") String locationName,
             @PathVariable("roomName") String roomName, Model model, Principal principal) {
 
@@ -83,7 +89,7 @@ public class StorageController {
         String roomID = locationDB.getStorage(username, locationName).getStoredItemIDs().get(roomName);
 
         model = addStorageDetailsToModel(model, username, "Cabinets",
-                "List of all the cabinets in " + roomName, "/chemicals",
+                "List of all the cabinets in " + roomName,
                 "Add new cabinet", "/api/add/cabinet/to/room/" + roomID);
 
         Storage room = roomDB.getStorage(username, roomID);
@@ -96,14 +102,14 @@ public class StorageController {
 
         model.addAttribute("storages", cabinetDB.batchGetStorages(username, cabinetIDs));
 
-        final List<String> breadcrumbs = Arrays.asList(new String[] {"locations" ,
-            locationName , "rooms" , roomName , "cabinets"});
+        final List<String> breadcrumbs = Arrays.asList(new String[] {"Home" ,
+            locationName , roomName});
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         return "storageView";
     }
 
-    @RequestMapping("/locations/{locationName}/rooms/{roomName}/cabinets/{cabinetName}/chemicals")
+    @RequestMapping("/{locationName}/{roomName}/{cabinetName}")
     public String chemicals(@PathVariable("locationName") String locationName,
             @PathVariable("roomName") String roomName, @PathVariable("cabinetName") String cabinetName,
             Model model, Principal principal) {
@@ -113,25 +119,50 @@ public class StorageController {
         String cabinetID = roomDB.getStorage(username, roomID).getStoredItemIDs().get(cabinetName);
 
         model = addStorageDetailsToModel(model, username, "Chemicals",
-                "List of all the chemicals in " + cabinetName, "/chemical",
+                "List of all the chemicals in " + cabinetName,
                 "Add chemical", "/api/add/chemical/to/cabinet/" + cabinetID);
 
         Storage cabinet = cabinetDB.getStorage(username, cabinetID);
 
         List<String> chemicalNames = new ArrayList<String>(cabinet.getStoredItemIDs().keySet());
 
-        final List<String> breadcrumbs = Arrays.asList(new String[] {"locations" ,
-            locationName , "rooms" , roomName , "cabinets" , cabinetName , "chemicals"});
+        List<Chemical> chemicals = chemicalDB.batchGetChemicals(chemicalNames);
+        model.addAttribute("chemicals", chemicals);
+
+        final List<String> breadcrumbs = Arrays.asList(new String[] {"Home" ,
+            locationName , roomName , cabinetName});
         model.addAttribute("breadcrumbs", breadcrumbs);
 
-        return "storageView";
+        return "chemicalsView";
+    }
+
+    @RequestMapping(value = "/{locationName}/{roomName}/{cabinetName}/{chemicalName}")
+    public String chemical(@PathVariable("locationName") String locationName, @PathVariable("roomName") String roomName,
+            @PathVariable("cabinetName") String cabinetName, @PathVariable("chemicalName") String chemicalName,
+            Model model, Principal principal) {
+
+        String username = principal.getName();
+        String roomID = locationDB.getStorage(username, locationName).getStoredItemIDs().get(roomName);
+        String cabinetID = roomDB.getStorage(username, roomID).getStoredItemIDs().get(cabinetName);
+
+        model = addStorageDetailsToModel(model, username, chemicalName, "Material Safety Data Sheet",
+                "Edit Chemical", "/api/update/chemical/" + chemicalName);
+
+        Chemical chemical = chemicalDB.getChemical(chemicalName);
+        model.addAttribute("chemical", chemical);
+
+        final List<String> breadcrumbs = Arrays.asList(new String[] {"Home",
+            locationName, roomName, cabinetName, chemicalName});
+        model.addAttribute("breadcrumbs", breadcrumbs);
+
+        model.addAttribute("fireDiamond", chemical.getFireDiamond());
+        return "chemicalView";
     }
 
     private Model addStorageDetailsToModel(final Model model, final String username, final String title,
-            final String subtitle, final String subStorageLink, final String addTooltip, final String addURL) {
+            final String subtitle, final String addTooltip, final String addURL) {
         model.addAttribute("title", title);
         model.addAttribute("subtitle", subtitle);
-        model.addAttribute("subStorageLink", subStorageLink);
         model.addAttribute("addTooltip", addTooltip);
         model.addAttribute("username", username);
         model.addAttribute("addURL", addURL);

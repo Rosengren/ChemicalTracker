@@ -142,10 +142,13 @@ public class ChemicalDataAccessDynamoDB implements ChemicalDataAccessObject {
             item.put(entry.getKey(), new AttributeValue().withM(properties));
         }
 
+        item.put("Image URL", new AttributeValue(chemical.getImageURL()));
+
         return item;
     }
 
     private Chemical convertItemToChemical(final Map<String, AttributeValue> item) {
+
         // TODO: add Exception
         if (item == null) {
             // throw exception
@@ -173,9 +176,11 @@ public class ChemicalDataAccessDynamoDB implements ChemicalDataAccessObject {
             properties.put(entry.getKey(), subProperties);
         }
 
+        // TODO: Important! how do we have unique images for each user?
+        chemical.setImageURL(item.get("Image URL").getS());
+
         chemical.setProperties(properties);
 
-        //return new Chemical(item.get("Name").getS(), fireDiamond);
         return chemical;
     }
 }
