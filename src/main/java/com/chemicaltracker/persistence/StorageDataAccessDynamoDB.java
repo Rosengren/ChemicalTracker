@@ -154,7 +154,7 @@ public class StorageDataAccessDynamoDB implements StorageDataAccessObject {
         item.put("Image URL", new AttributeValue(storage.getImageURL()));
 
         final Map<String, AttributeValue> storedItems = new HashMap<String, AttributeValue>();
-        for (Map.Entry<String, String> storedItem : storage.getStoredItemIDs().entrySet()) {
+        for (Map.Entry<String, String> storedItem : storage.getStoredItemsSet()) {
             storedItems.put(storedItem.getKey(), new AttributeValue(storedItem.getValue()));
         }
 
@@ -182,6 +182,5 @@ public class StorageDataAccessDynamoDB implements StorageDataAccessObject {
                 item.get("Description").getS(),
                 storedItems,
                 item.get("Image URL").getS());
-                //item.get(storedItemTitle).getM()); // TODO: replace with constants
     }
 }

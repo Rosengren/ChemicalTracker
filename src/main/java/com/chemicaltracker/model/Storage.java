@@ -1,5 +1,11 @@
 package com.chemicaltracker.model;
 
+import java.util.List;
+import java.util.ArrayList;
+
+import java.util.Set;
+import java.util.Map.Entry;
+
 import java.util.Map;
 import java.util.HashMap;
 
@@ -20,32 +26,32 @@ public class Storage {
     private String id;
     private String description;
     private String imageURL;
-    private Map<String, String> storedItemIDs;
+    private Map<String, String> storedItemMap;
+    private List<String> storedItemIDs;
+    private List<String> storedItemNames;
 
     public Storage() {
-        storedItemIDs = new HashMap<String, String>();
+        storedItemMap = new HashMap<String, String>();
+        storedItemIDs = new ArrayList<String>();
+        storedItemNames = new ArrayList<String>();
         imageURL = "placeholder.jpg";
     }
 
     public Storage(final String username, final String name, final String id, final String description,
-            final Map<String, String> storedItemIDs, final String imageURL) {
+            final Map<String, String> storedItemMap, final String imageURL) {
         this.username = username;
         this.name = name;
         this.id = id;
         this.description = description;
-        this.storedItemIDs = storedItemIDs;
+        this.storedItemMap = storedItemMap;
+        setNamesAndIDs();
+
         this.imageURL = imageURL;
     }
 
     public Storage(final String username, final String name, final String id, final String description,
-            final Map<String, String> storedItemIDs) {
-        this.username = username;
-        this.name = name;
-        this.id = id;
-        this.description = description;
-        this.storedItemIDs = storedItemIDs;
-        this.imageURL = "placeholder.jpg";
-
+            final Map<String, String> storedItemMap) {
+        this(username, name, id, description, storedItemMap, "placeholder.jpg");
     }
 
     public void setImageURL(final String imageURL) {
@@ -64,16 +70,31 @@ public class Storage {
         return this.id;
     }
 
-    public void setStoredItemIDs(final Map<String, String> storedItemIDs) {
-        this.storedItemIDs = storedItemIDs;
+    public void setStoredItemMap(final Map<String, String> storedItemMap) {
+        this.storedItemMap = storedItemMap;
+        setNamesAndIDs();
     }
 
-    public void addStoredItemID(final String storedItemID, final String storedItemName) {
-        this.storedItemIDs.put(storedItemID, storedItemName);
+    public void addStoredItem(final String storedItemID, final String storedItemName) {
+        this.storedItemMap.put(storedItemID, storedItemName);
+        this.storedItemIDs.add(storedItemID);
+        this.storedItemNames.add(storedItemName);
     }
 
-    public Map<String, String> getStoredItemIDs() {
+    public Set<Entry<String, String>> getStoredItemsSet() {
+        return this.storedItemMap.entrySet();
+    }
+
+    public String getStoredItemID(final String name) {
+        return this.storedItemMap.get(name);
+    }
+
+    public List<String> getStoredItemIDs() {
         return this.storedItemIDs;
+    }
+
+    public List<String> getStoredItemNames() {
+        return this.storedItemNames;
     }
 
     public void setUsername(final String username) {
@@ -100,14 +121,13 @@ public class Storage {
         return this.description;
     }
 
-    public String toJSON() {
-        JSONObject json = new JSONObject();
+    private void setNamesAndIDs() {
+        this.storedItemNames = new ArrayList<String>(this.storedItemMap.keySet());
 
-        json.put("name", this.name);
-        json.put("description", this.description);
-        json.put("storedItemIDs", this.storedItemIDs);
-
-        return json.toString();
+        this.storedItemIDs = new ArrayList<String>();
+        for (String Name : this.storedItemNames) {
+            this.storedItemIDs.add(this.storedItemMap.get(Name));
+        }
     }
 }
 

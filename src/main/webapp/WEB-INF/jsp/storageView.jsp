@@ -67,7 +67,6 @@
                                     </div>
                                 </div>
                                 <img src="/img/${storage.imageURL}">
-                                <%--<img src="/img/placeholder.jpg">--%>
                             </div>
                             <div class="content">
                                 <div class="header">${storage.name}</div>

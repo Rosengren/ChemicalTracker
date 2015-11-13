@@ -65,12 +65,8 @@ public class StorageController {
                 "List of all the rooms in " + locationName,
                 "Add new room", "/api/add/room/to/location/" + locationName);
 
-        Storage location = locationDB.getStorage(username, locationName);
-        List<String> roomIDs = new ArrayList<String>();
-
-        for (Map.Entry<String, String> entry : location.getStoredItemIDs().entrySet()) {
-            roomIDs.add(entry.getValue());
-        }
+        final Storage location = locationDB.getStorage(username, locationName);
+        final List<String> roomIDs = location.getStoredItemIDs();
 
         model.addAttribute("storages", roomDB.batchGetStorages(username, roomIDs));
 
@@ -86,19 +82,14 @@ public class StorageController {
             @PathVariable("roomName") String roomName, Model model, Principal principal) {
 
         String username = principal.getName();
-        String roomID = locationDB.getStorage(username, locationName).getStoredItemIDs().get(roomName);
+        String roomID = locationDB.getStorage(username, locationName).getStoredItemID(roomName);
 
         model = addStorageDetailsToModel(model, username, "Cabinets",
                 "List of all the cabinets in " + roomName,
                 "Add new cabinet", "/api/add/cabinet/to/room/" + roomID);
 
-        Storage room = roomDB.getStorage(username, roomID);
-
-        List<String> cabinetIDs = new ArrayList<String>();
-
-        for (Map.Entry<String, String> entry : room.getStoredItemIDs().entrySet()) {
-            cabinetIDs.add(entry.getValue());
-        }
+        final Storage room = roomDB.getStorage(username, roomID);
+        final List<String> cabinetIDs = room.getStoredItemIDs();
 
         model.addAttribute("storages", cabinetDB.batchGetStorages(username, cabinetIDs));
 
@@ -115,16 +106,15 @@ public class StorageController {
             Model model, Principal principal) {
 
         String username = principal.getName();
-        String roomID = locationDB.getStorage(username, locationName).getStoredItemIDs().get(roomName);
-        String cabinetID = roomDB.getStorage(username, roomID).getStoredItemIDs().get(cabinetName);
+        String roomID = locationDB.getStorage(username, locationName).getStoredItemID(roomName);
+        String cabinetID = roomDB.getStorage(username, roomID).getStoredItemID(cabinetName);
 
         model = addStorageDetailsToModel(model, username, "Chemicals",
                 "List of all the chemicals in " + cabinetName,
                 "Add chemical", "/api/add/chemicals/to/cabinet/" + cabinetID);
 
-        Storage cabinet = cabinetDB.getStorage(username, cabinetID);
-
-        List<String> chemicalNames = new ArrayList<String>(cabinet.getStoredItemIDs().keySet());
+        final Storage cabinet = cabinetDB.getStorage(username, cabinetID);
+        final List<String> chemicalNames = cabinet.getStoredItemNames();
 
         List<Chemical> chemicals = chemicalDB.batchGetChemicals(chemicalNames);
         model.addAttribute("chemicals", chemicals);
@@ -143,13 +133,13 @@ public class StorageController {
             Model model, Principal principal) {
 
         String username = principal.getName();
-        String roomID = locationDB.getStorage(username, locationName).getStoredItemIDs().get(roomName);
-        String cabinetID = roomDB.getStorage(username, roomID).getStoredItemIDs().get(cabinetName);
+        String roomID = locationDB.getStorage(username, locationName).getStoredItemID(roomName);
+        String cabinetID = roomDB.getStorage(username, roomID).getStoredItemID(cabinetName);
 
         model = addStorageDetailsToModel(model, username, chemicalName, "Material Safety Data Sheet",
                 "Edit Chemical", "/api/update/chemical/" + chemicalName);
 
-        Chemical chemical = chemicalDB.getChemical(chemicalName);
+        final Chemical chemical = chemicalDB.getChemical(chemicalName);
         model.addAttribute("chemical", chemical);
 
         final List<String> breadcrumbs = Arrays.asList(new String[] {"Home",

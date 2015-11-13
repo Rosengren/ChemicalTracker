@@ -60,7 +60,7 @@ public class APIController {
         String uuid = UUID.randomUUID().toString();
         room.setID(uuid);
 
-        location.addStoredItemID(room.getName(), uuid);
+        location.addStoredItem(room.getName(), uuid);
         locationDB.addStorage(location);
 
         roomDB.addStorage(room);
@@ -77,7 +77,7 @@ public class APIController {
         String uuid = UUID.randomUUID().toString();
         cabinet.setID(uuid);
 
-        room.addStoredItemID(cabinet.getName(), uuid);
+        room.addStoredItem(cabinet.getName(), uuid);
         roomDB.addStorage(room);
 
         cabinetDB.addStorage(cabinet);
@@ -92,7 +92,7 @@ public class APIController {
         Storage cabinet = cabinetDB.getStorage(principal.getName(), cabinetID);
 
         for (String chemicalName : chemicalNames) {
-            cabinet.addStoredItemID(chemicalName, "0");
+            cabinet.addStoredItem(chemicalName, "0");
         }
 
         cabinetDB.addStorage(cabinet);
@@ -123,7 +123,7 @@ public class APIController {
         String uuid = UUID.randomUUID().toString();
         Storage newRoom = new Storage(username, roomName, uuid, "some description", new HashMap<String, String>());
 
-        location.addStoredItemID(roomName, uuid);
+        location.addStoredItem(roomName, uuid);
         locationDB.addStorage(location);
 
         roomDB.addStorage(newRoom);
@@ -137,38 +137,17 @@ public class APIController {
 
         Storage location = locationDB.getStorage(username, locationName);
 
-        String roomID = location.getStoredItemIDs().get(roomName);
+        String roomID = location.getStoredItemID(roomName);
         Storage room = roomDB.getStorage(username, roomID);
 
         String uuid = UUID.randomUUID().toString();
         Storage newCabinet = new Storage(username, cabinetName, uuid, "some other description of the cabinet", new HashMap<String, String>());
 
-        room.addStoredItemID(cabinetName, uuid);
+        room.addStoredItem(cabinetName, uuid);
         roomDB.addStorage(room);
 
         cabinetDB.addStorage(newCabinet);
 
         return "done and done";
     }
-
-    // TODO: consider getting all locations
-
-    // FIXME: need to add principal once we know it works
-    // TODO: add star (*) to indicate "Get all Locations" (Object of Objects)
-    //@RequestMapping(value = "/user/{username}/location/{locationName}", method=GET)
-    //public @ResponseBody String getRoomsForLocation(@PathVariable("username") String username, @PathVariable("locationName") String locationName, Model model) {
-        //Storage location = locationDB.getStorage(username, locationName);
-        //return location.toJSON();
-    //}
-
-    //@RequestMapping(value = "/user/{username}/location/{locationName}/Room/{roomName}", method=GET)
-    //public @RequestBody String getCabinetsForRoom(@PathVariable("username") String username, @PathVariable("locationName") String locationName,
-            //@PathVariable("roomName") String roomName, Model model) {
-        //Storage location = locationDB.getStorage(username, locationName);
-
-    //}
-
-
-
-
 }
