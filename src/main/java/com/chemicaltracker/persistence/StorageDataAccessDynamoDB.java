@@ -159,8 +159,6 @@ public class StorageDataAccessDynamoDB implements StorageDataAccessObject {
         }
 
         item.put(storedItemTitle, new AttributeValue().withM(storedItems));
-        //item.put(storedItemTitle, new AttributeValue(storage.getStoredItemIDs()));
-        System.out.println("ITEM: " + item.toString());
         return item;
     }
 

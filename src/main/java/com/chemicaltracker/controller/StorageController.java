@@ -120,7 +120,7 @@ public class StorageController {
 
         model = addStorageDetailsToModel(model, username, "Chemicals",
                 "List of all the chemicals in " + cabinetName,
-                "Add chemical", "/api/add/chemical/to/cabinet/" + cabinetID);
+                "Add chemical", "/api/add/chemicals/to/cabinet/" + cabinetID);
 
         Storage cabinet = cabinetDB.getStorage(username, cabinetID);
 

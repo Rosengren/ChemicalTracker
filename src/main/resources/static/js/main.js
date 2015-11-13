@@ -57,3 +57,34 @@ $("#submitCreateStorage").click(function() {
         error: function(e) { }
     });
 });
+
+$("#submitAddChemicalsToCabinet").click(function() {
+
+    var username = $("#username").attr("value");
+    var url = $("#addURL").attr("value");
+
+    var selectedChemicals = [];
+
+    var inputs = document.querySelectorAll("input[type='checkbox']");
+    for(var i = 0; i < inputs.length; i++) {
+        if (inputs[i].checked == true) {
+            selectedChemicals.push(inputs[i].name);
+        }
+    }
+
+    if (selectedChemicals.length == 0) {
+        alert("No chemicals selected");
+        return;
+    }
+
+    $.ajax({
+        url: url,
+        type: "POST",
+        dataType: "json",
+        contentType: "application/json",
+        mimeType: "application/json",
+        data: JSON.stringify(selectedChemicals),
+        success: function(response) { },
+        error: function(e) { }
+    });
+});

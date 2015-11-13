@@ -21,7 +21,7 @@
             <div class="ui black deny button">
                 Cancel
             </div>
-            <div class="ui positive button" id="submitAddChemical">
+            <div class="ui positive button" id="submitAddChemicalsToCabinet">
                 Submit
             </div>
         </div>

@@ -74,8 +74,8 @@
                                 <div class="description">${storage.description}</div>
                             </div>
                             <div class="extra content">
-                              <a class="right floated created" onclick="alert('remove')">
-                                  Remove
+                              <a class="right floated created" onclick="alert('Generate Report')">
+                                  Generate Report
                               </a>
                               <a class="" onclick="alert('todo: add ability to edit')">
                                   <i class="edit icon"></i>Edit
