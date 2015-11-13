@@ -11,14 +11,15 @@ public class Chemical {
     private ChemicalProperties properties;
 
     public Chemical() {
-        properties = new ChemicalProperties();
+        this.properties = new ChemicalProperties();
         // initialize with blank values
-        fireDiamond = new FireDiamond();
-        name = "";
-        imageURL = "placeholder.jpg";
+        this.fireDiamond = new FireDiamond();
+        this.name = "";
+        this.imageURL = "placeholder.jpg";
     }
 
     public Chemical(String name) {
+        this();
         this.name = name;
         properties = new ChemicalProperties();
     }

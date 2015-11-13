@@ -53,12 +53,7 @@ $("#submitCreateStorage").click(function() {
             name: newStorageName,
             description: newStorageDesc
         }),
-        success: function(response) {
-            alert("Success!");
-        },
-        error: function(e) {
-            console.log("Error:");
-            console.log(e);
-        }
+        success: function(response) { },
+        error: function(e) { }
     });
-})
+});

@@ -4,18 +4,17 @@
 
     <div class="ui modal">
         <div class="header">
-            ${addTooltip}
+            Select chemicals to add to this Cabinet
         </div>
         <div class="content">
             <div class="ui form">
-                <div class="field">
-                    <label>Name</label>
-                    <input type="text" id="addChemicalName" placeholder="Name" />
-                </div>
-                <div class="field">
-                    <label>Description</label>
-                    <textarea rows="4" id="addChemicalDesc"></textarea>
-                </div>
+                <c:forEach items="${chemicalNames}" var="chemicalName">
+                    <div class="ui checkbox">
+                        <input type="checkbox" name="${chemicalName}">
+                        <label>${chemicalName}</label>
+                    </div>
+                    <div class="ui hidden divider"></div>
+                </c:forEach>
             </div>
         </div> 
         <div class="actions">

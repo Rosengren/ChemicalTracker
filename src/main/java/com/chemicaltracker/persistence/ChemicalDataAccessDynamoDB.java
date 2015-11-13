@@ -110,6 +110,21 @@ public class ChemicalDataAccessDynamoDB implements ChemicalDataAccessObject {
     }
 
     @Override
+    public List<String> getAllChemicalNames() {
+
+        final ScanRequest scanRequest = new ScanRequest()
+            .withTableName(CHEMICALS_TABLE_NAME);
+
+        final ScanResult result = dynamoDB.scan(scanRequest);
+        final List<String> chemicalNames = new ArrayList<String>();
+        for (Map<String, AttributeValue> item : result.getItems()) {
+            chemicalNames.add(item.get("Name").getS());
+        }
+
+        return chemicalNames;
+    }
+
+    @Override
     public List<Chemical> batchGetChemicals(final List<String> names) {
         final List<Chemical> chemicals = new ArrayList<Chemical>();
 
@@ -165,6 +180,7 @@ public class ChemicalDataAccessDynamoDB implements ChemicalDataAccessObject {
 
         final Chemical chemical = new Chemical(item.get("Name").getS(), fireDiamond);
 
+        // Add properties to chemical
         for (Map.Entry<String, Map<String, String>> entry : chemical.getProperties().entrySet()) {
 
             Map<String, String> subProperties = new HashMap<String, String>();
@@ -176,10 +192,10 @@ public class ChemicalDataAccessDynamoDB implements ChemicalDataAccessObject {
             properties.put(entry.getKey(), subProperties);
         }
 
-        // TODO: Important! how do we have unique images for each user?
-        chemical.setImageURL(item.get("Image URL").getS());
-
         chemical.setProperties(properties);
+
+        // TODO: Important! how do we have unique images for each user?
+        //chemical.setImageURL(item.get("Image URL").getS());
 
         return chemical;
     }

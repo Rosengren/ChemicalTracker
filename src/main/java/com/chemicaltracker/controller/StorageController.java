@@ -32,7 +32,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
-@RequestMapping("/home")
+@RequestMapping(value = {"/home", "/Home"})
 public class StorageController {
 
     private StorageDataAccessObject locationDB = StorageFactory.getStorage("LOCATIONS");
@@ -133,6 +133,7 @@ public class StorageController {
             locationName , roomName , cabinetName});
         model.addAttribute("breadcrumbs", breadcrumbs);
 
+        model.addAttribute("chemicalNames", chemicalDB.getAllChemicalNames());
         return "chemicalsView";
     }
 
