@@ -99,39 +99,47 @@ public class ReportDocument {
         Paragraph body = new Paragraph();
         body.add(new Paragraph("Location: " + location.getName(), HEADER));
 
-        for (Map.Entry<Storage, java.util.List<Storage>> room : roomCabinetMap.entrySet()) {
+        if (roomCabinetMap.entrySet().isEmpty()) {
+            Paragraph noRoomsHeader = new Paragraph("No rooms for this location", BODY);
+            noRoomsHeader.setIndentationLeft(20);
+            body.add(noRoomsHeader);
 
-            createEmptyLine(body, 1);
-            Paragraph roomHeader = new Paragraph(room.getKey().getName(), SUBHEADER);
-            roomHeader.setIndentationLeft(20);
-            body.add(roomHeader);
+        } else {
 
-            Paragraph cabinetHeader;
+            for (Map.Entry<Storage, java.util.List<Storage>> room : roomCabinetMap.entrySet()) {
 
-            if (room.getValue().isEmpty()) {
-                cabinetHeader = new Paragraph("No cabinets in this room.", BODY);
-                cabinetHeader.setIndentationLeft(40);
-                body.add(cabinetHeader);
-            } else {
+                createEmptyLine(body, 1);
+                Paragraph roomHeader = new Paragraph(room.getKey().getName(), SUBHEADER);
+                roomHeader.setIndentationLeft(20);
+                body.add(roomHeader);
 
-                for (Storage cabinet : room.getValue()) {
+                Paragraph cabinetHeader;
 
-                    cabinetHeader = new Paragraph(cabinet.getName(), LIST_TITLE);
+                if (room.getValue().isEmpty()) {
+                    cabinetHeader = new Paragraph("No cabinets in this room.", BODY);
                     cabinetHeader.setIndentationLeft(40);
                     body.add(cabinetHeader);
+                } else {
 
-                    List chemicalList = new List(false, false, 60);
-                    chemicalList.setListSymbol("");
-                    if (cabinet.getStoredItemNames().isEmpty()) {
-                        chemicalList.add(new ListItem("No chemicals in this cabinet.", LIST_ITEM));
-                    } else {
-                        for (String chemicalName : cabinet.getStoredItemNames()) {
-                            chemicalList.add(new ListItem(chemicalName, LIST_ITEM));
+                    for (Storage cabinet : room.getValue()) {
+
+                        cabinetHeader = new Paragraph(cabinet.getName(), LIST_TITLE);
+                        cabinetHeader.setIndentationLeft(40);
+                        body.add(cabinetHeader);
+
+                        List chemicalList = new List(false, false, 60);
+                        chemicalList.setListSymbol("");
+                        if (cabinet.getStoredItemNames().isEmpty()) {
+                            chemicalList.add(new ListItem("No chemicals in this cabinet.", LIST_ITEM));
+                        } else {
+                            for (String chemicalName : cabinet.getStoredItemNames()) {
+                                chemicalList.add(new ListItem(chemicalName, LIST_ITEM));
+                            }
                         }
-                    }
 
-                    body.add(chemicalList);
-                    createEmptyLine(body, 1);
+                        body.add(chemicalList);
+                        createEmptyLine(body, 1);
+                    }
                 }
             }
         }

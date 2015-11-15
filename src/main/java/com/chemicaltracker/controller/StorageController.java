@@ -119,11 +119,16 @@ public class StorageController {
         List<Chemical> chemicals = chemicalDB.batchGetChemicals(chemicalNames);
         model.addAttribute("chemicals", chemicals);
 
+        for (Chemical chemical : chemicals) {
+            chemical.setImageURL(cabinet.getStoredItemID(chemical.getName()));
+        }
+
         final List<String> breadcrumbs = Arrays.asList(new String[] {"Home" ,
             locationName , roomName , cabinetName});
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         model.addAttribute("chemicalNames", chemicalDB.getAllChemicalNames());
+
         return "chemicalsView";
     }
 

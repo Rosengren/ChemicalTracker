@@ -66,7 +66,7 @@
                                     </div>
                                 </div>
                                 <%--<img src="/img/placeholder.jpg">--%>
-                                <img src="/img/${chemical.imageURL}">
+                                <img src="${chemical.imageURL}">
                             </div>
                             <div class="content">
                                 <div class="header">${chemical.name}</div>

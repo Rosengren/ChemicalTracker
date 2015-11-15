@@ -66,14 +66,14 @@
                                         </div>
                                     </div>
                                 </div>
-                                <img src="/img/${storage.imageURL}">
+                                <img src="${storage.imageURL}">
                             </div>
                             <div class="content">
                                 <div class="header">${storage.name}</div>
                                 <div class="description">${storage.description}</div>
                             </div>
                             <div class="extra content">
-                              <a class="right floated created" onclick="alert('Generate Report')">
+                                <a class="right floated created" href="/report/generate/${storage.name}"">
                                   Generate Report
                               </a>
                               <a class="" onclick="alert('todo: add ability to edit')">

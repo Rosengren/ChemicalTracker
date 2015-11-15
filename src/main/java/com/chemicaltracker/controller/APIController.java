@@ -42,7 +42,6 @@ public class APIController {
 
     private ChemicalDataAccessObject chemicalDB = new ChemicalDataAccessDynamoDB();
 
-
     @RequestMapping(value="/add/location", method=POST)
     public @ResponseBody String addLocation(@RequestBody final Storage location, BindingResult result,
             Model model, Principal principal) {
@@ -98,56 +97,5 @@ public class APIController {
         cabinetDB.addStorage(cabinet);
 
         return "success";
-    }
-
-    @RequestMapping("/testPage")
-    public String getTestPage(Model model) {
-        return "testPage";
-    }
-
-    @RequestMapping(value = "/test/user/{username}/addLocation/{locationName}", method=GET)
-    public @ResponseBody String addLocationTest(@PathVariable("username") String username, @PathVariable("locationName") String locationName, Model model) {
-        // TODO: check DB if storage location already exists
-
-        Storage newLocation = new Storage(username, locationName, locationName, "general Description", new HashMap<String, String>());
-        locationDB.addStorage(newLocation);
-        return "done";
-    }
-
-    @RequestMapping(value = "/test/user/{username}/addRoom/location/{locationName}/room/{roomName}", method=GET)
-    public @ResponseBody String addRoomToLocation(@PathVariable("username") String username, @PathVariable("locationName") String locationName,
-            @PathVariable("roomName") String roomName, Model model) {
-
-        Storage location = locationDB.getStorage(username, locationName);
-
-        String uuid = UUID.randomUUID().toString();
-        Storage newRoom = new Storage(username, roomName, uuid, "some description", new HashMap<String, String>());
-
-        location.addStoredItem(roomName, uuid);
-        locationDB.addStorage(location);
-
-        roomDB.addStorage(newRoom);
-
-        return "done";
-    }
-
-    @RequestMapping(value = "/test/user/{username}/addCabinet/location/{locationName}/room/{roomName}/cabinet/{cabinetName}", method=GET)
-    public @ResponseBody String addCabinetToRoom(@PathVariable("username") String username, @PathVariable("locationName") String locationName,
-            @PathVariable("roomName") String roomName, @PathVariable("cabinetName") String cabinetName, Model model) {
-
-        Storage location = locationDB.getStorage(username, locationName);
-
-        String roomID = location.getStoredItemID(roomName);
-        Storage room = roomDB.getStorage(username, roomID);
-
-        String uuid = UUID.randomUUID().toString();
-        Storage newCabinet = new Storage(username, cabinetName, uuid, "some other description of the cabinet", new HashMap<String, String>());
-
-        room.addStoredItem(cabinetName, uuid);
-        roomDB.addStorage(room);
-
-        cabinetDB.addStorage(newCabinet);
-
-        return "done and done";
     }
 }

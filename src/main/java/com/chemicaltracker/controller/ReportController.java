@@ -48,7 +48,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Controller
-@RequestMapping("")
+@RequestMapping("/report")
 public class ReportController {
 
     private final StorageDataAccessObject locationDB = StorageFactory.getStorage("LOCATIONS");
@@ -57,20 +57,19 @@ public class ReportController {
 
     private final ChemicalDataAccessObject chemicalDB = new ChemicalDataAccessDynamoDB();
 
-    @RequestMapping(value = "/downloadPDF", method=GET)
-    public void downloadPDF(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    @RequestMapping(value = "/generate/{locationName}", method=GET)
+    public void downloadPDF(@PathVariable("locationName") String locationName,
+            HttpServletRequest request, HttpServletResponse response,
+            Principal principal) throws IOException {
 
-        // TODO: make this a POST and add: username + locationName to the requestBody;
         final ServletContext servletContext = request.getSession().getServletContext();
         final File tempDirectory = (File) servletContext.getAttribute("javax.servlet.context.tempdir");
         final String temperotyFilePath = tempDirectory.getAbsolutePath();
 
-        String fileName = "report.pdf"; // TODO; use a more meaningfull name
+        final String fileName = locationName + "-report.pdf";
         response.setContentType("application/pdf");
 
-        //String username = principal.getName();
-        String username = "kevin"; // FIXME
-        String locationName = "Carleton";
+        final String username = principal.getName();
         Storage location = locationDB.getStorage(username, locationName);
 
         final List<String> roomIDs = location.getStoredItemIDs();
@@ -85,7 +84,7 @@ public class ReportController {
 
         try {
 
-            ReportDocument.createPDF(temperotyFilePath+"\\"+fileName, "Chemical Tracker Report", location, roomCabinetMap);
+            ReportDocument.createPDF(temperotyFilePath+"\\"+fileName, ReportDocument.DEFAULT_TITLE, location, roomCabinetMap);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             baos = convertPDFToByteArrayOutputStream(temperotyFilePath+"\\"+fileName);
             OutputStream os = response.getOutputStream();
