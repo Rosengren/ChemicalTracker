@@ -40,7 +40,6 @@
                 </div>
             </div>
         </div>
-
         <div class="ui container bottom-padding">
             <div class="ui breadcrumb">
                 <c:set var="sectionLink" value="" />

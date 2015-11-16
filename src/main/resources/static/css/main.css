@@ -61,11 +61,12 @@
   content: '';
   background-size: cover;
 
-  opacity: 0.45;
+  /*opacity: 0.45;*/
+  opacity: 0.35;
 }
 
 #ctrackr.index .masthead.bg1:after {
-  background-color: darkgrey;
+  background-color: grey;
 }
 
 #ctrackr.index .masthead,

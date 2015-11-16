@@ -60,7 +60,7 @@
         <dependency>
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-dynamodb</artifactId>
-            <version>1.10.21</version>
+            <version>RELEASE</version>
         </dependency>
     </dependencies>
     <repositories>
@@ -74,11 +74,6 @@
         </repository>
     </repositories>
     <build>
-        <!--<resources>-->
-            <!--<resource>-->
-                <!--<directory>${env.HOME}/.aws/</directory>-->
-            <!--</resource>-->
-        <!--</resources>-->
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
