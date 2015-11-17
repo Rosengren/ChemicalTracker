@@ -47,7 +47,7 @@ To start the local server, run
 
 The local server should be running at
 
-    localhost:8080/ChemicalTracker/
+    localhost:8080/
 
 ###AWS Setup
 
@@ -80,7 +80,7 @@ order to communicate with the server. Select next.
 
 12. Under _Aditional Resources_, leave the options unchecked.  Select next.
 
-13. Under _Configuration Details_, select t1.micro for "Instance type", enter your email address
+13. Under _Configuration Details_, select t2.micro for "Instance type", enter your email address
 in the "Email address" field. All other fields are optional. Select next.
 
 14. Under _Environment Tags_, use you Key and Value credentials here. See section on creating
