@@ -46,7 +46,7 @@ public class StorageDataAccessDynamoDB implements StorageDataAccessObject {
     private AmazonDynamoDBClient dynamoDB;
 
     public StorageDataAccessDynamoDB(final String tableName, final String tableHashKey,
-            final String tableRangeKey, final String storedItemTitle) {
+            final String tableRangeKey, final String storedItemTitle) throws Exception {
 
         this.tableName = tableName;
         this.tableHashKey = tableHashKey;
@@ -57,6 +57,7 @@ public class StorageDataAccessDynamoDB implements StorageDataAccessObject {
             initializeDBConnection();
         } catch (Exception e) {
             System.out.println("Error occured while initializing DB Connection");
+            throw e;
         }
     }
 
@@ -66,6 +67,8 @@ public class StorageDataAccessDynamoDB implements StorageDataAccessObject {
 
         try {
             credentials = new ProfileCredentialsProvider().getCredentials();
+            //credentials = new DefaultAWSCredentialsProviderChain().getCredentials();
+            //System.out.println("DEBUG: " + credentials.getAWSAccessKeyId() + "   " + credentials.getAWSSecretKey());
         } catch (Exception e) {
             throw new AmazonClientException("Could not load credentials", e);
         }

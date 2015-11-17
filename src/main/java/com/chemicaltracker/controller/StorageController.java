@@ -5,6 +5,7 @@ import java.security.Principal;
 
 import com.chemicaltracker.model.Storage;
 import com.chemicaltracker.model.Chemical;
+import com.chemicaltracker.persistence.StorageDataAccessDynamoDB;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -44,6 +45,19 @@ public class StorageController {
     @RequestMapping("")
     public String home(Model model, Principal principal) {
 
+        //try {
+            //StorageDataAccessObject locationDB = StorageFactory.getStorage("LOCATIONS");
+        //} catch(Exception e) {
+            //model.addAttribute("err", e.toString());
+            //StackTraceElement[] ste = e.getStackTrace();
+
+            //String st = "";
+            //for (int i = 0; i < ste.length; i++) {
+                //st += "<br/>" + ste[i];
+            //}
+            //model.addAttribute("err2", st);
+            //model.addAttribute("err3", e.getMessage());
+        //}
         String username = principal.getName();
         model = addStorageDetailsToModel(model, username, "Locations",
                 "List of all your locations", "Add new location", "/api/add/location");

@@ -53,7 +53,6 @@
                 <i class="add icon"></i>
             </div>
             <div class="ui four column stackable grid container">
-
                 <c:forEach items="${storages}" var="storage">
                     <div class="column">
                         <div class="ui link card" >
