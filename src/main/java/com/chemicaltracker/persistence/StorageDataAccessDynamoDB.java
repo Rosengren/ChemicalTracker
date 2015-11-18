@@ -171,7 +171,6 @@ public class StorageDataAccessDynamoDB implements StorageDataAccessObject {
     public List<Storage> batchGetStorages(final String username, final List<String> storageIDs) {
         final List<Storage> storages = new ArrayList<Storage>();
 
-        // TODO: create more efficient batch method
         for (String id : storageIDs) {
             storages.add(getStorage(username, id));
         }
@@ -179,7 +178,6 @@ public class StorageDataAccessDynamoDB implements StorageDataAccessObject {
         return storages;
     }
 
-    // TODO: replace Map<> with Item()
     private Map<String, AttributeValue> convertStorageToItem(final Storage storage) {
         final Map<String, AttributeValue> item = new HashMap<String, AttributeValue>();
 
@@ -200,9 +198,8 @@ public class StorageDataAccessDynamoDB implements StorageDataAccessObject {
 
     private Storage convertItemToStorage(final Map<String, AttributeValue> item) {
 
-        // TODO: add Exception
         if (item == null) {
-            // throw exception
+            logger.error("Error occurred while converting an Item to Storage object. item was found");
             return null;
         }
 
@@ -213,10 +210,10 @@ public class StorageDataAccessDynamoDB implements StorageDataAccessObject {
 
         return new Storage(
                 item.get(tableHashKey).getS(),
-                item.get("Name").getS(),
+                item.get(Storage.NAME).getS(),
                 item.get(tableRangeKey).getS(),
-                item.get("Description").getS(),
+                item.get(Storage.DESCRIPTION).getS(),
                 storedItems,
-                item.get("Image URL").getS());
+                item.get(Storage.IMAGE_URL).getS());
     }
 }

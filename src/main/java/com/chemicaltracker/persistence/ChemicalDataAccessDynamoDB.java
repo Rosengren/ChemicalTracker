@@ -179,7 +179,6 @@ public class ChemicalDataAccessDynamoDB implements ChemicalDataAccessObject {
     public List<Chemical> batchGetChemicals(final List<String> names) {
         final List<Chemical> chemicals = new ArrayList<Chemical>();
 
-        // TODO: create more effecient batch method
         for (String name : names) {
             chemicals.add(getChemical(name));
         }

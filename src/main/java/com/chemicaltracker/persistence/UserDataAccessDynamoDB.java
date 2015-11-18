@@ -32,7 +32,11 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import org.apache.log4j.Logger;
+
 public class UserDataAccessDynamoDB implements UserDetailsService {
+
+    private static final Logger logger = Logger.getLogger(UserDataAccessDynamoDB.class);
 
     private static final String USERS_TABLE_NAME = "Users";
     private static final String USERS_TABLE_INDEX = "Username";
@@ -43,7 +47,7 @@ public class UserDataAccessDynamoDB implements UserDetailsService {
         try {
             initializeDBConnection();
         } catch (Exception e) {
-            System.out.println("Error occured while initializing DB Connection");
+            logger.error("Error occured while initializing DB Connection", e);
         }
     }
 
@@ -57,7 +61,12 @@ public class UserDataAccessDynamoDB implements UserDetailsService {
             throw new AmazonClientException("Could not load credentials", e);
         }
 
-        dynamoDB = new AmazonDynamoDBClient(credentials);
+        try {
+            dynamoDB = new AmazonDynamoDBClient(credentials);
+        } catch (Exception e) {
+            throw new AmazonClientException("Credentials were not valid when trying to connect to the user DB", e);
+        }
+
         final Region usWest2 = Region.getRegion(Regions.US_WEST_2);
         dynamoDB.setRegion(usWest2);
     }
@@ -97,16 +106,16 @@ public class UserDataAccessDynamoDB implements UserDetailsService {
 
     private UserDetails convertItemToUserDetails(final Map<String, AttributeValue> item) {
 
-        String username = item.get("Username").getS();
-        String password = item.get("Password").getS();
-        String role = item.get("Role").getS();
+        final String username = item.get("Username").getS();
+        final String password = item.get("Password").getS();
+        final String role = item.get("Role").getS();
 
-        boolean enabled = true;
-        boolean accountNonExpired = true;
-        boolean credentialsNonExpired = true;
-        boolean accountNonLocked = true;
+        final boolean enabled = true;
+        final boolean accountNonExpired = true;
+        final boolean credentialsNonExpired = true;
+        final boolean accountNonLocked = true;
 
-        List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+        final List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
         authorities.add(new SimpleGrantedAuthority(role));
 
         return new User(username, password, enabled, accountNonExpired,
