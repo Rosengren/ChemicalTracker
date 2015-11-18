@@ -45,19 +45,6 @@ public class StorageController {
     @RequestMapping("")
     public String home(Model model, Principal principal) {
 
-        //try {
-            //StorageDataAccessObject locationDB = StorageFactory.getStorage("LOCATIONS");
-        //} catch(Exception e) {
-            //model.addAttribute("err", e.toString());
-            //StackTraceElement[] ste = e.getStackTrace();
-
-            //String st = "";
-            //for (int i = 0; i < ste.length; i++) {
-                //st += "<br/>" + ste[i];
-            //}
-            //model.addAttribute("err2", st);
-            //model.addAttribute("err3", e.getMessage());
-        //}
         String username = principal.getName();
         model = addStorageDetailsToModel(model, username, "Locations",
                 "List of all your locations", "Add new location", "/api/add/location");
@@ -130,8 +117,7 @@ public class StorageController {
         final Storage cabinet = cabinetDB.getStorage(username, cabinetID);
         final List<String> chemicalNames = cabinet.getStoredItemNames();
 
-        List<Chemical> chemicals = chemicalDB.batchGetChemicals(chemicalNames);
-        model.addAttribute("chemicals", chemicals);
+        final List<Chemical> chemicals = chemicalDB.batchGetChemicals(chemicalNames);
 
         for (Chemical chemical : chemicals) {
             chemical.setImageURL(cabinet.getStoredItemID(chemical.getName()));
@@ -142,6 +128,7 @@ public class StorageController {
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         model.addAttribute("chemicalNames", chemicalDB.getAllChemicalNames());
+        model.addAttribute("chemicals", chemicals);
 
         return "chemicalsView";
     }
@@ -166,6 +153,7 @@ public class StorageController {
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         model.addAttribute("fireDiamond", chemical.getFireDiamond());
+
         return "chemicalView";
     }
 

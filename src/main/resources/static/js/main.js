@@ -28,33 +28,29 @@ $(function () {
 
 $("#submitCreateStorage").click(function() {
 
-    var username = $("#username").attr("value");
-    var url = $("#addURL").attr("value");
-
-    var newStorageName = $("#newStorageName").val();
-    var newStorageDesc = $("#newStorageDesc").val();
-
-    if (newStorageName === null || newStorageName === "") {
-        alert("missing name");
-        return;
-    } else if (newStorageDesc === null || newStorageDesc === "") {
-        alert("missing description");
-        return;
-    }
-
+    var formData = new FormData($('#storageForm')[0]);
     $.ajax({
-        url: url,
         type: "POST",
-        dataType: "json",
-        contentType: "application/json",
-        mimeType: "application/json",
-        data: JSON.stringify({
-            username: username,
-            name: newStorageName,
-            description: newStorageDesc
-        }),
-        success: function(response) { },
-        error: function(e) { }
+        url: "uploadFile",
+        contentType: false,
+        processData: false,
+        cache: false,
+        data: formData,
+        success: function() {
+            $('#formSubmissionMsg .header').text("Submission Successful");
+            $('#formSubmissionMsg p').text("The location was successfully created!");
+            $('#formSubmissionMsg').removeClass("error");
+            $('#formSubmissionMsg').addClass("success");
+        },
+        error: function() {
+            $('#formSubmissionMsg .header').text("Submission Failed");
+            $('#formSubmissionMsg p').text("An error occurred while creating the location!");
+            $('#formSubmissionMsg').addClass("error");
+            $('#formSubmissionMsg').removeClass("success");
+        },
+        complete: function() {
+            $('#formSubmissionMsg').show();
+        }
     });
 });
 
@@ -88,3 +84,4 @@ $("#submitAddChemicalsToCabinet").click(function() {
         error: function(e) { }
     });
 });
+

@@ -1,23 +1,29 @@
 <%@include file="templates/header.jsp" %>
 
 <body id="ctrackr" class="index popup pusher storage" ontouchstart>
-
     <div class="ui modal">
         <div class="header">
             ${addTooltip}
         </div>
         <div class="content">
-            <div class="ui form">
+
+            <form id="storageForm" class="ui form" method="POST" action="uploadFile" enctype="multipart/form-data">
+                <div class="field">
+                    <label>Photo</label>
+                    <input type="file" name="Image">
+                </div>
                 <div class="field">
                     <label>Name</label>
-                    <input type="text" id="newStorageName" placeholder="Name" />
+                    <input type="text" name="Name">
                 </div>
                 <div class="field">
                     <label>Description</label>
-                    <textarea rows="4" id="newStorageDesc"></textarea>
+                    <input type="text" name="Description">
                 </div>
-            </div>
-        </div> 
+                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
+            </form>
+
+        </div>
         <div class="actions">
             <div class="ui black deny button">
                 Cancel
@@ -27,8 +33,9 @@
             </div>
         </div>
     </div>
-
     <div class="full height">
+
+
         <div class="masthead segment bg1">
             <div class="ui container">
                 <div class="introduction">
@@ -38,6 +45,15 @@
                     </h1>
                     <div class="ui hidden divider"></div>
                 </div>
+            </div>
+        </div>
+        <div class="ui container">
+            <div id="formSubmissionMsg" class="ui hidden positive message bottom-padding">
+                <i class="close icon"></i>
+                <div class="header">
+                    You are eligible for a reward
+                </div>
+                <p>Go to your <b>special offers</b> page to see now.</p>
             </div>
         </div>
         <div class="ui container bottom-padding">
@@ -71,7 +87,7 @@
                                 <div class="description">${storage.description}</div>
                             </div>
                             <div class="extra content">
-                                <a class="right floated created" href="/report/generate/${storage.name}"">
+                                <a class="right floated created" href="/report/generate/${storage.name}">
                                   Generate Report
                               </a>
                               <a class="" onclick="alert('todo: add ability to edit')">

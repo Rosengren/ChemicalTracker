@@ -106,11 +106,10 @@ public class ChemicalDataAccessDynamoDB implements ChemicalDataAccessObject {
 
         } catch (Exception e) {
             logger.error("Error occurred while getting chemical: " + name + " from table: " + CHEMICALS_TABLE_NAME);
-        } finally {
-            // not sure if returning an empty obect is better than no object.
-            // From the user's point of view, at least it will display something
-            return new Chemical();
         }
+        // not sure if returning an empty obect is better than no object.
+        // From the user's point of view, at least it will display something
+        return new Chemical();
     }
 
     @Override
@@ -182,6 +181,7 @@ public class ChemicalDataAccessDynamoDB implements ChemicalDataAccessObject {
         for (String name : names) {
             chemicals.add(getChemical(name));
         }
+
 
         return chemicals;
     }
