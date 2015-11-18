@@ -20,7 +20,10 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Storage {
 
-    // TODO: maybe add a field to determine if this is a new storage an existing storage
+    public static final String NAME = "Name";
+    public static final String DESCRIPTION = "Description";
+    public static final String IMAGE_URL = "Image URL";
+
     private String username;
     private String name;
     private String id;

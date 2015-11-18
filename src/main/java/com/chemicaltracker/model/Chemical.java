@@ -5,6 +5,10 @@ import java.util.HashMap;
 
 public class Chemical {
 
+    // DB field names
+    public static final String NAME = "Name";
+    public static final String IMAGE_URL = "Image URL";
+
     private String name;
     private String imageURL;
     private FireDiamond fireDiamond;

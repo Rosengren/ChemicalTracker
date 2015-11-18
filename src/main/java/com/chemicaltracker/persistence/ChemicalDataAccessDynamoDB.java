@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 
-import com.amazonaws.AmazonClientException;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.regions.Region;
@@ -27,9 +26,14 @@ import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.document.Item;
 
+import org.apache.log4j.Logger;
+
+import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 
 public class ChemicalDataAccessDynamoDB implements ChemicalDataAccessObject {
+
+    private static final Logger logger = Logger.getLogger(ChemicalDataAccessDynamoDB.class);
 
     private static final String CHEMICALS_TABLE_NAME = "Chemicals";
     private static final String CHEMICALS_TABLE_INDEX = "Name";
@@ -37,14 +41,15 @@ public class ChemicalDataAccessDynamoDB implements ChemicalDataAccessObject {
     private AmazonDynamoDBClient dynamoDB;
 
     public ChemicalDataAccessDynamoDB() {
+
         try {
             initializeDBConnection();
         } catch (Exception e) {
-            System.out.println("Error occured while initializing DB Connection");
+            logger.error("Error occured while initializing DB Connection", e);
         }
     }
 
-    public void initializeDBConnection() throws Exception {
+    public void initializeDBConnection() throws AmazonClientException {
 
         AWSCredentials credentials = null;
 
@@ -54,21 +59,32 @@ public class ChemicalDataAccessDynamoDB implements ChemicalDataAccessObject {
             throw new AmazonClientException("Could not load credentials", e);
         }
 
-        dynamoDB = new AmazonDynamoDBClient(credentials);
+        try {
+            dynamoDB = new AmazonDynamoDBClient(credentials);
+        } catch (Exception e) {
+            throw new AmazonClientException("The provided credentials were not valid", e);
+        }
+
         final Region usWest2 = Region.getRegion(Regions.US_WEST_2);
         dynamoDB.setRegion(usWest2);
     }
 
     @Override
     public List<Chemical> getAllChemicals() {
-        // TODO: may need a more efficient way of converting these values instead of looping
+
+        final List<Chemical> chemicals = new ArrayList<Chemical>();
         final ScanRequest scanRequest = new ScanRequest()
             .withTableName(CHEMICALS_TABLE_NAME);
 
-        final ScanResult result = dynamoDB.scan(scanRequest);
-        final List<Chemical> chemicals = new ArrayList<Chemical>();
-        for (Map<String, AttributeValue> item : result.getItems()) {
-            chemicals.add(convertItemToChemical(item));
+        try {
+            final ScanResult result = dynamoDB.scan(scanRequest);
+
+            for (Map<String, AttributeValue> item : result.getItems()) {
+                chemicals.add(convertItemToChemical(item));
+            }
+
+        } catch (Exception e) {
+            logger.error("Error occurred while scanning for all chemicals in table: " + CHEMICALS_TABLE_NAME, e);
         }
 
         return chemicals;
@@ -76,49 +92,84 @@ public class ChemicalDataAccessDynamoDB implements ChemicalDataAccessObject {
 
     @Override
     public Chemical getChemical(final String name) {
-        final Map<String, AttributeValue> item = new HashMap<String, AttributeValue>();
-        item.put(CHEMICALS_TABLE_INDEX, new AttributeValue().withS(name));
 
-        final GetItemRequest request = new GetItemRequest(CHEMICALS_TABLE_NAME, item);
-        final GetItemResult result  = dynamoDB.getItem(request);
-        return convertItemToChemical(result.getItem());
+        final Map<String, AttributeValue> key = new HashMap<String, AttributeValue>();
+        key.put(CHEMICALS_TABLE_INDEX, new AttributeValue().withS(name));
+
+        final GetItemRequest request = new GetItemRequest()
+            .withTableName(CHEMICALS_TABLE_NAME)
+            .withKey(key);
+
+        try {
+            final GetItemResult result = dynamoDB.getItem(request);
+            return convertItemToChemical(result.getItem());
+
+        } catch (Exception e) {
+            logger.error("Error occurred while getting chemical: " + name + " from table: " + CHEMICALS_TABLE_NAME);
+        } finally {
+            // not sure if returning an empty obect is better than no object.
+            // From the user's point of view, at least it will display something
+            return new Chemical();
+        }
     }
 
     @Override
-    public void updateChemical(final Chemical chemical) throws Exception {
+    public void updateChemical(final Chemical chemical) {
         addChemical(chemical);
     }
 
     @Override
     public void deleteChemical(final Chemical chemical) {
-        final Map<String, AttributeValue> item = new HashMap<String, AttributeValue>();
-        item.put(CHEMICALS_TABLE_INDEX, new AttributeValue().withS(chemical.getName()));
 
-        final DeleteItemRequest deleteItemRequest = new DeleteItemRequest(CHEMICALS_TABLE_NAME, item);
-        final DeleteItemResult result = dynamoDB.deleteItem(deleteItemRequest);
+        final Map<String, AttributeValue> key = new HashMap<String, AttributeValue>();
+        key.put(CHEMICALS_TABLE_INDEX, new AttributeValue().withS(chemical.getName()));
+
+        final DeleteItemRequest deleteItemRequest = new DeleteItemRequest()
+            .withTableName(CHEMICALS_TABLE_NAME)
+            .withKey(key);
+
+        try {
+            dynamoDB.deleteItem(deleteItemRequest);
+        } catch (AmazonServiceException e) {
+            logger.error("Error occured while trying to delete chemical: " +
+                    chemical.getName() + " from table: " + CHEMICALS_TABLE_NAME);
+        }
     }
 
     @Override
-    public void addChemical(final Chemical chemical) throws Exception {
+    public void addChemical(final Chemical chemical) {
+
+        final Map<String, AttributeValue> item = convertChemicalToItem(chemical);
+        final PutItemRequest putItemRequest = new PutItemRequest()
+            .withTableName(CHEMICALS_TABLE_NAME)
+            .withItem(item);
+
         try {
-            final Map<String, AttributeValue> item = convertChemicalToItem(chemical);
-            final PutItemRequest putItemRequest = new PutItemRequest(CHEMICALS_TABLE_NAME, item);
-            final PutItemResult putItemResult = dynamoDB.putItem(putItemRequest);
+            dynamoDB.putItem(putItemRequest);
         } catch (AmazonServiceException e) {
-            throw new Exception(e);
+            logger.error("Error occurred while trying to add chemical: " +
+                    chemical.getName() + " to table: " + CHEMICALS_TABLE_NAME, e);
         }
     }
 
     @Override
     public List<String> getAllChemicalNames() {
 
+        final List<String> chemicalNames = new ArrayList<String>();
         final ScanRequest scanRequest = new ScanRequest()
             .withTableName(CHEMICALS_TABLE_NAME);
 
-        final ScanResult result = dynamoDB.scan(scanRequest);
-        final List<String> chemicalNames = new ArrayList<String>();
-        for (Map<String, AttributeValue> item : result.getItems()) {
-            chemicalNames.add(item.get("Name").getS());
+
+        try {
+            final ScanResult result = dynamoDB.scan(scanRequest);
+
+            for (Map<String, AttributeValue> item : result.getItems()) {
+                chemicalNames.add(item.get(Chemical.NAME).getS());
+            }
+
+        } catch (AmazonServiceException e) {
+            logger.error("Error occurred while trying to get all the chemical names for the table: " +
+                    CHEMICALS_TABLE_NAME);
         }
 
         return chemicalNames;
@@ -136,7 +187,6 @@ public class ChemicalDataAccessDynamoDB implements ChemicalDataAccessObject {
         return chemicals;
     }
 
-    // TODO: move this into a new class which handles the conversion
     private Map<String, AttributeValue> convertChemicalToItem(final Chemical chemical) {
         final FireDiamond fireDiamond = chemical.getFireDiamond();
         final Map<String, AttributeValue> item = new HashMap<String, AttributeValue>();
@@ -147,55 +197,69 @@ public class ChemicalDataAccessDynamoDB implements ChemicalDataAccessObject {
         item.put(fireDiamond.INSTABILITY, new AttributeValue().withN(Integer.toString(fireDiamond.getInstability())));
         item.put(fireDiamond.NOTICE, new AttributeValue(fireDiamond.getNotice()));
 
-        for (Map.Entry<String, Map<String, String>> entry : chemical.getProperties().entrySet()) {
-            Map<String, AttributeValue> properties = new HashMap<String, AttributeValue>();
+        try {
+            for (Map.Entry<String, Map<String, String>> entry : chemical.getProperties().entrySet()) {
+                Map<String, AttributeValue> properties = new HashMap<String, AttributeValue>();
 
-            for (Map.Entry<String, String> entry2 : entry.getValue().entrySet()) {
-                properties.put(entry2.getKey(), new AttributeValue(entry2.getValue()));
+                for (Map.Entry<String, String> entry2 : entry.getValue().entrySet()) {
+                    properties.put(entry2.getKey(), new AttributeValue(entry2.getValue()));
+                }
+
+                item.put(entry.getKey(), new AttributeValue().withM(properties));
             }
 
-            item.put(entry.getKey(), new AttributeValue().withM(properties));
+            item.put(Chemical.IMAGE_URL, new AttributeValue(chemical.getImageURL()));
+        } catch (Exception e) {
+            logger.error("Error occurred while converting the chemical: " + chemical.getName(), e);
         }
-
-        item.put("Image URL", new AttributeValue(chemical.getImageURL()));
 
         return item;
     }
 
     private Chemical convertItemToChemical(final Map<String, AttributeValue> item) {
 
-        // TODO: add Exception
         if (item == null) {
-            // throw exception
+            logger.error("A null object was passed as a parameter to be converted to a Chemical object");
             return null;
         }
 
-        final FireDiamond fireDiamond = new FireDiamond(
-                Integer.parseInt(item.get(FireDiamond.FLAMMABILITY).getN()),
-                Integer.parseInt(item.get(FireDiamond.HEALTH).getN()),
-                Integer.parseInt(item.get(FireDiamond.INSTABILITY).getN()),
-                item.get(FireDiamond.NOTICE).getS());
+        final Chemical chemical = new Chemical();
+        chemical.setName(item.get(Chemical.NAME).getS());
+
+        try {
+            final FireDiamond fireDiamond = new FireDiamond(
+                    Integer.parseInt(item.get(FireDiamond.FLAMMABILITY).getN()),
+                    Integer.parseInt(item.get(FireDiamond.HEALTH).getN()),
+                    Integer.parseInt(item.get(FireDiamond.INSTABILITY).getN()),
+                    item.get(FireDiamond.NOTICE).getS());
+
+            chemical.setFireDiamond(fireDiamond);
+
+        } catch (Exception e) {
+            logger.error("Error occurred while creating the fire Diamond", e);
+        }
 
         final Map<String, Map<String, String>> properties = new HashMap<String, Map<String, String>>();
 
-        final Chemical chemical = new Chemical(item.get("Name").getS(), fireDiamond);
+        try {
 
-        // Add properties to chemical
-        for (Map.Entry<String, Map<String, String>> entry : chemical.getProperties().entrySet()) {
+            // Add properties to chemical
+            for (Map.Entry<String, Map<String, String>> entry : chemical.getProperties().entrySet()) {
 
-            Map<String, String> subProperties = new HashMap<String, String>();
+                Map<String, String> subProperties = new HashMap<String, String>();
 
-            for (Map.Entry<String, AttributeValue> entry2 : item.get(entry.getKey()).getM().entrySet()) {
-                subProperties.put(entry2.getKey(), entry2.getValue().getS());
+                for (Map.Entry<String, AttributeValue> entry2 : item.get(entry.getKey()).getM().entrySet()) {
+                    subProperties.put(entry2.getKey(), entry2.getValue().getS());
+                }
+
+                properties.put(entry.getKey(), subProperties);
             }
 
-            properties.put(entry.getKey(), subProperties);
+            chemical.setProperties(properties);
+
+        } catch (Exception e) {
+            logger.error("Error occured while converting a DynamoDB Item to a chemical object", e);
         }
-
-        chemical.setProperties(properties);
-
-        // TODO: Important! how do we have unique images for each user?
-        //chemical.setImageURL(item.get("Image URL").getS());
 
         return chemical;
     }

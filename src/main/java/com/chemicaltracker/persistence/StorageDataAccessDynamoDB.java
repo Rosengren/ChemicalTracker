@@ -36,7 +36,11 @@ import com.amazonaws.services.dynamodbv2.document.QueryOutcome;
 import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
 import com.amazonaws.services.dynamodbv2.document.KeyAttribute;
 
+import org.apache.log4j.Logger;
+
 public class StorageDataAccessDynamoDB implements StorageDataAccessObject {
+
+    private static final Logger logger = Logger.getLogger(StorageDataAccessDynamoDB.class);
 
     private String tableName;
     private String tableHashKey;
@@ -46,7 +50,7 @@ public class StorageDataAccessDynamoDB implements StorageDataAccessObject {
     private AmazonDynamoDBClient dynamoDB;
 
     public StorageDataAccessDynamoDB(final String tableName, final String tableHashKey,
-            final String tableRangeKey, final String storedItemTitle) throws Exception {
+            final String tableRangeKey, final String storedItemTitle) {
 
         this.tableName = tableName;
         this.tableHashKey = tableHashKey;
@@ -57,7 +61,6 @@ public class StorageDataAccessDynamoDB implements StorageDataAccessObject {
             initializeDBConnection();
         } catch (Exception e) {
             System.out.println("Error occured while initializing DB Connection");
-            throw e;
         }
     }
 
@@ -67,20 +70,24 @@ public class StorageDataAccessDynamoDB implements StorageDataAccessObject {
 
         try {
             credentials = new ProfileCredentialsProvider().getCredentials();
-            //credentials = new DefaultAWSCredentialsProviderChain().getCredentials();
-            //System.out.println("DEBUG: " + credentials.getAWSAccessKeyId() + "   " + credentials.getAWSSecretKey());
         } catch (Exception e) {
             throw new AmazonClientException("Could not load credentials", e);
         }
 
-        dynamoDB = new AmazonDynamoDBClient(credentials);
+        try {
+            dynamoDB = new AmazonDynamoDBClient(credentials);
+        } catch (Exception e) {
+            throw new AmazonClientException("The provided credentials for the storage DB were not valid", e);
+        }
+
         final Region usWest2 = Region.getRegion(Regions.US_WEST_2);
         dynamoDB.setRegion(usWest2);
     }
 
     @Override
     public List<Storage> getAllStoragesForUser(final String username) {
-        // TODO: may need a more efficient way of converting these values instead of looping
+
+        final List<Storage> storages = new ArrayList<Storage>();
         final Map<String, AttributeValue> attributes = new HashMap<String, AttributeValue>();
         attributes.put(":hashval", new AttributeValue(username));
 
@@ -89,10 +96,13 @@ public class StorageDataAccessDynamoDB implements StorageDataAccessObject {
             .withKeyConditionExpression(tableHashKey + " = :hashval")
             .withExpressionAttributeValues(attributes);
 
-        final QueryResult result = dynamoDB.query(request);
-        final List<Storage> storages = new ArrayList<Storage>();
-        for (Map<String, AttributeValue> item : result.getItems()) {
-            storages.add(convertItemToStorage(item));
+        try {
+            final QueryResult result = dynamoDB.query(request);
+            for (Map<String, AttributeValue> item : result.getItems()) {
+                storages.add(convertItemToStorage(item));
+            }
+        } catch (Exception e) {
+            logger.error("Error occurred while querying the database for all the storages for user: " + username, e);
         }
 
         return storages;
@@ -100,14 +110,24 @@ public class StorageDataAccessDynamoDB implements StorageDataAccessObject {
 
     @Override
     public Storage getStorage(final String username, final String storageID) {
-        final Map<String, AttributeValue> item = new HashMap<String, AttributeValue>();
-        item.put(tableHashKey, new AttributeValue().withS(username));
-        item.put(tableRangeKey, new AttributeValue().withS(storageID));
+        final Map<String, AttributeValue> key = new HashMap<String, AttributeValue>();
+        key.put(tableHashKey, new AttributeValue().withS(username));
+        key.put(tableRangeKey, new AttributeValue().withS(storageID));
 
-        final GetItemRequest request = new GetItemRequest(tableName, item);
-        final GetItemResult result = dynamoDB.getItem(request);
+        final GetItemRequest request = new GetItemRequest()
+            .withTableName(tableName)
+            .withKey(key);
 
-        return convertItemToStorage(result.getItem());
+        Storage storage = new Storage();
+
+        try {
+            final GetItemResult result = dynamoDB.getItem(request);
+            storage = convertItemToStorage(result.getItem());
+        } catch (Exception e) {
+            logger.error("Error occurred while getting storage: " + storageID + " for user: " + username, e);
+        }
+
+        return storage;
     }
 
     @Override
@@ -117,20 +137,34 @@ public class StorageDataAccessDynamoDB implements StorageDataAccessObject {
 
     @Override
     public void deleteStorage(final String username, final String storageID) {
-        final Map<String, AttributeValue> item = new HashMap<String, AttributeValue>();
-        item.put(tableHashKey, new AttributeValue().withS(username));
-        item.put(tableRangeKey, new AttributeValue().withS(storageID));
+        final Map<String, AttributeValue> key = new HashMap<String, AttributeValue>();
+        key.put(tableHashKey, new AttributeValue().withS(username));
+        key.put(tableRangeKey, new AttributeValue().withS(storageID));
 
-        final DeleteItemRequest deleteItemRequest = new DeleteItemRequest(tableName, item);
-        final DeleteItemResult result = dynamoDB.deleteItem(deleteItemRequest);
+        final DeleteItemRequest deleteItemRequest = new DeleteItemRequest()
+            .withTableName(tableName)
+            .withKey(key);
+
+        try {
+            dynamoDB.deleteItem(deleteItemRequest);
+        } catch (Exception e) {
+            logger.error("Error occurred while deleting item: " + storageID + " for user: " + username, e);
+        }
     }
 
     @Override
     public void addStorage(final Storage storage) {
-        // TODO: add check that chemical was correctly added
+
         final Map<String, AttributeValue> item = convertStorageToItem(storage);
-        final PutItemRequest putItemRequest = new PutItemRequest(tableName, item);
-        final PutItemResult putItemResult = dynamoDB.putItem(putItemRequest);
+        final PutItemRequest putItemRequest = new PutItemRequest()
+            .withTableName(tableName)
+            .withItem(item);
+
+        try {
+            dynamoDB.putItem(putItemRequest);
+        } catch (Exception e) {
+            logger.error("Error occurred while adding storage: " + storage.getName());
+        }
     }
 
     @Override
@@ -145,16 +179,15 @@ public class StorageDataAccessDynamoDB implements StorageDataAccessObject {
         return storages;
     }
 
-    // TODO: move this into a new class which handles the conversion
     // TODO: replace Map<> with Item()
     private Map<String, AttributeValue> convertStorageToItem(final Storage storage) {
         final Map<String, AttributeValue> item = new HashMap<String, AttributeValue>();
 
         item.put(tableHashKey, new AttributeValue(storage.getUsername()));
-        item.put("Name", new AttributeValue(storage.getName()));
+        item.put(Storage.NAME, new AttributeValue(storage.getName()));
         item.put(tableRangeKey, new AttributeValue(storage.getID()));
-        item.put("Description", new AttributeValue(storage.getDescription()));
-        item.put("Image URL", new AttributeValue(storage.getImageURL()));
+        item.put(Storage.DESCRIPTION, new AttributeValue(storage.getDescription()));
+        item.put(Storage.IMAGE_URL, new AttributeValue(storage.getImageURL()));
 
         final Map<String, AttributeValue> storedItems = new HashMap<String, AttributeValue>();
         for (Map.Entry<String, String> storedItem : storage.getStoredItemsSet()) {
