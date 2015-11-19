@@ -52,6 +52,8 @@
             <div class="ui icon button addModal right floated" title="${addTooltip}">
                 <i class="add icon"></i>
             </div>
+        </div>
+        <div class="ui container">
             <div class="ui four column stackable grid container">
 
                 <c:forEach items="${chemicals}" var="chemical">

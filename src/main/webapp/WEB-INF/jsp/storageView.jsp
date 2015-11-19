@@ -20,6 +20,7 @@
                     <label>Description</label>
                     <input type="text" name="Description">
                 </div>
+                <input type="hidden" name="Location">
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
             </form>
 
@@ -34,7 +35,6 @@
         </div>
     </div>
     <div class="full height">
-
 
         <div class="masthead segment bg1">
             <div class="ui container">
@@ -68,10 +68,12 @@
             <div class="ui icon button addModal right floated" title="${addTooltip}">
                 <i class="add icon"></i>
             </div>
-            <div class="ui four column stackable grid container">
+        </div>
+        <div class="ui container">
+            <div class="ui four column stackable centered grid">
                 <c:forEach items="${storages}" var="storage">
                     <div class="column">
-                        <div class="ui link card" >
+                        <div class="ui link centered card" >
                             <div class="blurring dimmable image"onclick="window.location+='/${storage.name}'">
                                 <div class="ui dimmer">
                                     <div class="content">

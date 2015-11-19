@@ -150,6 +150,7 @@ public class StorageController {
 
         final List<String> breadcrumbs = Arrays.asList(new String[] {"Home",
             locationName, roomName, cabinetName, chemicalName});
+
         model.addAttribute("breadcrumbs", breadcrumbs);
 
         model.addAttribute("fireDiamond", chemical.getFireDiamond());

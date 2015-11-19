@@ -1,3 +1,7 @@
+$(document).ready(function() {
+    $('#storageForm input[name="Location"]').val(window.location.pathname);
+});
+
 $(".clickableContainer").click(function() {
     window.location = $(this).find("a").attr("href"); 
     return false;
@@ -36,6 +40,13 @@ $("#submitCreateStorage").click(function() {
         processData: false,
         cache: false,
         data: formData,
+        xhr: function() { // custom XMLHttpRequest
+            var myXhr = $.ajaxSettings.xhr();
+            if (myXhr.upload) {
+                myXhr.upload.addEventListener('progress', progressHandlingFunction, false);
+            }
+            return myXhr;
+        },
         success: function() {
             $('#formSubmissionMsg .header').text("Submission Successful");
             $('#formSubmissionMsg p').text("The location was successfully created!");
@@ -85,3 +96,16 @@ $("#submitAddChemicalsToCabinet").click(function() {
     });
 });
 
+function progressHandlingFunction(e) {
+    if (e.lengthComputable) {
+        $('progress').attr({
+            value: e.loaded,
+            max: e.total
+        });
+    }
+}
+
+$('.message .close').on('click', function() {
+    $(this).closest('.message')
+           .transition('fade');
+});

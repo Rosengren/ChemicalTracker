@@ -20,6 +20,8 @@ public class ImageDataAccessS3 implements ImageDataAccessObject {
 
     private static final Logger logger = Logger.getLogger(ImageDataAccessS3.class);
 
+    private static final String IMAGE_BUCKET_NAME = "chemical-images";
+
     private AmazonS3Client s3client;
 
     public ImageDataAccessS3() {
@@ -49,10 +51,8 @@ public class ImageDataAccessS3 implements ImageDataAccessObject {
     }
 
     @Override
-    public void uploadImage(final String filePath,
-            final String filename, final String bucketName) {
+    public void uploadImage(final String filePath, final String filename) {
 
-        // TODO: make sure to consider what to name the file (ex: Storage is called location
         File imageFile = null;
 
         try {
@@ -62,12 +62,12 @@ public class ImageDataAccessS3 implements ImageDataAccessObject {
         }
 
         try {
-            s3client.putObject(new PutObjectRequest(bucketName, filename, imageFile));
+            s3client.putObject(new PutObjectRequest(IMAGE_BUCKET_NAME, filename, imageFile));
         } catch (AmazonServiceException ase) {
             logger.error("The image was rejected from S3", ase);
         } catch (AmazonClientException ace) {
             logger.error("Error occurred while trying to put file: " + filePath +
-                    " with filename: " + filename + " into bucket: " + bucketName, ace);
+                    " with filename: " + filename + " into bucket: " + IMAGE_BUCKET_NAME, ace);
         }
     }
 }

@@ -4,6 +4,8 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 
+import com.chemicaltracker.persistence.ImageDataAccessObject;
+import com.chemicaltracker.persistence.ImageDataAccessS3;
 
 import org.springframework.ui.Model;
 import java.security.Principal;
@@ -28,17 +30,23 @@ public class FileUploadController {
 
     private static final Logger logger = Logger.getLogger(FileUploadController.class);
 
-    /**
-     * Upload single file using Spring Controller
-     */
+    // TODO: add support for other file types
+    private static final String IMAGE_EXTENSION = ".jpg";
+
+    private static final ImageDataAccessObject imageDB = new ImageDataAccessS3();
+
     // TODO: rename this and move it a different controller or change the controller name
     // since this will be used for submitting the complete form and not just the image
     @RequestMapping(value = "/uploadFile", method = RequestMethod.POST)
-    public ResponseEntity uploadFileHandler(@RequestParam("Name") String name,
+    public ResponseEntity uploadFileHandler(Principal principal,
+            @RequestParam("Name") String name,
             @RequestParam("Description") String description,
+            @RequestParam("Location") String location,
             @RequestParam("Image") MultipartFile image) {
 
-        // TODO: return a message if failure such as a missing 
+        System.out.println("Name: " + name);
+        System.out.println("Desc: " + description);
+        System.out.println("Location: " + location);
 
         if (!image.isEmpty()) {
             try {
@@ -61,13 +69,16 @@ public class FileUploadController {
                 logger.info("Server Image Location="
                         + serverFile.getAbsolutePath());
 
-                return new ResponseEntity(HttpStatus.OK); //"success";
+                imageDB.uploadImage(serverFile.getAbsolutePath(),
+                        principal.getName() + location +
+                        File.separator + name.replace(' ', '-') + IMAGE_EXTENSION);
+
+                return new ResponseEntity(HttpStatus.OK);
             } catch (Exception e) {
-                return new ResponseEntity(HttpStatus.BAD_REQUEST); //"failed"; // REASON: You failed to upload " + name + " => " + e.getMessage();
+                return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
             }
         } else {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST); //"failed"; // REASON: "You failed to upload " + name
-                    //+ " because the file was empty.";
+            return new ResponseEntity("the image file was missing", HttpStatus.BAD_REQUEST);
         }
     }
 }
