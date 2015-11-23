@@ -199,7 +199,7 @@ public class StorageDataAccessDynamoDB implements StorageDataAccessObject {
     private Storage convertItemToStorage(final Map<String, AttributeValue> item) {
 
         if (item == null) {
-            logger.error("Error occurred while converting an Item to Storage object. item was found");
+            logger.error("Error occurred while converting an Item to Storage object. item was null");
             return null;
         }
 

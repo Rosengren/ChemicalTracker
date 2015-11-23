@@ -1,5 +1,7 @@
 package com.chemicaltracker.model;
 
+import com.chemicaltracker.model.report.*;
+
 import java.util.ArrayList;
 
 import java.util.Map;
@@ -16,7 +18,6 @@ import com.itextpdf.text.Element;
 import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -39,7 +40,8 @@ public class ReportDocument {
     private static Font FOOTER = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD);
     private static Font TIMESTAMP = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD);
 
-    public static Document createPDF(final String file, final String title, final Storage location, final Map<Storage, java.util.List<Storage>> roomCabinetMap) {
+    //public static Document createPDF(final String file, final String title, final Storage location, final Map<Storage, java.util.List<Storage>> roomCabinetMap) {
+    public static Document createPDF(final String file, final String title, final DocumentComponent component) {
 
         Document document = null;
 
@@ -52,7 +54,9 @@ public class ReportDocument {
 
             addHeader(document, title);
 
-            addReportDetails(document, location, roomCabinetMap);
+            addBody(document, component);
+
+            //addReportDetails(document, location, roomCabinetMap);
 
             document.close();
 
@@ -64,6 +68,10 @@ public class ReportDocument {
         }
         return document;
 
+    }
+
+    private static void addBody(Document document, DocumentComponent component) throws DocumentException {
+        document.add(component.getFormattedParagraph(0));
     }
 
     private static void addMetaData(Document document) {

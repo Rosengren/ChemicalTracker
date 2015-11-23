@@ -11,6 +11,8 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+
 import org.apache.log4j.Logger;
 
 import com.amazonaws.AmazonClientException;
@@ -62,7 +64,8 @@ public class ImageDataAccessS3 implements ImageDataAccessObject {
         }
 
         try {
-            s3client.putObject(new PutObjectRequest(IMAGE_BUCKET_NAME, filename, imageFile));
+            s3client.putObject(new PutObjectRequest(IMAGE_BUCKET_NAME, filename, imageFile)
+                    .withCannedAcl(CannedAccessControlList.PublicRead));
         } catch (AmazonServiceException ase) {
             logger.error("The image was rejected from S3", ase);
         } catch (AmazonClientException ace) {

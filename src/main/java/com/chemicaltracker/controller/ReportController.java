@@ -1,5 +1,7 @@
 package com.chemicaltracker.controller;
 
+import com.chemicaltracker.model.report.*;
+
 import java.util.List;
 import java.util.ArrayList;
 
@@ -76,15 +78,21 @@ public class ReportController {
         final List<Storage> rooms = roomDB.batchGetStorages(username, roomIDs);
 
         final Map<Storage, List<Storage>> roomCabinetMap = new HashMap<Storage, List<Storage>>();
+
+        final StorageComposite locationDocument = new StorageComposite(location, "Location");
+
         for (Storage room : rooms) {
 
-            List<String> cabinetIDs = room.getStoredItemIDs();
-            roomCabinetMap.put(room, cabinetDB.batchGetStorages(username, cabinetIDs));
+            StorageComposite roomDocument = new StorageComposite(room, "Room");
+            for (Storage cabinet : cabinetDB.batchGetStorages(username, room.getStoredItemIDs())) {
+                roomDocument.addElement(new ChemicalsComposite(cabinet));
+            }
+
+            locationDocument.addElement(roomDocument);
         }
 
         try {
-
-            ReportDocument.createPDF(temperotyFilePath+"\\"+fileName, ReportDocument.DEFAULT_TITLE, location, roomCabinetMap);
+            ReportDocument.createPDF(temperotyFilePath+"\\"+fileName, ReportDocument.DEFAULT_TITLE, locationDocument);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             baos = convertPDFToByteArrayOutputStream(temperotyFilePath+"\\"+fileName);
             OutputStream os = response.getOutputStream();

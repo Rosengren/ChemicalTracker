@@ -7,7 +7,7 @@
         </div>
         <div class="content">
 
-            <form id="storageForm" class="ui form" method="POST" action="uploadFile" enctype="multipart/form-data">
+            <form id="storageForm" class="ui form" method="POST" action="${formLink}" enctype="multipart/form-data">
                 <div class="field">
                     <label>Photo</label>
                     <input type="file" name="Image">
@@ -21,6 +21,7 @@
                     <input type="text" name="Description">
                 </div>
                 <input type="hidden" name="Location">
+                <input type="hidden" name="ParentID" value="${parentID}">
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
             </form>
 

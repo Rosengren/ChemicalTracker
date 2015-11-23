@@ -47,7 +47,7 @@ public class StorageController {
 
         String username = principal.getName();
         model = addStorageDetailsToModel(model, username, "Locations",
-                "List of all your locations", "Add new location", "/api/add/location");
+                "List of all your locations", "Add new location", "/add/location");
 
         // Get Locations
         model.addAttribute("storages", locationDB.getAllStoragesForUser(username));
@@ -64,7 +64,7 @@ public class StorageController {
         String username = principal.getName();
         model = addStorageDetailsToModel(model, username, "Rooms",
                 "List of all the rooms in " + locationName,
-                "Add new room", "/api/add/room/to/location/" + locationName);
+                "Add new room", "/add/room/");
 
         final Storage location = locationDB.getStorage(username, locationName);
         final List<String> roomIDs = location.getStoredItemIDs();
@@ -74,6 +74,8 @@ public class StorageController {
         // TODO; make more efficient
         final List<String> breadcrumbs = Arrays.asList(new String[] {"Home", locationName});
         model.addAttribute("breadcrumbs", breadcrumbs);
+
+        model.addAttribute("parentID", location.getID());
 
         return "storageView";
     }
@@ -86,8 +88,8 @@ public class StorageController {
         String roomID = locationDB.getStorage(username, locationName).getStoredItemID(roomName);
 
         model = addStorageDetailsToModel(model, username, "Cabinets",
-                "List of all the cabinets in " + roomName,
-                "Add new cabinet", "/api/add/cabinet/to/room/" + roomID);
+                "List of all the cabinets in " + roomName, "/add/room",
+                "Add new cabinet");
 
         final Storage room = roomDB.getStorage(username, roomID);
         final List<String> cabinetIDs = room.getStoredItemIDs();
@@ -97,6 +99,8 @@ public class StorageController {
         final List<String> breadcrumbs = Arrays.asList(new String[] {"Home" ,
             locationName , roomName});
         model.addAttribute("breadcrumbs", breadcrumbs);
+
+        model.addAttribute("parentID", room.getID());
 
         return "storageView";
     }

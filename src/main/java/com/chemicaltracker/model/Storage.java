@@ -52,6 +52,11 @@ public class Storage {
         this.imageURL = imageURL;
     }
 
+    public Storage(final String username, final String name, final String id,
+            final String description, final String imageURL) {
+        this(username, name, id, description, new HashMap<String, String>(), imageURL);
+    }
+
     public Storage(final String username, final String name, final String id, final String description,
             final Map<String, String> storedItemMap) {
         this(username, name, id, description, storedItemMap, "placeholder.jpg");

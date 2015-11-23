@@ -33,9 +33,11 @@ $(function () {
 $("#submitCreateStorage").click(function() {
 
     var formData = new FormData($('#storageForm')[0]);
+    var url = $("#addURL").attr("value");
+
     $.ajax({
         type: "POST",
-        url: "uploadFile",
+        url: url,
         contentType: false,
         processData: false,
         cache: false,
