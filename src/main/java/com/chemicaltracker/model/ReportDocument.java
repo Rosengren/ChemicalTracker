@@ -56,8 +56,6 @@ public class ReportDocument {
 
             addBody(document, component);
 
-            //addReportDetails(document, location, roomCabinetMap);
-
             document.close();
 
         } catch (FileNotFoundException e) {
@@ -99,60 +97,6 @@ public class ReportDocument {
         createEmptyLine(header, 1);
 
         document.add(header);
-    }
-
-    private static void addReportDetails(Document document, final Storage location,
-            final Map<Storage, java.util.List<Storage>> roomCabinetMap) throws DocumentException {
-
-        Paragraph body = new Paragraph();
-        body.add(new Paragraph("Location: " + location.getName(), HEADER));
-
-        if (roomCabinetMap.entrySet().isEmpty()) {
-            Paragraph noRoomsHeader = new Paragraph("No rooms for this location", BODY);
-            noRoomsHeader.setIndentationLeft(20);
-            body.add(noRoomsHeader);
-
-        } else {
-
-            for (Map.Entry<Storage, java.util.List<Storage>> room : roomCabinetMap.entrySet()) {
-
-                createEmptyLine(body, 1);
-                Paragraph roomHeader = new Paragraph(room.getKey().getName(), SUBHEADER);
-                roomHeader.setIndentationLeft(20);
-                body.add(roomHeader);
-
-                Paragraph cabinetHeader;
-
-                if (room.getValue().isEmpty()) {
-                    cabinetHeader = new Paragraph("No cabinets in this room.", BODY);
-                    cabinetHeader.setIndentationLeft(40);
-                    body.add(cabinetHeader);
-                } else {
-
-                    for (Storage cabinet : room.getValue()) {
-
-                        cabinetHeader = new Paragraph(cabinet.getName(), LIST_TITLE);
-                        cabinetHeader.setIndentationLeft(40);
-                        body.add(cabinetHeader);
-
-                        List chemicalList = new List(false, false, 60);
-                        chemicalList.setListSymbol("");
-                        if (cabinet.getStoredItemNames().isEmpty()) {
-                            chemicalList.add(new ListItem("No chemicals in this cabinet.", LIST_ITEM));
-                        } else {
-                            for (String chemicalName : cabinet.getStoredItemNames()) {
-                                chemicalList.add(new ListItem(chemicalName, LIST_ITEM));
-                            }
-                        }
-
-                        body.add(chemicalList);
-                        createEmptyLine(body, 1);
-                    }
-                }
-            }
-        }
-
-        document.add(body);
     }
 
     private static void createEmptyLine(Paragraph paragraph, int number) {

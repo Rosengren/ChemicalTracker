@@ -2,25 +2,28 @@ package com.chemicaltracker.model.report;
 
 import com.chemicaltracker.model.Storage;
 
-import java.util.List;
+//import java.util.List;
 import java.util.ArrayList;
 
+import com.itextpdf.text.List;
+import com.itextpdf.text.ListItem;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.html.HtmlTags;
 
 public class StorageComposite implements DocumentComponent {
 
-    private static final int DEFAULT_FONT_SIZE = 30;
+    private static final int DEFAULT_FONT_SIZE = 28;
+    private static final int SMALLER_FONT_SIZE = 6;
+    private static final int SMALLEST_FONT_SIZE = 10;
     private static final Font BODY = new Font(Font.FontFamily.HELVETICA, 12, Font.NORMAL);
 
     private Storage storage;
-    private String storageType;
-    private List<DocumentComponent> elements;
+    private java.util.List<DocumentComponent> elements;
 
-    public StorageComposite(Storage storage, String storageType) {
+    public StorageComposite(Storage storage) {
         elements = new ArrayList<DocumentComponent>();
         this.storage = storage;
-        this.storageType = storageType;
     }
 
     public void addElement(DocumentComponent element) {
@@ -28,22 +31,27 @@ public class StorageComposite implements DocumentComponent {
     }
 
     @Override
-    public Paragraph getFormattedParagraph(int level) { // level must start at 0
+    public Paragraph getFormattedParagraph(int level) {
         Paragraph formatted = new Paragraph();
 
         // ADD HEADER
-        Paragraph header = new Paragraph();
+        List header = new List(false, false, level * 20);
+        header.setListSymbol("");
 
-        int fontSize = DEFAULT_FONT_SIZE - level * 4;
-        header.add(new Paragraph(storageType + ": " + storage.getName(), new Font(Font.FontFamily.HELVETICA, fontSize, Font.BOLD)));
-        header.add(new Paragraph(storage.getDescription(), BODY));
+        int fontSize = Math.max(DEFAULT_FONT_SIZE - level * SMALLER_FONT_SIZE, SMALLEST_FONT_SIZE);
+        header.add(new ListItem(storage.getName(), new Font(Font.FontFamily.HELVETICA, fontSize, Font.BOLD)));
+        header.add(new ListItem(storage.getDescription(), BODY));
+        createEmptyLine(header, 2);
 
         // Add BODY
-        Paragraph body = new Paragraph();
+        List body = new List();
+        body.setListSymbol("");
         for (DocumentComponent element : elements) {
-            body.add(element.getFormattedParagraph(level + 1));
+            body.add(new ListItem(element.getFormattedParagraph(level + 1)));
             createEmptyLine(body, 1);
         }
+
+        createEmptyLine(body, 2);
 
         formatted.add(header);
         formatted.add(body);
@@ -51,9 +59,9 @@ public class StorageComposite implements DocumentComponent {
         return formatted;
     }
 
-    private static void createEmptyLine(Paragraph paragraph, int number) {
+    private void createEmptyLine(List list, int number) {
         for (int i = 0; i < number; i++) {
-            paragraph.add(new Paragraph(" "));
+            list.add(new ListItem());
         }
     }
 }

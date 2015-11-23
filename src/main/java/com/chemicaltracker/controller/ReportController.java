@@ -79,11 +79,11 @@ public class ReportController {
 
         final Map<Storage, List<Storage>> roomCabinetMap = new HashMap<Storage, List<Storage>>();
 
-        final StorageComposite locationDocument = new StorageComposite(location, "Location");
+        final StorageComposite locationDocument = new StorageComposite(location);
 
         for (Storage room : rooms) {
 
-            StorageComposite roomDocument = new StorageComposite(room, "Room");
+            StorageComposite roomDocument = new StorageComposite(room);
             for (Storage cabinet : cabinetDB.batchGetStorages(username, room.getStoredItemIDs())) {
                 roomDocument.addElement(new ChemicalsComposite(cabinet));
             }
