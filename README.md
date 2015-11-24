@@ -187,3 +187,16 @@ ChemicalTracker/Tracker/ directory.
 - Find interesting ways of using the data
     - Graphs about overall dangers in a container
     - Statistics about chemicals
+
+
+##Troubleshooting
+
+####POST http://url.com 403 (Forbidden)
+
+If you see this in the console while submitting a form or a message similar to:
+Token 'null' was found on the request parameter '\_csrf' or header 'X-CSRF-TOKEN',
+add the following line inside of your form:
+
+    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
+
+
