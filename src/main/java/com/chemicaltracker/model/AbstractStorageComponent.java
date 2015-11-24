@@ -1,18 +1,16 @@
-package com.chemicaltracker.model.report;
+package com.chemicaltracker.model;
 
-import com.chemicaltracker.model.Storage;
-
-import com.itextpdf.text.Paragraph;
 
 import com.itextpdf.text.List;
 import com.itextpdf.text.ListItem;
 import com.itextpdf.text.Font;
+import com.itextpdf.text.Phrase;
+import com.itextpdf.text.Paragraph;
 
 import static com.itextpdf.text.Font.FontFamily.HELVETICA;
 import static com.itextpdf.text.Font.BOLD;
-import static com.itextpdf.text.Chunk.NEWLINE;
 
-public abstract class AbstractDocumentComposite {
+public abstract class AbstractStorageComponent {
 
     protected static final boolean NOT_NUMBERED = false;
     protected static final boolean NOT_LETTERED = false;
@@ -21,12 +19,14 @@ public abstract class AbstractDocumentComposite {
 
     protected static final int DEFAULT_FONT_SIZE = 28;
     protected static final int SMALLER_FONT_SIZE = 6;
-    protected static final int SMALLEST_FONT_SIZE = 10;
+    protected static final int SMALLEST_FONT_SIZE = 12;
 
     protected static final Font BODY = new Font(Font.FontFamily.HELVETICA, 12, Font.NORMAL);
     protected static final Font LIST_ITEM = new Font(Font.FontFamily.HELVETICA, 12, Font.NORMAL);
 
-    protected Storage storage;
+    protected String name;
+
+    abstract protected String getDescription();
 
     protected void createEmptyLine(List list, int number) {
         for (int i = 0; i < number; i++) {
@@ -40,8 +40,8 @@ public abstract class AbstractDocumentComposite {
         header.setListSymbol(""); // removes bullets
 
         int fontSize = Math.max(DEFAULT_FONT_SIZE - level * SMALLER_FONT_SIZE, SMALLEST_FONT_SIZE);
-        header.add(new ListItem(storage.getName(), new Font(HELVETICA, fontSize, BOLD)));
-        header.add(new ListItem(storage.getDescription(), BODY));
+        header.add(new ListItem(name, new Font(HELVETICA, fontSize, BOLD)));
+        header.add(new ListItem(getDescription(), BODY));
 
         content.add(header);
     }

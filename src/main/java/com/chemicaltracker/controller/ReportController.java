@@ -1,6 +1,6 @@
 package com.chemicaltracker.controller;
 
-import com.chemicaltracker.model.report.*;
+//import com.chemicaltracker.model.report.*;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.HashMap;
 
+import com.chemicaltracker.model.Chemical;
 import com.chemicaltracker.model.Storage;
 import com.chemicaltracker.model.ReportDocument;
 
@@ -79,20 +80,24 @@ public class ReportController {
 
         final Map<Storage, List<Storage>> roomCabinetMap = new HashMap<Storage, List<Storage>>();
 
-        final StorageComposite locationDocument = new StorageComposite(location);
-
+        // TODO: this logic will be moved to the Models
         for (Storage room : rooms) {
 
-            StorageComposite roomDocument = new StorageComposite(room);
             for (Storage cabinet : cabinetDB.batchGetStorages(username, room.getStoredItemIDs())) {
-                roomDocument.addElement(new ChemicalsComposite(cabinet));
+
+                for (Chemical chemical : chemicalDB.batchGetChemicals(cabinet.getStoredItemNames())) {
+                    cabinet.addElement(chemical);
+                }
+
+                room.addElement(cabinet);
             }
 
-            locationDocument.addElement(roomDocument);
+            location.addElement(room);
         }
 
         try {
-            ReportDocument.createPDF(temperotyFilePath+"\\"+fileName, ReportDocument.DEFAULT_TITLE, locationDocument);
+            //ReportDocument.createPDF(temperotyFilePath+"\\"+fileName, ReportDocument.DEFAULT_TITLE, locationDocument);
+            ReportDocument.createPDF(temperotyFilePath+"\\"+fileName, ReportDocument.DEFAULT_TITLE, location);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             baos = convertPDFToByteArrayOutputStream(temperotyFilePath+"\\"+fileName);
             OutputStream os = response.getOutputStream();

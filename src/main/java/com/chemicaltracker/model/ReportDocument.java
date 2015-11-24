@@ -1,6 +1,6 @@
 package com.chemicaltracker.model;
 
-import com.chemicaltracker.model.report.*;
+//import com.chemicaltracker.model.report.*;
 
 import java.util.ArrayList;
 
@@ -41,7 +41,7 @@ public class ReportDocument {
     private static Font TIMESTAMP = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD);
 
     //public static Document createPDF(final String file, final String title, final Storage location, final Map<Storage, java.util.List<Storage>> roomCabinetMap) {
-    public static Document createPDF(final String file, final String title, final DocumentComponent component) {
+    public static Document createPDF(final String file, final String title, final StorageComponent component) {
 
         Document document = null;
 
@@ -68,8 +68,8 @@ public class ReportDocument {
 
     }
 
-    private static void addBody(Document document, DocumentComponent component) throws DocumentException {
-        document.add(component.getFormattedParagraph(0));
+    private static void addBody(Document document, StorageComponent component) throws DocumentException {
+        document.add(component.getFormattedPDF(0));
     }
 
     private static void addMetaData(Document document) {
