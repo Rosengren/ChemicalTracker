@@ -22,6 +22,12 @@
   flex: none !important;
 }
 
+.storage-message {
+
+    font-weight: normal;
+    color: darkgrey;
+}
+
 /*--------------
     Masthead
 ---------------*/

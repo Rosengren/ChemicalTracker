@@ -18,7 +18,7 @@ $(".tooltip").popup({
 });
 
 $(".addModal").click(function() {
-    $('.ui.modal').modal('show');
+    $('.ui.modal.addStorageModal').modal('show');
 });
 
 /** Required for making AJAX POST requests **/
@@ -110,4 +110,8 @@ function progressHandlingFunction(e) {
 $('.message .close').on('click', function() {
     $(this).closest('.message')
            .transition('fade');
+});
+
+$('#editStorage').on('click', function() {
+    $('.ui.modal.editStorageModal').modal('show');
 });

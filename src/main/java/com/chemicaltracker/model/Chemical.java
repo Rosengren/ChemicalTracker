@@ -53,7 +53,13 @@ public class Chemical extends AbstractStorageComponent implements StorageCompone
 
     @Override
     public String getDescription() {
-        return "This will be a description taken from other properties";
+        String desc = "";
+        desc += "Flammability: " + fireDiamond.getFlammability()
+            + " Health: " + fireDiamond.getHealth()
+            + " Instability: " + fireDiamond.getInstability()
+            + " Notice: " + fireDiamond.getNotice();
+
+        return desc;
     }
 
     public void addProperty(String name, Map<String, String> property) {

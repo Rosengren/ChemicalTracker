@@ -1,7 +1,7 @@
 <%@include file="templates/header.jsp" %>
 
 <body id="ctrackr" class="index popup pusher storage" ontouchstart>
-    <div class="ui modal">
+    <div class="ui modal addStorageModal">
         <div class="header">
             ${addTooltip}
         </div>
@@ -25,7 +25,43 @@
                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
             </form>
 
+
+            <div class="actions">
+                <div class="ui black deny button">
+                    Cancel
+                </div>
+                <div class="ui positive button" id="submitCreateStorage">
+                    Submit
+                </div>
+            </div>
         </div>
+    </div>
+
+    <div class="ui modal editStorageModal">
+        <div class="header">
+            Edit the storage Item
+        </div>
+        <div class="content">
+
+        <form id="editStorageForm" class="ui form" method="POST" action="" enctype="multipart/form-data">
+            <div class="field">
+                <label>Photo</label>
+                <input type="file" name="Image">
+            </div>
+            <div class="field">
+                <label>Name</label>
+                <input type="text" name="Name">
+            </div>
+            <div class="field">
+                <label>Description</label>
+                <input type="text" name="Description">
+            </div>
+            <input type="hidden" name="Location">
+            <%--<input type="hidden" name="ParentID" value="${parentID}">--%>
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
+        </form>
+        </div>
+
         <div class="actions">
             <div class="ui black deny button">
                 Cancel
@@ -35,6 +71,7 @@
             </div>
         </div>
     </div>
+
     <div class="full height">
 
         <div class="masthead segment bg1">
@@ -51,10 +88,7 @@
         <div class="ui container">
             <div id="formSubmissionMsg" class="ui hidden positive message bottom-padding">
                 <i class="close icon"></i>
-                <div class="header">
-                    You are eligible for a reward
-                </div>
-                <p>Go to your <b>special offers</b> page to see now.</p>
+                <div class="header"></div>
             </div>
         </div>
         <div class="ui container bottom-padding">
@@ -72,6 +106,22 @@
         </div>
         <div class="ui container">
             <div class="ui four column stackable centered grid">
+                <c:if test="${empty storages}">
+                    <div class="ui center aligned grid container">
+
+                        <div class="column">
+                            <h2 class="ui header">
+                                No elements in this location
+                          </h2>
+                          <h2 class="storage-message">Click the 
+                            <div class="ui icon button addModal center" title="${addTooltip}">
+                                <i class="add icon"></i>
+                            </div>
+                            above to to add a new location
+                          </h2>
+                        </div>
+                    </div>
+                </c:if>
                 <c:forEach items="${storages}" var="storage">
                     <div class="column">
                         <div class="ui link centered card" >
@@ -93,7 +143,7 @@
                                 <a class="right floated created" href="/report/generate/${storage.name}">
                                   Generate Report
                               </a>
-                              <a class="" onclick="alert('todo: add ability to edit')">
+                              <a id="editStorage">
                                   <i class="edit icon"></i>Edit
                                 </a>
                             </div>

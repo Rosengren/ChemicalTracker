@@ -14,12 +14,14 @@ open (my $fh, '<:raw', $filename)
 my @sections = ("","","","","","","","","","","","","","","","");
 my $sectionNumber = 0;
 my $chemicalName = "";
+my $outputFileName = "";
 
 while (my $row = <$fh>) {
     chomp $row;
 
     if ($row =~ /Product Name: (.+) Catalog/) {
         $chemicalName = $1;
+        #$outputFileName = $1;
     }
 
     if ($row =~ /Section \d+: \w+/) {
@@ -174,6 +176,7 @@ $json .= "}";
 if (!$DEBUG) {
     $filename =~ /(.+)\.txt/;
     my $file = "$1.json";
+    #my $file = "$outputFileName.json";
 
     unless(open FILE, '>'.$file) {
         die "\nUnable to create $file\n";

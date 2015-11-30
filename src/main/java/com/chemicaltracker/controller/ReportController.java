@@ -96,7 +96,6 @@ public class ReportController {
         }
 
         try {
-            //ReportDocument.createPDF(temperotyFilePath+"\\"+fileName, ReportDocument.DEFAULT_TITLE, locationDocument);
             ReportDocument.createPDF(temperotyFilePath+"\\"+fileName, ReportDocument.DEFAULT_TITLE, location);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             baos = convertPDFToByteArrayOutputStream(temperotyFilePath+"\\"+fileName);
