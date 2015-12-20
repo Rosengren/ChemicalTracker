@@ -58,7 +58,8 @@ public class ReportController {
     private final StorageDataAccessObject roomDB = StorageFactory.getStorage("ROOMS");
     private final StorageDataAccessObject cabinetDB = StorageFactory.getStorage("CABINETS");
 
-    private final ChemicalDataAccessObject chemicalDB = new ChemicalDataAccessDynamoDB();
+    private final ChemicalDataAccessObject chemicalDB =
+        ChemicalDataAccessDynamoDB.getInstance();
 
     @RequestMapping(value = "/generate/{locationName}", method=GET)
     public void downloadPDF(@PathVariable("locationName") String locationName,

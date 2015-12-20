@@ -81,12 +81,12 @@ public class Storage extends AbstractStorageComponent implements StorageComponen
         this.storedItemNames.add(storedItemName);
     }
 
-    public void addElement(StorageComponent element) {
+    public void addElement(final StorageComponent element) {
         elements.add(element);
     }
 
     @Override
-    public Phrase getFormattedPDF(int level) {
+    public Phrase getFormattedPDF(final int level) {
         Paragraph content = new Paragraph();
 
         addHeader(content, level);

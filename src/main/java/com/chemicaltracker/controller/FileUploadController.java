@@ -44,7 +44,7 @@ public class FileUploadController {
 
     private static final String S3_BASE_URL = "https://s3-us-west-2.amazonaws.com/chemical-images/";
 
-    private static final ImageDataAccessObject imageDB = new ImageDataAccessS3();
+    private static final ImageDataAccessObject imageDB = ImageDataAccessS3.getInstance();
     private static final StorageDataAccessObject locationDB = StorageFactory.getStorage("LOCATIONS");
     private static final StorageDataAccessObject roomDB = StorageFactory.getStorage("ROOMS");
     private static final StorageDataAccessObject cabinetDB = StorageFactory.getStorage("CABINETS");

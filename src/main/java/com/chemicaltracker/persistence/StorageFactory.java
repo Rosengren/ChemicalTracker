@@ -4,6 +4,10 @@ import org.apache.log4j.Logger;
 
 public class StorageFactory {
 
+    private static volatile StorageDataAccessDynamoDB cabinetsDB;
+    private static volatile StorageDataAccessDynamoDB roomsDB;
+    private static volatile StorageDataAccessDynamoDB locationsDB;
+
     private static final Logger logger = Logger.getLogger(StorageFactory.class);
 
     public static StorageDataAccessObject getStorage(String storageName) {
@@ -15,15 +19,42 @@ public class StorageFactory {
 
         if (storageName.equalsIgnoreCase("CABINETS")) {
 
-            return new StorageDataAccessDynamoDB("Cabinets", "Username", "Cabinet ID", "Chemical Names");
+            if (cabinetsDB == null) {
+                synchronized (StorageDataAccessDynamoDB.class) {
+                    if (cabinetsDB == null) {
+                        cabinetsDB = new StorageDataAccessDynamoDB(
+                                "Cabinets", "Username", "Cabinet ID", "Chemical Names");
+                    }
+                }
+            }
+
+            return cabinetsDB;
 
         } else if (storageName.equalsIgnoreCase("ROOMS")) {
 
-            return new StorageDataAccessDynamoDB("Rooms", "Username", "Room ID", "Cabinet Names");
+            if (roomsDB == null) {
+                synchronized (StorageDataAccessDynamoDB.class) {
+                    if (roomsDB == null) {
+                        roomsDB = new StorageDataAccessDynamoDB(
+                                "Rooms", "Username", "Room ID", "Cabinet Names");
+                    }
+                }
+            }
+
+            return roomsDB;
 
         } else if (storageName.equalsIgnoreCase("LOCATIONS")) {
 
-            return new StorageDataAccessDynamoDB("Locations", "Username", "Location ID", "Room Names");
+            if (locationsDB == null) {
+                synchronized (StorageDataAccessDynamoDB.class) {
+                    if (locationsDB == null) {
+                        locationsDB = new StorageDataAccessDynamoDB(
+                                "Locations", "Username", "Location ID", "Room Names");
+                    }
+                }
+            }
+
+            return locationsDB;
         }
 
         return null;

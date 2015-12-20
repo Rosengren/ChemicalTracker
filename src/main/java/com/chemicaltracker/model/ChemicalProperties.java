@@ -23,6 +23,10 @@ public class ChemicalProperties {
         return this.properties;
     }
 
+    public Map<String, String> getProperty(String property) {
+        return this.properties.get(property);
+    }
+
     public void addProperty(final String name, Map<String, String> property) {
         properties.put(name, property);
     }

@@ -5,7 +5,9 @@ import com.itextpdf.text.List;
 import com.itextpdf.text.ListItem;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Phrase;
+import com.itextpdf.text.Chunk;
 import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.pdf.draw.LineSeparator;
 
 import static com.itextpdf.text.Font.FontFamily.HELVETICA;
 import static com.itextpdf.text.Font.BOLD;
@@ -28,15 +30,15 @@ public abstract class AbstractStorageComponent {
 
     abstract protected String getDescription();
 
-    protected void createEmptyLine(List list, int number) {
+    protected void createEmptyLine(final List list, final int number) {
         for (int i = 0; i < number; i++) {
             list.add(new ListItem("\n"));
         }
     }
 
-    protected void addHeader(Paragraph content, int level) {
+    protected void addHeader(final Paragraph content, final int level) {
 
-        List header = new List(NOT_NUMBERED, NOT_LETTERED, level * INDENT_WIDTH);
+        final List header = new List(NOT_NUMBERED, NOT_LETTERED, level * INDENT_WIDTH);
         header.setListSymbol(""); // removes bullets
 
         int fontSize = Math.max(DEFAULT_FONT_SIZE - level * SMALLER_FONT_SIZE, SMALLEST_FONT_SIZE);

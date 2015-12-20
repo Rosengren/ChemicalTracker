@@ -40,7 +40,8 @@ public class StorageController {
     private StorageDataAccessObject roomDB = StorageFactory.getStorage("ROOMS");
     private StorageDataAccessObject cabinetDB = StorageFactory.getStorage("CABINETS");
 
-    private ChemicalDataAccessObject chemicalDB = new ChemicalDataAccessDynamoDB();
+    private ChemicalDataAccessObject chemicalDB =
+        ChemicalDataAccessDynamoDB.getInstance();
 
     @RequestMapping("")
     public String home(Model model, Principal principal) {

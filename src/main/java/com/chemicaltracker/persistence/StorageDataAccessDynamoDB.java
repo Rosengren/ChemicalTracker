@@ -47,7 +47,7 @@ public class StorageDataAccessDynamoDB implements StorageDataAccessObject {
     private String tableRangeKey;
     private String storedItemTitle;
 
-    private AmazonDynamoDBClient dynamoDB;
+    private AmazonDynamoDBClient amazonDynamoDBClient;
 
     public StorageDataAccessDynamoDB(final String tableName, final String tableHashKey,
             final String tableRangeKey, final String storedItemTitle) {
@@ -75,13 +75,13 @@ public class StorageDataAccessDynamoDB implements StorageDataAccessObject {
         }
 
         try {
-            dynamoDB = new AmazonDynamoDBClient(credentials);
+            amazonDynamoDBClient = new AmazonDynamoDBClient(credentials);
         } catch (Exception e) {
             throw new AmazonClientException("The provided credentials for the storage DB were not valid", e);
         }
 
         final Region usWest2 = Region.getRegion(Regions.US_WEST_2);
-        dynamoDB.setRegion(usWest2);
+        amazonDynamoDBClient.setRegion(usWest2);
     }
 
     @Override
@@ -97,7 +97,7 @@ public class StorageDataAccessDynamoDB implements StorageDataAccessObject {
             .withExpressionAttributeValues(attributes);
 
         try {
-            final QueryResult result = dynamoDB.query(request);
+            final QueryResult result = amazonDynamoDBClient.query(request);
             for (Map<String, AttributeValue> item : result.getItems()) {
                 storages.add(convertItemToStorage(item));
             }
@@ -121,7 +121,7 @@ public class StorageDataAccessDynamoDB implements StorageDataAccessObject {
         Storage storage = new Storage();
 
         try {
-            final GetItemResult result = dynamoDB.getItem(request);
+            final GetItemResult result = amazonDynamoDBClient.getItem(request);
             storage = convertItemToStorage(result.getItem());
         } catch (Exception e) {
             logger.error("Error occurred while getting storage: " + storageID + " for user: " + username, e);
@@ -146,7 +146,7 @@ public class StorageDataAccessDynamoDB implements StorageDataAccessObject {
             .withKey(key);
 
         try {
-            dynamoDB.deleteItem(deleteItemRequest);
+            amazonDynamoDBClient.deleteItem(deleteItemRequest);
         } catch (Exception e) {
             logger.error("Error occurred while deleting item: " + storageID + " for user: " + username, e);
         }
@@ -161,7 +161,7 @@ public class StorageDataAccessDynamoDB implements StorageDataAccessObject {
             .withItem(item);
 
         try {
-            dynamoDB.putItem(putItemRequest);
+            amazonDynamoDBClient.putItem(putItemRequest);
         } catch (Exception e) {
             logger.error("Error occurred while adding storage: " + storage.getName());
         }

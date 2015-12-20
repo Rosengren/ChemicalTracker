@@ -41,7 +41,7 @@ public class UserDataAccessDynamoDB implements UserDetailsService {
     private static final String USERS_TABLE_NAME = "Users";
     private static final String USERS_TABLE_INDEX = "Username";
 
-    private AmazonDynamoDBClient dynamoDB;
+    private AmazonDynamoDBClient amazonDynamoDBClient;
 
     public UserDataAccessDynamoDB() {
         try {
@@ -62,13 +62,13 @@ public class UserDataAccessDynamoDB implements UserDetailsService {
         }
 
         try {
-            dynamoDB = new AmazonDynamoDBClient(credentials);
+            amazonDynamoDBClient = new AmazonDynamoDBClient(credentials);
         } catch (Exception e) {
             throw new AmazonClientException("Credentials were not valid when trying to connect to the user DB", e);
         }
 
         final Region usWest2 = Region.getRegion(Regions.US_WEST_2);
-        dynamoDB.setRegion(usWest2);
+        amazonDynamoDBClient.setRegion(usWest2);
     }
 
     //@Override
@@ -85,7 +85,7 @@ public class UserDataAccessDynamoDB implements UserDetailsService {
         }
 
         final PutItemRequest putItemRequest = new PutItemRequest(USERS_TABLE_NAME, item);
-        final PutItemResult putItemResult = dynamoDB.putItem(putItemRequest);
+        final PutItemResult putItemResult = amazonDynamoDBClient.putItem(putItemRequest);
     }
 
     @Override
@@ -95,7 +95,7 @@ public class UserDataAccessDynamoDB implements UserDetailsService {
         item.put(USERS_TABLE_INDEX, new AttributeValue().withS(username));
 
         final GetItemRequest request = new GetItemRequest(USERS_TABLE_NAME, item);
-        final GetItemResult result = dynamoDB.getItem(request);
+        final GetItemResult result = amazonDynamoDBClient.getItem(request);
 
         if (result.getItem() == null || result.getItem().isEmpty()) { // TODO: replace item with AWS Item object
             throw new UsernameNotFoundException("Could not find username: " + username);

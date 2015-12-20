@@ -20,19 +20,33 @@ import com.amazonaws.AmazonServiceException;
 
 public class ImageDataAccessS3 implements ImageDataAccessObject {
 
+    private static volatile ImageDataAccessS3 instance;
+
     private static final Logger logger = Logger.getLogger(ImageDataAccessS3.class);
 
     private static final String IMAGE_BUCKET_NAME = "chemical-images";
 
-    private AmazonS3Client s3client;
+    private AmazonS3Client amazonS3Client;
 
-    public ImageDataAccessS3() {
+    private ImageDataAccessS3() {
 
         try {
             initializeDBConnection();
         } catch (Exception e) {
             logger.error("Error occured while initializing DB Connection", e);
         }
+    }
+
+    public static ImageDataAccessObject getInstance() {
+        if (instance == null) {
+            synchronized (ImageDataAccessS3.class) {
+                if (instance == null) {
+                    instance = new ImageDataAccessS3();
+                }
+            }
+        }
+
+        return instance;
     }
 
     public void initializeDBConnection() throws AmazonClientException {
@@ -46,7 +60,7 @@ public class ImageDataAccessS3 implements ImageDataAccessObject {
         }
 
         try {
-            s3client = new AmazonS3Client(credentials);
+            amazonS3Client = new AmazonS3Client(credentials);
         } catch (Exception e) {
             throw new AmazonClientException("The provided credentials were not valid", e);
         }
@@ -64,7 +78,7 @@ public class ImageDataAccessS3 implements ImageDataAccessObject {
         }
 
         try {
-            s3client.putObject(new PutObjectRequest(IMAGE_BUCKET_NAME, filename, imageFile)
+            amazonS3Client.putObject(new PutObjectRequest(IMAGE_BUCKET_NAME, filename, imageFile)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
         } catch (AmazonServiceException ase) {
             logger.error("The image was rejected from S3", ase);

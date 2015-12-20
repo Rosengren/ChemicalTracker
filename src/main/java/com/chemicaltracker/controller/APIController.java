@@ -36,11 +36,14 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RequestMapping("/api")
 public class APIController {
 
-    private StorageDataAccessObject locationDB = StorageFactory.getStorage("LOCATIONS");
-    private StorageDataAccessObject roomDB = StorageFactory.getStorage("ROOMS");
-    private StorageDataAccessObject cabinetDB = StorageFactory.getStorage("CABINETS");
+    private static final StorageDataAccessObject locationDB =
+        StorageFactory.getStorage("LOCATIONS");
+    private static final StorageDataAccessObject roomDB =
+        StorageFactory.getStorage("ROOMS");
+    private static final StorageDataAccessObject cabinetDB =
+        StorageFactory.getStorage("CABINETS");
 
-    private ChemicalDataAccessObject chemicalDB = new ChemicalDataAccessDynamoDB();
+    private ChemicalDataAccessObject chemicalDB = ChemicalDataAccessDynamoDB.getInstance();
 
     @RequestMapping(value="/add/location", method=POST)
     public @ResponseBody String addLocation(@RequestBody final Storage location, BindingResult result,

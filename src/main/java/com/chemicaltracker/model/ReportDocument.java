@@ -68,18 +68,18 @@ public class ReportDocument {
 
     }
 
-    private static void addBody(Document document, StorageComponent component) throws DocumentException {
+    private static void addBody(final Document document, final StorageComponent component) throws DocumentException {
         document.add(component.getFormattedPDF(0));
     }
 
-    private static void addMetaData(Document document) {
+    private static void addMetaData(final Document document) {
         document.addTitle("Chemical Report");
         document.addSubject("Chemical Report");
         document.addAuthor("Chemical Tracker");
         document.addCreator("Chemical Tracker");
     }
 
-    private static void addHeader(Document document, String title)
+    private static void addHeader(final Document document, final String title)
             throws DocumentException {
 
         Paragraph header = new Paragraph();

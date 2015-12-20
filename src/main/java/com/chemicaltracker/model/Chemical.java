@@ -44,7 +44,7 @@ public class Chemical extends AbstractStorageComponent implements StorageCompone
     }
 
     @Override
-    public Phrase getFormattedPDF(int level) {
+    public Phrase getFormattedPDF(final int level) {
         Paragraph content = new Paragraph();
 
         addHeader(content, level);
@@ -55,10 +55,13 @@ public class Chemical extends AbstractStorageComponent implements StorageCompone
     public String getDescription() {
         String desc = "";
         desc += "Flammability: " + fireDiamond.getFlammability()
-            + " Health: " + fireDiamond.getHealth()
-            + " Instability: " + fireDiamond.getInstability()
-            + " Notice: " + fireDiamond.getNotice();
+            + ", Health: " + fireDiamond.getHealth()
+            + ", Instability: " + fireDiamond.getInstability()
+            + ", Notice: " + fireDiamond.getNotice();
 
+        Map<String, String> handlingAndStorage = properties.getProperty("Handling and Storage");
+
+        desc += "\n\nStorage:\n" + handlingAndStorage.get("Storage");
         return desc;
     }
 

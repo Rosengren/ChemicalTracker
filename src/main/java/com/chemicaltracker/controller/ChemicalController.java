@@ -29,13 +29,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RequestMapping("/chemicals")
 public class ChemicalController {
 
-    private ChemicalDataAccessObject chemicalDB = new ChemicalDataAccessDynamoDB();
-
-    @RequestMapping(value = "/new", method=GET)
-    public String initChemicalForm(Model model) {
-        model.addAttribute("chemical", new Chemical());
-        return "chemicals/addChemical";
-    }
+    private static final ChemicalDataAccessObject chemicalDB =
+        ChemicalDataAccessDynamoDB.getInstance();
 
     @RequestMapping(value = "/new", method=POST)
     public String processChemicalForm(@ModelAttribute Chemical chemical, BindingResult result, Model model) {

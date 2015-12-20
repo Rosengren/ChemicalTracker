@@ -33,14 +33,16 @@ import com.amazonaws.AmazonServiceException;
 
 public class ChemicalDataAccessDynamoDB implements ChemicalDataAccessObject {
 
+    private static volatile ChemicalDataAccessDynamoDB instance;
+
     private static final Logger logger = Logger.getLogger(ChemicalDataAccessDynamoDB.class);
 
     private static final String CHEMICALS_TABLE_NAME = "Chemicals";
     private static final String CHEMICALS_TABLE_INDEX = "Name";
 
-    private AmazonDynamoDBClient dynamoDB;
+    private AmazonDynamoDBClient amazonDynamoDBClient;
 
-    public ChemicalDataAccessDynamoDB() {
+    private ChemicalDataAccessDynamoDB() {
 
         try {
             initializeDBConnection();
@@ -49,6 +51,18 @@ public class ChemicalDataAccessDynamoDB implements ChemicalDataAccessObject {
         }
     }
 
+    public static ChemicalDataAccessObject getInstance() {
+
+        if (instance == null) {
+            synchronized (ChemicalDataAccessDynamoDB.class) {
+                if (instance == null) {
+                    instance = new ChemicalDataAccessDynamoDB();
+                }
+            }
+        }
+
+        return instance;
+    }
     public void initializeDBConnection() throws AmazonClientException {
 
         AWSCredentials credentials = null;
@@ -60,13 +74,13 @@ public class ChemicalDataAccessDynamoDB implements ChemicalDataAccessObject {
         }
 
         try {
-            dynamoDB = new AmazonDynamoDBClient(credentials);
+            amazonDynamoDBClient = new AmazonDynamoDBClient(credentials);
         } catch (Exception e) {
             throw new AmazonClientException("The provided credentials were not valid", e);
         }
 
         final Region usWest2 = Region.getRegion(Regions.US_WEST_2);
-        dynamoDB.setRegion(usWest2);
+        amazonDynamoDBClient.setRegion(usWest2);
     }
 
     @Override
@@ -77,7 +91,7 @@ public class ChemicalDataAccessDynamoDB implements ChemicalDataAccessObject {
             .withTableName(CHEMICALS_TABLE_NAME);
 
         try {
-            final ScanResult result = dynamoDB.scan(scanRequest);
+            final ScanResult result = amazonDynamoDBClient.scan(scanRequest);
 
             for (Map<String, AttributeValue> item : result.getItems()) {
                 chemicals.add(convertItemToChemical(item));
@@ -101,7 +115,7 @@ public class ChemicalDataAccessDynamoDB implements ChemicalDataAccessObject {
             .withKey(key);
 
         try {
-            final GetItemResult result = dynamoDB.getItem(request);
+            final GetItemResult result = amazonDynamoDBClient.getItem(request);
             return convertItemToChemical(result.getItem());
 
         } catch (Exception e) {
@@ -128,7 +142,7 @@ public class ChemicalDataAccessDynamoDB implements ChemicalDataAccessObject {
             .withKey(key);
 
         try {
-            dynamoDB.deleteItem(deleteItemRequest);
+            amazonDynamoDBClient.deleteItem(deleteItemRequest);
         } catch (AmazonServiceException e) {
             logger.error("Error occured while trying to delete chemical: " +
                     chemical.getName() + " from table: " + CHEMICALS_TABLE_NAME);
@@ -144,7 +158,7 @@ public class ChemicalDataAccessDynamoDB implements ChemicalDataAccessObject {
             .withItem(item);
 
         try {
-            dynamoDB.putItem(putItemRequest);
+            amazonDynamoDBClient.putItem(putItemRequest);
         } catch (AmazonServiceException e) {
             logger.error("Error occurred while trying to add chemical: " +
                     chemical.getName() + " to table: " + CHEMICALS_TABLE_NAME, e);
@@ -160,7 +174,7 @@ public class ChemicalDataAccessDynamoDB implements ChemicalDataAccessObject {
 
 
         try {
-            final ScanResult result = dynamoDB.scan(scanRequest);
+            final ScanResult result = amazonDynamoDBClient.scan(scanRequest);
 
             for (Map<String, AttributeValue> item : result.getItems()) {
                 chemicalNames.add(item.get(Chemical.NAME).getS());
