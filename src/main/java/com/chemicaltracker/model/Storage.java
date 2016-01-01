@@ -5,7 +5,6 @@ import com.itextpdf.text.ListItem;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 
-//import java.util.List;
 import java.util.ArrayList;
 
 import java.util.Set;
