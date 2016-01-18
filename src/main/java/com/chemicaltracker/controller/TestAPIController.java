@@ -48,37 +48,29 @@ public class TestAPIController {
         //System.out.println(request.toJSONString());
 
         if (!requestType.equals("ADD") && !requestType.equals("REMOVE")) {
-            response = new UpdateResponse(false, UpdateStatus.INVALID_REQUEST_TYPE,
-                    "Invalid request");
+            response = new UpdateResponse(UpdateStatus.INVALID_REQUEST_TYPE);
         } else if (request.getUsername().equals("invalid") || request.getUsername().equals("")) {
-            response = new UpdateResponse(false, UpdateStatus.INVALID_USERNAME,
-                    "The username does not exist");
+            response = new UpdateResponse(UpdateStatus.INVALID_USERNAME);
         } else if (request.getLocation().equals("invalid") || request.getLocation().equals("") ||
                     request.getRoom().equals("invalid") || request.getRoom().equals("") ||
                     request.getCabinet().equals("invalid") || request.getCabinet().equals("")) {
-            response = new UpdateResponse(false, UpdateStatus.MISSING_STORAGE_FIELD,
-                    "One of the storage fields is missing");
+            response = new UpdateResponse(UpdateStatus.MISSING_STORAGE_FIELD);
         } else {
             if (request.getChemical().equals("valid")) {
                 if (requestType.equals("ADD")) {
-                    response = new UpdateResponse(true, UpdateStatus.ADDED_CHEMICAL,
-                            "Successfully added chemical: " + request.getChemical());
+                    response = new UpdateResponse(UpdateStatus.ADDED_CHEMICAL);
                 } else {
-                    response = new UpdateResponse(true, UpdateStatus.REMOVED_CHEMICAL,
-                            "Successfully removed chemical: " + request.getChemical());
+                    response = new UpdateResponse(UpdateStatus.REMOVED_CHEMICAL);
                 }
             } else {
                 final Chemical chemical = chemicalDB.getChemical(request.getChemical());
                 if (chemical.getName().equals("")) {
-                    response = new UpdateResponse(false, UpdateStatus.INVALID_CHEMICAL,
-                            "The chemical: " + request.getChemical() + " does not exist in the database");
+                    response = new UpdateResponse(UpdateStatus.INVALID_CHEMICAL);
                 } else {
                     if (requestType.equals("ADD")) {
-                        response = new UpdateResponse(true, UpdateStatus.ADDED_CHEMICAL,
-                            "Successfully added chemical: " + request.getChemical());
+                        response = new UpdateResponse(UpdateStatus.ADDED_CHEMICAL);
                     } else {
-                        response = new UpdateResponse(true, UpdateStatus.REMOVED_CHEMICAL,
-                            "Successfully removed chemical: " + request.getChemical());
+                        response = new UpdateResponse(UpdateStatus.REMOVED_CHEMICAL);
                     }
                 }
             }

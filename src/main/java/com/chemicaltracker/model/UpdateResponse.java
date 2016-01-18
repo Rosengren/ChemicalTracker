@@ -9,14 +9,14 @@ public class UpdateResponse {
     private UpdateStatus status;
     private String message;
 
-    public UpdateResponse(Boolean success, UpdateStatus status, String message) {
-        this.success = success;
+    public UpdateResponse(UpdateStatus status) {
         this.status = status;
-        this.message = message;
+        this.success = status.getSuccess();
+        this.message = status.getMessage();
     }
 
     public UpdateResponse() {
-        this(false, UpdateStatus.UNKNOWN_ERROR, "");
+        this(UpdateStatus.UNKNOWN_ERROR);
     }
 
     public String toJSONString() {
