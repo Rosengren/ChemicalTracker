@@ -1,5 +1,6 @@
 package com.chemicaltracker.controller;
 
+import com.chemicaltracker.model.Chemical;
 import com.chemicaltracker.model.UpdateRequest;
 import com.chemicaltracker.model.ChemicalQueryRequest;
 
@@ -33,17 +34,20 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RequestMapping("/api/test")
 public class TestAPIController {
 
+    private ChemicalDataAccessObject chemicalDB = ChemicalDataAccessDynamoDB.getInstance();
+
     @RequestMapping(value="/update", method=POST)
     public @ResponseBody String testUpdate(@RequestBody final UpdateRequest request, BindingResult result,
             Model model, Principal principal) {
 
-        return request.toString();
+        return request.toJSONString();
     }
 
     @RequestMapping(value="/query", method=POST)
     public @ResponseBody String testQuery(@RequestBody final ChemicalQueryRequest request, BindingResult result,
             Model model, Principal principal) {
 
-        return request.toString();
+        final Chemical chemical = chemicalDB.getChemical(request.getChemical());
+        return chemical.toJSONString();
     }
 }

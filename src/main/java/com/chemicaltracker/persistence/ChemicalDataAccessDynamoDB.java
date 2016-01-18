@@ -116,7 +116,12 @@ public class ChemicalDataAccessDynamoDB implements ChemicalDataAccessObject {
 
         try {
             final GetItemResult result = amazonDynamoDBClient.getItem(request);
-            return convertItemToChemical(result.getItem());
+
+            if (result.getItem() == null) {
+                return new Chemical();
+            } else {
+                return convertItemToChemical(result.getItem());
+            }
 
         } catch (Exception e) {
             logger.error("Error occurred while getting chemical: " + name + " from table: " + CHEMICALS_TABLE_NAME);
@@ -237,6 +242,7 @@ public class ChemicalDataAccessDynamoDB implements ChemicalDataAccessObject {
         }
 
         final Chemical chemical = new Chemical();
+        chemical.setMatch(true);
         chemical.setName(item.get(Chemical.NAME).getS());
 
         try {

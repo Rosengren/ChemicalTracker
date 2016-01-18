@@ -32,13 +32,13 @@ public class UpdateRequest {
         this.chemical = chemical;
     }
 
-    public String toString() {
-        return "{ 'requestType' : " + this.requestType +
-                ", 'username' : " + this.username +
-                ", 'location' : " + this.location +
-                ", 'room' : " + this.room +
-                ", 'cabinet' : " + this.cabinet +
-                ", 'chemical' : " + this.chemical +
+    public String toJSONString() {
+        return "{ \"requestType\" : \"" + this.requestType + "\"" +
+                ", \"username\" : \"" + this.username + "\"" +
+                ", \"location\" : \"" + this.location + "\"" +
+                ", \"room\" : \"" + this.room + "\"" +
+                ", \"cabinet\" : \"" + this.cabinet + "\"" +
+                ", \"chemical\" : \"" + this.chemical + "\"" +
                 "}";
     }
 

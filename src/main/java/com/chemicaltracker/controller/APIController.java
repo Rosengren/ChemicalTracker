@@ -45,6 +45,7 @@ public class APIController {
 
     private ChemicalDataAccessObject chemicalDB = ChemicalDataAccessDynamoDB.getInstance();
 
+    // TODO: Below may need to be deprecated
     @RequestMapping(value="/add/location", method=POST)
     public @ResponseBody String addLocation(@RequestBody final Storage location, BindingResult result,
             Model model, Principal principal) {

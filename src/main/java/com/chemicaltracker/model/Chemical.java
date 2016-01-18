@@ -18,29 +18,39 @@ public class Chemical extends AbstractStorageComponent implements StorageCompone
     private String imageURL;
     private FireDiamond fireDiamond;
     private ChemicalProperties properties;
+    private Boolean match;
 
     public Chemical() {
         this.properties = new ChemicalProperties();
         this.fireDiamond = new FireDiamond();
         this.name = "";
+        this.match = false;
         this.imageURL = "placeholder.jpg";
     }
 
     public Chemical(String name) {
         this();
         this.name = name;
-        properties = new ChemicalProperties();
+        this.match = true;
     }
 
     public Chemical(String name, FireDiamond fireDiamond) {
         this(name);
+        this.match = true;
         this.fireDiamond = fireDiamond;
     }
 
     public Chemical(String name, FireDiamond fireDiamond, Map<String, Map<String, String>> properties) {
         this.name = name;
+        this.match = true;
         this.fireDiamond = fireDiamond;
         this.properties.setProperties(properties);
+    }
+
+    public String toJSONString() {
+        return "{ \"match\" :  \"" + this.match.toString() + "\"" +
+                ", \"chemical\" : \"" + this.name + "\"" +
+                ", \"properties\" : " + this.fireDiamond.toJSONString() + "}";
     }
 
     @Override
@@ -78,4 +88,6 @@ public class Chemical extends AbstractStorageComponent implements StorageCompone
     public String getName() { return name; }
     public void setFireDiamond(FireDiamond fireDiamond) { this.fireDiamond = fireDiamond; }
     public FireDiamond getFireDiamond() { return fireDiamond; }
+    public void setMatch(final Boolean match) { this.match = match; }
+    public Boolean getMatch() { return match; }
 }
