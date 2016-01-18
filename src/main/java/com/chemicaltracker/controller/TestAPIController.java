@@ -1,7 +1,9 @@
 package com.chemicaltracker.controller;
 
 import com.chemicaltracker.model.Chemical;
+import com.chemicaltracker.model.UpdateStatus;
 import com.chemicaltracker.model.UpdateRequest;
+import com.chemicaltracker.model.UpdateResponse;
 import com.chemicaltracker.model.ChemicalQueryRequest;
 
 import com.chemicaltracker.persistence.ChemicalDataAccessObject;
@@ -40,7 +42,49 @@ public class TestAPIController {
     public @ResponseBody String testUpdate(@RequestBody final UpdateRequest request, BindingResult result,
             Model model, Principal principal) {
 
-        return request.toJSONString();
+        final String requestType = request.getRequestType();
+        UpdateResponse response = new UpdateResponse();
+
+        //System.out.println(request.toJSONString());
+
+        if (!requestType.equals("ADD") && !requestType.equals("REMOVE")) {
+            response = new UpdateResponse(false, UpdateStatus.INVALID_REQUEST_TYPE,
+                    "Invalid request");
+        } else if (request.getUsername().equals("invalid") || request.getUsername().equals("")) {
+            response = new UpdateResponse(false, UpdateStatus.INVALID_USERNAME,
+                    "The username does not exist");
+        } else if (request.getLocation().equals("invalid") || request.getLocation().equals("") ||
+                    request.getRoom().equals("invalid") || request.getRoom().equals("") ||
+                    request.getCabinet().equals("invalid") || request.getCabinet().equals("")) {
+            response = new UpdateResponse(false, UpdateStatus.MISSING_STORAGE_FIELD,
+                    "One of the storage fields is missing");
+        } else {
+            if (request.getChemical().equals("valid")) {
+                if (requestType.equals("ADD")) {
+                    response = new UpdateResponse(true, UpdateStatus.ADDED_CHEMICAL,
+                            "Successfully added chemical: " + request.getChemical());
+                } else {
+                    response = new UpdateResponse(true, UpdateStatus.REMOVED_CHEMICAL,
+                            "Successfully removed chemical: " + request.getChemical());
+                }
+            } else {
+                final Chemical chemical = chemicalDB.getChemical(request.getChemical());
+                if (chemical.getName().equals("")) {
+                    response = new UpdateResponse(false, UpdateStatus.INVALID_CHEMICAL,
+                            "The chemical: " + request.getChemical() + " does not exist in the database");
+                } else {
+                    if (requestType.equals("ADD")) {
+                        response = new UpdateResponse(true, UpdateStatus.ADDED_CHEMICAL,
+                            "Successfully added chemical: " + request.getChemical());
+                    } else {
+                        response = new UpdateResponse(true, UpdateStatus.REMOVED_CHEMICAL,
+                            "Successfully removed chemical: " + request.getChemical());
+                    }
+                }
+            }
+        }
+
+        return response.toJSONString();
     }
 
     @RequestMapping(value="/query", method=POST)
