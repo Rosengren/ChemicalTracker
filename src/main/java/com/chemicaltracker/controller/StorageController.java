@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import com.chemicaltracker.persistence.StorageFactory;
 import com.chemicaltracker.persistence.StorageDAO;
 import com.chemicaltracker.persistence.ChemicalDAO;
-import com.chemicaltracker.persistence.ChemicalDAO;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -28,7 +27,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import org.springframework.web.bind.annotation.PathVariable;
 
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
