@@ -18,17 +18,17 @@ import org.apache.log4j.Logger;
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 
-public class ImageDataAccessS3 implements ImageDataAccessObject {
+public class ImageDAO {
 
-    private static volatile ImageDataAccessS3 instance;
+    private static volatile ImageDAO instance;
 
-    private static final Logger logger = Logger.getLogger(ImageDataAccessS3.class);
+    private static final Logger logger = Logger.getLogger(ImageDAO.class);
 
     private static final String IMAGE_BUCKET_NAME = "chemical-images";
 
     private AmazonS3Client amazonS3Client;
 
-    private ImageDataAccessS3() {
+    private ImageDAO() {
 
         try {
             initializeDBConnection();
@@ -37,11 +37,11 @@ public class ImageDataAccessS3 implements ImageDataAccessObject {
         }
     }
 
-    public static ImageDataAccessObject getInstance() {
+    public static ImageDAO getInstance() {
         if (instance == null) {
-            synchronized (ImageDataAccessS3.class) {
+            synchronized (ImageDAO.class) {
                 if (instance == null) {
-                    instance = new ImageDataAccessS3();
+                    instance = new ImageDAO();
                 }
             }
         }
@@ -66,7 +66,6 @@ public class ImageDataAccessS3 implements ImageDataAccessObject {
         }
     }
 
-    @Override
     public void uploadImage(final String filePath, final String filename) {
 
         File imageFile = null;

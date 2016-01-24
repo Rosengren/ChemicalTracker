@@ -5,7 +5,6 @@ import java.security.Principal;
 
 import com.chemicaltracker.model.Storage;
 import com.chemicaltracker.model.Chemical;
-import com.chemicaltracker.persistence.StorageDataAccessDynamoDB;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -15,9 +14,9 @@ import java.util.Arrays;
 import java.util.ArrayList;
 
 import com.chemicaltracker.persistence.StorageFactory;
-import com.chemicaltracker.persistence.StorageDataAccessObject;
-import com.chemicaltracker.persistence.ChemicalDataAccessObject;
-import com.chemicaltracker.persistence.ChemicalDataAccessDynamoDB;
+import com.chemicaltracker.persistence.StorageDAO;
+import com.chemicaltracker.persistence.ChemicalDAO;
+import com.chemicaltracker.persistence.ChemicalDAO;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -36,12 +35,12 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RequestMapping(value = {"/home", "/Home"})
 public class StorageController {
 
-    private StorageDataAccessObject locationDB = StorageFactory.getStorage("LOCATIONS");
-    private StorageDataAccessObject roomDB = StorageFactory.getStorage("ROOMS");
-    private StorageDataAccessObject cabinetDB = StorageFactory.getStorage("CABINETS");
+    private StorageDAO locationDB = StorageFactory.getStorage("LOCATIONS");
+    private StorageDAO roomDB = StorageFactory.getStorage("ROOMS");
+    private StorageDAO cabinetDB = StorageFactory.getStorage("CABINETS");
 
-    private ChemicalDataAccessObject chemicalDB =
-        ChemicalDataAccessDynamoDB.getInstance();
+    private ChemicalDAO chemicalDB =
+        ChemicalDAO.getInstance();
 
     @RequestMapping("")
     public String home(Model model, Principal principal) {

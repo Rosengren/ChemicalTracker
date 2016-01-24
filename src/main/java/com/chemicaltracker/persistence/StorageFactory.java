@@ -4,13 +4,13 @@ import org.apache.log4j.Logger;
 
 public class StorageFactory {
 
-    private static volatile StorageDataAccessDynamoDB cabinetsDB;
-    private static volatile StorageDataAccessDynamoDB roomsDB;
-    private static volatile StorageDataAccessDynamoDB locationsDB;
+    private static volatile StorageDAO cabinetsDB;
+    private static volatile StorageDAO roomsDB;
+    private static volatile StorageDAO locationsDB;
 
     private static final Logger logger = Logger.getLogger(StorageFactory.class);
 
-    public static StorageDataAccessObject getStorage(String storageName) {
+    public static StorageDAO getStorage(String storageName) {
 
         if (storageName == null || storageName == "") {
             logger.error("Error occurred while creating storage. storageName was null or empty");
@@ -20,9 +20,9 @@ public class StorageFactory {
         if (storageName.equalsIgnoreCase("CABINETS")) {
 
             if (cabinetsDB == null) {
-                synchronized (StorageDataAccessDynamoDB.class) {
+                synchronized (StorageDAO.class) {
                     if (cabinetsDB == null) {
-                        cabinetsDB = new StorageDataAccessDynamoDB(
+                        cabinetsDB = new StorageDAO(
                                 "Cabinets", "Username", "Cabinet ID", "Chemical Names");
                     }
                 }
@@ -33,9 +33,9 @@ public class StorageFactory {
         } else if (storageName.equalsIgnoreCase("ROOMS")) {
 
             if (roomsDB == null) {
-                synchronized (StorageDataAccessDynamoDB.class) {
+                synchronized (StorageDAO.class) {
                     if (roomsDB == null) {
-                        roomsDB = new StorageDataAccessDynamoDB(
+                        roomsDB = new StorageDAO(
                                 "Rooms", "Username", "Room ID", "Cabinet Names");
                     }
                 }
@@ -46,9 +46,9 @@ public class StorageFactory {
         } else if (storageName.equalsIgnoreCase("LOCATIONS")) {
 
             if (locationsDB == null) {
-                synchronized (StorageDataAccessDynamoDB.class) {
+                synchronized (StorageDAO.class) {
                     if (locationsDB == null) {
-                        locationsDB = new StorageDataAccessDynamoDB(
+                        locationsDB = new StorageDAO(
                                 "Locations", "Username", "Location ID", "Room Names");
                     }
                 }

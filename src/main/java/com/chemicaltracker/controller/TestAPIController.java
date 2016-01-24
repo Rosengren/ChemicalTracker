@@ -6,11 +6,10 @@ import com.chemicaltracker.model.UpdateRequest;
 import com.chemicaltracker.model.UpdateResponse;
 import com.chemicaltracker.model.ChemicalQueryRequest;
 
-import com.chemicaltracker.persistence.ChemicalDataAccessObject;
-import com.chemicaltracker.persistence.ChemicalDataAccessDynamoDB;
+import com.chemicaltracker.persistence.ChemicalDAO;
 
 import com.chemicaltracker.persistence.StorageFactory;
-import com.chemicaltracker.persistence.StorageDataAccessObject;
+import com.chemicaltracker.persistence.StorageDAO;
 
 import org.springframework.ui.Model;
 import java.security.Principal;
@@ -36,7 +35,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RequestMapping("/api/test")
 public class TestAPIController {
 
-    private ChemicalDataAccessObject chemicalDB = ChemicalDataAccessDynamoDB.getInstance();
+    private ChemicalDAO chemicalDB = ChemicalDAO.getInstance();
 
     @RequestMapping(value="/update", method=POST)
     public @ResponseBody String testUpdate(@RequestBody final UpdateRequest request, BindingResult result,

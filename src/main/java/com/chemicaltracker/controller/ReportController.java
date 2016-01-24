@@ -12,11 +12,10 @@ import com.chemicaltracker.model.Chemical;
 import com.chemicaltracker.model.Storage;
 import com.chemicaltracker.model.ReportDocument;
 
-import com.chemicaltracker.persistence.ChemicalDataAccessObject;
-import com.chemicaltracker.persistence.ChemicalDataAccessDynamoDB;
+import com.chemicaltracker.persistence.ChemicalDAO;
 
 import com.chemicaltracker.persistence.StorageFactory;
-import com.chemicaltracker.persistence.StorageDataAccessObject;
+import com.chemicaltracker.persistence.StorageDAO;
 
 import org.springframework.ui.Model;
 import java.security.Principal;
@@ -54,12 +53,12 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/report")
 public class ReportController {
 
-    private final StorageDataAccessObject locationDB = StorageFactory.getStorage("LOCATIONS");
-    private final StorageDataAccessObject roomDB = StorageFactory.getStorage("ROOMS");
-    private final StorageDataAccessObject cabinetDB = StorageFactory.getStorage("CABINETS");
+    private final StorageDAO locationDB = StorageFactory.getStorage("LOCATIONS");
+    private final StorageDAO roomDB = StorageFactory.getStorage("ROOMS");
+    private final StorageDAO cabinetDB = StorageFactory.getStorage("CABINETS");
 
-    private final ChemicalDataAccessObject chemicalDB =
-        ChemicalDataAccessDynamoDB.getInstance();
+    private final ChemicalDAO chemicalDB =
+        ChemicalDAO.getInstance();
 
     @RequestMapping(value = "/generate/{locationName}", method=GET)
     public void downloadPDF(@PathVariable("locationName") String locationName,

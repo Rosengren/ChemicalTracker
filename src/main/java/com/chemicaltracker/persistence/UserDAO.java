@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
@@ -34,21 +36,36 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import org.apache.log4j.Logger;
 
-public class UserDataAccessDynamoDB implements UserDetailsService {
+public class UserDAO implements UserDetailsService {
 
-    private static final Logger logger = Logger.getLogger(UserDataAccessDynamoDB.class);
+    private static volatile UserDAO instance;
+
+    private static final Logger logger = Logger.getLogger(UserDAO.class);
 
     private static final String USERS_TABLE_NAME = "Users";
     private static final String USERS_TABLE_INDEX = "Username";
 
     private AmazonDynamoDBClient amazonDynamoDBClient;
 
-    public UserDataAccessDynamoDB() {
+    public UserDAO() {
         try {
             initializeDBConnection();
         } catch (Exception e) {
             logger.error("Error occured while initializing DB Connection", e);
         }
+    }
+
+    public static UserDAO getInstance() {
+
+        if (instance == null) {
+            synchronized (UserDAO.class) {
+                if (instance == null) {
+                    instance = new UserDAO();
+                }
+            }
+        }
+
+        return instance;
     }
 
     public void initializeDBConnection() throws Exception {

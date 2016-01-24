@@ -1,6 +1,6 @@
 package com.chemicaltracker.controller;
 
-import com.chemicaltracker.persistence.UserDataAccessDynamoDB;
+import com.chemicaltracker.persistence.UserDAO;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -16,12 +16,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private UserDetailsService users = new UserDataAccessDynamoDB();
+    private UserDetailsService users = UserDAO.getInstance();
 
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()
             .antMatchers("/css/**", "/js/**", "/img/**", "/", "/homepage",
-                         "/api/test/**").permitAll()
+                         "/api/test/**", "/signup").permitAll()
             .anyRequest().authenticated()
             .and()
         .formLogin()
@@ -31,7 +31,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .logout()
             .permitAll();
 
-        http.csrf().ignoringAntMatchers("/api/test/**");
+        http.csrf().ignoringAntMatchers("/api/**");
     }
 
     @Autowired

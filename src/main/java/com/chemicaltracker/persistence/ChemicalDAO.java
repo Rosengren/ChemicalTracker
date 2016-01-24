@@ -31,18 +31,18 @@ import org.apache.log4j.Logger;
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
 
-public class ChemicalDataAccessDynamoDB implements ChemicalDataAccessObject {
+public class ChemicalDAO {
 
-    private static volatile ChemicalDataAccessDynamoDB instance;
+    private static volatile ChemicalDAO instance;
 
-    private static final Logger logger = Logger.getLogger(ChemicalDataAccessDynamoDB.class);
+    private static final Logger logger = Logger.getLogger(ChemicalDAO.class);
 
     private static final String CHEMICALS_TABLE_NAME = "Chemicals";
     private static final String CHEMICALS_TABLE_INDEX = "Name";
 
     private AmazonDynamoDBClient amazonDynamoDBClient;
 
-    private ChemicalDataAccessDynamoDB() {
+    private ChemicalDAO() {
 
         try {
             initializeDBConnection();
@@ -51,12 +51,12 @@ public class ChemicalDataAccessDynamoDB implements ChemicalDataAccessObject {
         }
     }
 
-    public static ChemicalDataAccessObject getInstance() {
+    public static ChemicalDAO getInstance() {
 
         if (instance == null) {
-            synchronized (ChemicalDataAccessDynamoDB.class) {
+            synchronized (ChemicalDAO.class) {
                 if (instance == null) {
-                    instance = new ChemicalDataAccessDynamoDB();
+                    instance = new ChemicalDAO();
                 }
             }
         }
@@ -83,7 +83,6 @@ public class ChemicalDataAccessDynamoDB implements ChemicalDataAccessObject {
         amazonDynamoDBClient.setRegion(usWest2);
     }
 
-    @Override
     public List<Chemical> getAllChemicals() {
 
         final List<Chemical> chemicals = new ArrayList<Chemical>();
@@ -104,7 +103,6 @@ public class ChemicalDataAccessDynamoDB implements ChemicalDataAccessObject {
         return chemicals;
     }
 
-    @Override
     public Chemical getChemical(final String name) {
 
         final Map<String, AttributeValue> key = new HashMap<String, AttributeValue>();
@@ -131,12 +129,10 @@ public class ChemicalDataAccessDynamoDB implements ChemicalDataAccessObject {
         return new Chemical();
     }
 
-    @Override
     public void updateChemical(final Chemical chemical) {
         addChemical(chemical);
     }
 
-    @Override
     public void deleteChemical(final Chemical chemical) {
 
         final Map<String, AttributeValue> key = new HashMap<String, AttributeValue>();
@@ -154,7 +150,6 @@ public class ChemicalDataAccessDynamoDB implements ChemicalDataAccessObject {
         }
     }
 
-    @Override
     public void addChemical(final Chemical chemical) {
 
         final Map<String, AttributeValue> item = convertChemicalToItem(chemical);
@@ -170,7 +165,6 @@ public class ChemicalDataAccessDynamoDB implements ChemicalDataAccessObject {
         }
     }
 
-    @Override
     public List<String> getAllChemicalNames() {
 
         final List<String> chemicalNames = new ArrayList<String>();
@@ -193,7 +187,6 @@ public class ChemicalDataAccessDynamoDB implements ChemicalDataAccessObject {
         return chemicalNames;
     }
 
-    @Override
     public List<Chemical> batchGetChemicals(final List<String> names) {
         final List<Chemical> chemicals = new ArrayList<Chemical>();
 

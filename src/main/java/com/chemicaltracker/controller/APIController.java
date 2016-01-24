@@ -4,13 +4,16 @@ import java.util.List;
 import java.util.UUID;
 import java.util.HashMap;
 
+import com.chemicaltracker.model.Chemical;
 import com.chemicaltracker.model.Storage;
+import com.chemicaltracker.model.ChemicalQueryRequest;
+import com.chemicaltracker.model.User;
 
-import com.chemicaltracker.persistence.ChemicalDataAccessObject;
-import com.chemicaltracker.persistence.ChemicalDataAccessDynamoDB;
+import com.chemicaltracker.persistence.ChemicalDAO;
+import com.chemicaltracker.persistence.UserDAO;
 
 import com.chemicaltracker.persistence.StorageFactory;
-import com.chemicaltracker.persistence.StorageDataAccessObject;
+import com.chemicaltracker.persistence.StorageDAO;
 
 import org.springframework.ui.Model;
 import java.security.Principal;
@@ -36,14 +39,30 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RequestMapping("/api")
 public class APIController {
 
-    private static final StorageDataAccessObject locationDB =
+    private static final StorageDAO locationDB =
         StorageFactory.getStorage("LOCATIONS");
-    private static final StorageDataAccessObject roomDB =
+    private static final StorageDAO roomDB =
         StorageFactory.getStorage("ROOMS");
-    private static final StorageDataAccessObject cabinetDB =
+    private static final StorageDAO cabinetDB =
         StorageFactory.getStorage("CABINETS");
 
-    private ChemicalDataAccessObject chemicalDB = ChemicalDataAccessDynamoDB.getInstance();
+    private ChemicalDAO chemicalDB = ChemicalDAO.getInstance();
+
+    private UserDAO userDB = UserDAO.getInstance();
+
+    @RequestMapping(value="/add/user", method=POST)
+    public @ResponseBody String addUser(@RequestBody final User user) {
+        userDB.createUser(user.getUsername(), user.getPassword(), user.getRole());
+        return "success";
+    }
+
+    @RequestMapping(value="/query", method=POST)
+    public @ResponseBody String testQuery(@RequestBody final ChemicalQueryRequest request, BindingResult result,
+            Model model, Principal principal) {
+
+        final Chemical chemical = chemicalDB.getChemical(request.getChemical());
+        return chemical.toJSONString();
+    }
 
     // TODO: Below may need to be deprecated
     @RequestMapping(value="/add/location", method=POST)

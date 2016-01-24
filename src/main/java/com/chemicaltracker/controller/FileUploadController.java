@@ -7,10 +7,9 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 
-import com.chemicaltracker.persistence.ImageDataAccessObject;
-import com.chemicaltracker.persistence.ImageDataAccessS3;
+import com.chemicaltracker.persistence.ImageDAO;
 
-import com.chemicaltracker.persistence.StorageDataAccessObject;
+import com.chemicaltracker.persistence.StorageDAO;
 import com.chemicaltracker.persistence.StorageFactory;
 
 import org.springframework.ui.Model;
@@ -44,10 +43,10 @@ public class FileUploadController {
 
     private static final String S3_BASE_URL = "https://s3-us-west-2.amazonaws.com/chemical-images/";
 
-    private static final ImageDataAccessObject imageDB = ImageDataAccessS3.getInstance();
-    private static final StorageDataAccessObject locationDB = StorageFactory.getStorage("LOCATIONS");
-    private static final StorageDataAccessObject roomDB = StorageFactory.getStorage("ROOMS");
-    private static final StorageDataAccessObject cabinetDB = StorageFactory.getStorage("CABINETS");
+    private static final ImageDAO imageDB = ImageDAO.getInstance();
+    private static final StorageDAO locationDB = StorageFactory.getStorage("LOCATIONS");
+    private static final StorageDAO roomDB = StorageFactory.getStorage("ROOMS");
+    private static final StorageDAO cabinetDB = StorageFactory.getStorage("CABINETS");
 
     @RequestMapping(value = "/add/location", method = POST)
     public ResponseEntity addLocationHandler(Principal principal,

@@ -3,8 +3,7 @@ package com.chemicaltracker.controller;
 import com.chemicaltracker.model.Chemical;
 import com.chemicaltracker.model.FireDiamond;
 
-import com.chemicaltracker.persistence.ChemicalDataAccessObject;
-import com.chemicaltracker.persistence.ChemicalDataAccessDynamoDB;
+import com.chemicaltracker.persistence.ChemicalDAO;
 
 import org.springframework.ui.Model;
 import java.security.Principal;
@@ -29,8 +28,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RequestMapping("/chemicals")
 public class ChemicalController {
 
-    private static final ChemicalDataAccessObject chemicalDB =
-        ChemicalDataAccessDynamoDB.getInstance();
+    private static final ChemicalDAO chemicalDB =
+        ChemicalDAO.getInstance();
 
     @RequestMapping(value = "/new", method=POST)
     public String processChemicalForm(@ModelAttribute Chemical chemical, BindingResult result, Model model) {

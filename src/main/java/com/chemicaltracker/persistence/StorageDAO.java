@@ -38,9 +38,9 @@ import com.amazonaws.services.dynamodbv2.document.KeyAttribute;
 
 import org.apache.log4j.Logger;
 
-public class StorageDataAccessDynamoDB implements StorageDataAccessObject {
+public class StorageDAO {
 
-    private static final Logger logger = Logger.getLogger(StorageDataAccessDynamoDB.class);
+    private static final Logger logger = Logger.getLogger(StorageDAO.class);
 
     private String tableName;
     private String tableHashKey;
@@ -49,7 +49,7 @@ public class StorageDataAccessDynamoDB implements StorageDataAccessObject {
 
     private AmazonDynamoDBClient amazonDynamoDBClient;
 
-    public StorageDataAccessDynamoDB(final String tableName, final String tableHashKey,
+    public StorageDAO(final String tableName, final String tableHashKey,
             final String tableRangeKey, final String storedItemTitle) {
 
         this.tableName = tableName;
@@ -84,7 +84,6 @@ public class StorageDataAccessDynamoDB implements StorageDataAccessObject {
         amazonDynamoDBClient.setRegion(usWest2);
     }
 
-    @Override
     public List<Storage> getAllStoragesForUser(final String username) {
 
         final List<Storage> storages = new ArrayList<Storage>();
@@ -108,7 +107,6 @@ public class StorageDataAccessDynamoDB implements StorageDataAccessObject {
         return storages;
     }
 
-    @Override
     public Storage getStorage(final String username, final String storageID) {
         final Map<String, AttributeValue> key = new HashMap<String, AttributeValue>();
         key.put(tableHashKey, new AttributeValue().withS(username));
@@ -130,12 +128,10 @@ public class StorageDataAccessDynamoDB implements StorageDataAccessObject {
         return storage;
     }
 
-    @Override
     public void updateStorage(final Storage storage) {
         addStorage(storage);
     }
 
-    @Override
     public void deleteStorage(final String username, final String storageID) {
         final Map<String, AttributeValue> key = new HashMap<String, AttributeValue>();
         key.put(tableHashKey, new AttributeValue().withS(username));
@@ -152,7 +148,6 @@ public class StorageDataAccessDynamoDB implements StorageDataAccessObject {
         }
     }
 
-    @Override
     public void addStorage(final Storage storage) {
 
         final Map<String, AttributeValue> item = convertStorageToItem(storage);
@@ -167,7 +162,6 @@ public class StorageDataAccessDynamoDB implements StorageDataAccessObject {
         }
     }
 
-    @Override
     public List<Storage> batchGetStorages(final String username, final List<String> storageIDs) {
         final List<Storage> storages = new ArrayList<Storage>();
 
