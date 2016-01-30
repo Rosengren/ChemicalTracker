@@ -6,6 +6,8 @@ import com.chemicaltracker.model.Chemical;
 import java.util.Map;
 import java.util.HashMap;
 
+import java.util.Arrays;
+
 import java.util.List;
 import java.util.ArrayList;
 
@@ -167,24 +169,26 @@ public class ChemicalDAO {
 
     public List<String> getAllChemicalNames() {
 
-        final List<String> chemicalNames = new ArrayList<String>();
-        final ScanRequest scanRequest = new ScanRequest()
-            .withTableName(CHEMICALS_TABLE_NAME);
+        final Map<String, AttributeValue> key = new HashMap<String, AttributeValue>();
+        key.put(CHEMICALS_TABLE_INDEX, new AttributeValue().withS("All"));
 
+        final GetItemRequest request = new GetItemRequest()
+            .withTableName(CHEMICALS_TABLE_NAME)
+            .withKey(key);
 
         try {
-            final ScanResult result = amazonDynamoDBClient.scan(scanRequest);
+            final GetItemResult result = amazonDynamoDBClient.getItem(request);
 
-            for (Map<String, AttributeValue> item : result.getItems()) {
-                chemicalNames.add(item.get(Chemical.NAME).getS());
+            if (result.getItem() != null) {
+                return result.getItem().get("Chemicals").getSS();
             }
 
-        } catch (AmazonServiceException e) {
-            logger.error("Error occurred while trying to get all the chemical names for the table: " +
-                    CHEMICALS_TABLE_NAME);
+        } catch (Exception e) {
+            logger.error("Error occurred while getting all chemical names from table: " + CHEMICALS_TABLE_NAME);
         }
 
-        return chemicalNames;
+     
+        return new ArrayList<String>();
     }
 
     public List<Chemical> batchGetChemicals(final List<String> names) {
@@ -274,5 +278,44 @@ public class ChemicalDAO {
         }
 
         return chemical;
+    }
+
+    // This is a temporary method for updating the chemical row that contains
+    // all of the chemical names
+    public void updateChemicalNames() {
+
+        // Query for all elements in the Database
+        final List<String> chemicalNames = new ArrayList<String>();
+        final ScanRequest scanRequest = new ScanRequest()
+            .withTableName(CHEMICALS_TABLE_NAME);
+
+
+        try {
+            final ScanResult result = amazonDynamoDBClient.scan(scanRequest);
+
+            for (Map<String, AttributeValue> item : result.getItems()) {
+                chemicalNames.add(item.get(Chemical.NAME).getS());
+            }
+
+        } catch (AmazonServiceException e) {
+            logger.error("Error occurred while trying to get all the chemical names for the table: " +
+                    CHEMICALS_TABLE_NAME);
+        }
+ 
+        logger.info("Updating All Chemicals row");
+        final Map<String, AttributeValue> item = new HashMap<String, AttributeValue>();
+
+        item.put("Name", new AttributeValue("All"));
+        item.put("Chemicals", new AttributeValue(chemicalNames));
+        
+        final PutItemRequest putItemRequest = new PutItemRequest()
+            .withTableName(CHEMICALS_TABLE_NAME)
+            .withItem(item);
+
+        try {
+            amazonDynamoDBClient.putItem(putItemRequest);
+        } catch (AmazonServiceException e) {
+            logger.error("Error occurred while trying to add chemical: " + " to table: " + CHEMICALS_TABLE_NAME, e);
+        }
     }
 }

@@ -25,7 +25,7 @@ public class Chemical extends AbstractStorageComponent implements StorageCompone
         this.fireDiamond = new FireDiamond();
         this.name = "";
         this.match = false;
-        this.imageURL = "placeholder.jpg";
+        this.imageURL = "https://s3-us-west-2.amazonaws.com/chemical-images/placeholder.png";
     }
 
     public Chemical(String name) {

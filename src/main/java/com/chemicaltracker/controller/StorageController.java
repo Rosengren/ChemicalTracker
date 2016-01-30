@@ -37,8 +37,7 @@ public class StorageController {
     private StorageDAO roomDB = StorageFactory.getStorage("ROOMS");
     private StorageDAO cabinetDB = StorageFactory.getStorage("CABINETS");
 
-    private ChemicalDAO chemicalDB =
-        ChemicalDAO.getInstance();
+    private ChemicalDAO chemicalDB = ChemicalDAO.getInstance();
 
     @RequestMapping("")
     public String home(Model model, Principal principal) {
@@ -53,7 +52,7 @@ public class StorageController {
         final List<String> breadcrumbs = Arrays.asList(new String[] {"Home"});
         model.addAttribute("breadcrumbs", breadcrumbs);
 
-        return "storageView";
+        return "locationsView";
     }
 
     @RequestMapping("/{locationName}")
@@ -75,7 +74,7 @@ public class StorageController {
 
         model.addAttribute("parentID", location.getID());
 
-        return "storageView";
+        return "roomsView";
     }
 
     @RequestMapping("/{locationName}/{roomName}")
@@ -100,7 +99,7 @@ public class StorageController {
 
         model.addAttribute("parentID", room.getID());
 
-        return "storageView";
+        return "cabinetsView";
     }
 
     @RequestMapping("/{locationName}/{roomName}/{cabinetName}")
@@ -130,7 +129,9 @@ public class StorageController {
             locationName , roomName , cabinetName});
         model.addAttribute("breadcrumbs", breadcrumbs);
 
-        model.addAttribute("chemicalNames", chemicalDB.getAllChemicalNames());
+        // List<String> names = chemicalDB.getAllChemicalNames();
+        List<String> names = new ArrayList<String>();
+        model.addAttribute("chemicalNames", names);
         model.addAttribute("chemicals", chemicals);
 
         return "chemicalsView";

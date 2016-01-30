@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.HashMap;
 
+import com.chemicaltracker.util.Evaluator;
+
 import com.chemicaltracker.model.Chemical;
 import com.chemicaltracker.model.Storage;
 import com.chemicaltracker.model.ChemicalQueryRequest;
@@ -116,11 +118,11 @@ public class APIController {
         Storage cabinet = cabinetDB.getStorage(principal.getName(), cabinetID);
 
         for (String chemicalName : chemicalNames) {
-            cabinet.addStoredItem(chemicalName, "0");
+            cabinet.addStoredItem(chemicalName, "https://s3-us-west-2.amazonaws.com/chemical-images/placeholder.png");
         }
 
+        cabinet = evaluateCabinet(cabinet);
         cabinetDB.addStorage(cabinet);
-
         return "success";
     }
 
@@ -130,6 +132,9 @@ public class APIController {
 
         Storage cabinet = cabinetDB.getStorage(principal.getName(), cabinetID);
         cabinet.removeStoredItem(request.getChemicalName());
+
+        cabinet = evaluateCabinet(cabinet);
+        
         cabinetDB.addStorage(cabinet);
 
         return "success";
@@ -138,5 +143,21 @@ public class APIController {
     @RequestMapping(value="/success")
     public @ResponseBody String success() {
         return "success";
+    }
+
+    private Storage evaluateCabinet(Storage cabinet) {
+        // TODO: evaluate for flammability and stuff
+        // then add tags
+
+        List<Chemical> chemicals = 
+            chemicalDB.batchGetChemicals(cabinet.getStoredItemNames());
+
+        Evaluator evaluator = new Evaluator();
+
+        if (evaluator.checkFlammability(chemicals)) {
+            cabinet.addTag("FLAMMABLE");
+        }
+
+        return cabinet;
     }
 }

@@ -96,17 +96,20 @@ $("#submitAddChemicalsToCabinet").click(function() {
 
     var selectedChemicals = [];
 
-    var inputs = document.querySelectorAll("input[type='checkbox']");
-    for(var i = 0; i < inputs.length; i++) {
-        if (inputs[i].checked == true) {
-            selectedChemicals.push(inputs[i].name);
-        }
-    }
+    // var inputs = document.querySelectorAll("input[type='checkbox']");
+    // for(var i = 0; i < inputs.length; i++) {
+    //     if (inputs[i].checked == true) {
+    //         selectedChemicals.push(inputs[i].name);
+    //     }
+    // }
 
-    if (selectedChemicals.length == 0) {
-        alert("No chemicals selected");
-        return;
-    }
+    // if (selectedChemicals.length == 0) {
+    //     alert("No chemicals selected");
+    //     return;
+    // }
+
+    var selectedChemicals = [];
+    selectedChemicals.push($("#selectedAddChemical").html());
 
     $.ajax({
         url: url,

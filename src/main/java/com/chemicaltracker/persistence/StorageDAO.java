@@ -179,6 +179,7 @@ public class StorageDAO {
         item.put(Storage.NAME, new AttributeValue(storage.getName()));
         item.put(tableRangeKey, new AttributeValue(storage.getID()));
         item.put(Storage.DESCRIPTION, new AttributeValue(storage.getDescription()));
+        item.put(Storage.TAGS, new AttributeValue(storage.getTagNames()));
         item.put(Storage.IMAGE_URL, new AttributeValue(storage.getImageURL()));
 
         final Map<String, AttributeValue> storedItems = new HashMap<String, AttributeValue>();
@@ -207,6 +208,7 @@ public class StorageDAO {
                 item.get(Storage.NAME).getS(),
                 item.get(tableRangeKey).getS(),
                 item.get(Storage.DESCRIPTION).getS(),
+                item.get(Storage.TAGS).getSS(),
                 storedItems,
                 item.get(Storage.IMAGE_URL).getS());
     }

@@ -9,13 +9,17 @@
         </div>
         <div class="content">
             <div class="ui form">
-                <c:forEach items="${chemicalNames}" var="chemicalName">
-                    <div class="ui checkbox">
-                        <input type="checkbox" name="${chemicalName}">
-                        <label>${chemicalName}</label>
-                    </div>
-                    <div class="ui hidden divider"></div>
-                </c:forEach>
+                <div class="ui selection dropdown">
+                <input type="hidden" name="gender">
+                  <i class="dropdown icon"></i>
+                  <div class="default text" id="selectedAddChemical">Chemical</div>
+                  <div class="menu">
+                      <c:forEach items="${chemicalNames}" var="chemicalName">
+                            <div class="item" data-value="${chemicalName}">${chemicalName}</div>
+                        <div class="ui hidden divider"></div>
+                    </c:forEach>
+                  </div>
+                </div>
             </div>
         </div> 
         <div class="actions">

@@ -1,13 +1,17 @@
 package com.chemicaltracker.model;
 
-import com.itextpdf.text.List;
+import com.chemicaltracker.model.StorageTag;
+
+// import com.itextpdf.text.List;
 import com.itextpdf.text.ListItem;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
 
 import java.util.ArrayList;
 
+import java.util.List;
 import java.util.Set;
+import java.util.HashSet;
 import java.util.Map.Entry;
 
 import java.util.Map;
@@ -24,35 +28,40 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Storage extends AbstractStorageComponent implements StorageComponent {
 
-    private java.util.List<StorageComponent> elements;
+    private List<StorageComponent> elements;
 
     public static final String NAME = "Name";
     public static final String DESCRIPTION = "Description";
+    public static final String TAGS = "Tags";
     public static final String IMAGE_URL = "Image URL";
 
     private String username;
     private String id;
     private String description;
     private String imageURL;
+    private Set<StorageTag> tags;
     private Map<String, String> storedItemMap;
-    private java.util.List<String> storedItemIDs;
-    private java.util.List<String> storedItemNames;
+    private List<String> storedItemIDs;
+    private List<String> storedItemNames;
 
     public Storage() {
         storedItemMap = new HashMap<String, String>();
         storedItemIDs = new ArrayList<String>();
         storedItemNames = new ArrayList<String>();
-        imageURL = "placeholder.jpg";
+        imageURL = "https://s3-us-west-2.amazonaws.com/chemical-images/placeholder.png";
         elements = new ArrayList<StorageComponent>();
+        tags = new HashSet<StorageTag>();
     }
 
     public Storage(final String username, final String name, final String id, final String description,
-            final Map<String, String> storedItemMap, final String imageURL) {
+            final List<String> tags, final Map<String, String> storedItemMap, final String imageURL) {
         this.username = username;
         this.name = name;
         this.id = id;
         this.description = description;
         this.storedItemMap = storedItemMap;
+        this.tags = new HashSet<StorageTag>();
+        addTags(tags);
         setNamesAndIDs();
 
         elements = new ArrayList<StorageComponent>();
@@ -61,12 +70,12 @@ public class Storage extends AbstractStorageComponent implements StorageComponen
 
     public Storage(final String username, final String name, final String id,
             final String description, final String imageURL) {
-        this(username, name, id, description, new HashMap<String, String>(), imageURL);
+        this(username, name, id, description, new ArrayList<String>(), new HashMap<String, String>(), imageURL);
     }
 
     public Storage(final String username, final String name, final String id, final String description,
             final Map<String, String> storedItemMap) {
-        this(username, name, id, description, storedItemMap, "placeholder.jpg");
+        this(username, name, id, description, new ArrayList<String>(), storedItemMap, "placeholder.jpg");
     }
 
     public void setStoredItemMap(final Map<String, String> storedItemMap) {
@@ -91,6 +100,49 @@ public class Storage extends AbstractStorageComponent implements StorageComponen
         elements.add(element);
     }
 
+    public List<StorageComponent> getElements() {
+        return elements;
+    }
+
+    public void addTag(final String tag) {
+
+        if (tag.equals("FLAMMABLE")) {
+            tags.add(StorageTag.FLAMMABLE);
+        } else if (tag.equals("UNSTABLE")) {
+            tags.add(StorageTag.UNSTABLE);
+        } else if (tag.equals("HEALTH")) {
+            tags.add(StorageTag.HEALTH);
+        }
+    }
+
+    public void addTags(final List<String> tags) {
+        for (String tag : tags) {
+            addTag(tag);
+        }
+    }
+
+    public void setTags(final Set<StorageTag> tags) {
+        this.tags = tags; 
+    }
+
+    public void resetTags(final String tag) {
+        tags = new HashSet<StorageTag>();
+    }
+
+    public List<StorageTag> getTags() {
+        List<StorageTag> tagList = new ArrayList<StorageTag>();
+        tagList.addAll(tags);
+        return tagList;
+    }
+
+    public List<String> getTagNames() {
+        List<String> tagNames = new ArrayList<String>();
+        for (StorageTag tag : tags) {
+            tagNames.add(tag.getTitle());
+        }
+        return tagNames;
+    }
+
     @Override
     public Phrase getFormattedPDF(final int level) {
         Paragraph content = new Paragraph();
@@ -104,7 +156,7 @@ public class Storage extends AbstractStorageComponent implements StorageComponen
 
     private void addBody(Paragraph content, int level) {
 
-        List body = new List();
+        com.itextpdf.text.List body = new com.itextpdf.text.List();
         body.setListSymbol("");
 
         if (elements.isEmpty()) {
@@ -128,8 +180,8 @@ public class Storage extends AbstractStorageComponent implements StorageComponen
     public String getID() { return this.id; }
     public Set<Entry<String, String>> getStoredItemsSet() { return this.storedItemMap.entrySet(); }
     public String getStoredItemID(final String name) { return this.storedItemMap.get(name); }
-    public java.util.List<String> getStoredItemIDs() { return this.storedItemIDs; }
-    public java.util.List<String> getStoredItemNames() { return this.storedItemNames; }
+    public List<String> getStoredItemIDs() { return this.storedItemIDs; }
+    public List<String> getStoredItemNames() { return this.storedItemNames; }
     public void setUsername(final String username) { this.username = username; }
     public String getUsername() { return this.username; }
     public void setName(final String name) { this.name = name; }
