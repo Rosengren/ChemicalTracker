@@ -1,4 +1,5 @@
 <%@include file="templates/header.jsp" %>
+<%@include file="templates/menu.jsp" %>
 
 <body id="ctrackr" class="index popup pusher chemical" ontouchstart>
 

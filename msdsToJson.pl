@@ -15,13 +15,19 @@ my @sections = ("","","","","","","","","","","","","","","","");
 my $sectionNumber = 0;
 my $chemicalName = "";
 my $outputFileName = "";
+my $casNumber = "";
 
 while (my $row = <$fh>) {
     chomp $row;
 
     if ($row =~ /Product Name: (.+) Catalog/) {
-        $chemicalName = $1;
+        $chemicalName = lc($1);
+        #$chemicalName = lc($chemicalName);
         #$outputFileName = $1;
+    }
+
+    if ($row =~ /CAS#: (.+) RTECS/) {
+        $casNumber = $1;
     }
 
     if ($row =~ /Section \d+: \w+/) {
@@ -39,6 +45,7 @@ if ($DEBUG) {
 }
 
 my $json = "{\"Name\" : \"$chemicalName\",";
+$json .= "\"CAS\" : \"$casNumber\",";
 
 my $sect = $sections[3];
 $sect =~ /(Potential Acute Health Effects): (.+) (Potential Chronic Health Effects): (.+)/;

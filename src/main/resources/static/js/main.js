@@ -7,6 +7,24 @@ $(".clickableContainer").click(function() {
     return false;
 });
 
+var selectedChemical = null;
+var selectedChemicalName = "";
+$(".remove").click(function() {
+    selectedChemicalName = $(this).attr("data");
+    selectedChemical = $(this).closest(".column");
+    $('.ui.basic.modal.confirm').modal('show');
+});
+
+$("#confirmRemove").click(function() {
+    // TODO: add AJAX to permanently remove from DB
+    // Use selectedChemicalName in AJAX Call
+    if (selectedChemical) {
+        selectedChemical.remove();
+        removeChemical(selectedChemicalName);
+    }
+    $('.ui.basic.modal.confirm').modal('hide');
+});
+
 $(".button").popup({
     variation: 'inverted',
     position: 'top center',
@@ -19,6 +37,7 @@ $(".tooltip").popup({
 
 $(".addModal").click(function() {
     $('.ui.modal.addStorageModal').modal('show');
+    $('.ui.modal.addChemicalModal').modal('show');
 });
 
 /** Required for making AJAX POST requests **/
@@ -29,6 +48,9 @@ $(function () {
         xhr.setRequestHeader(header, token);
     });
 });
+
+$('.ui.dropdown')
+  .dropdown();
 
 $("#submitCreateStorage").click(function() {
 
@@ -105,6 +127,24 @@ function progressHandlingFunction(e) {
             max: e.total
         });
     }
+}
+
+function removeChemical(chemicalName) {
+
+    var username = $("#username").attr("value");
+    var url = $("#removeURL").attr("value");
+    console.log(JSON.stringify(chemicalName));
+    console.log({"chemicalName": chemicalName});
+    $.ajax({
+        url: url,
+        type: "POST",
+        dataType: "json",
+        contentType: "application/json",
+        mimeType: "application/json",
+        data: JSON.stringify({"chemicalName" :chemicalName}),
+        success: function(response) { },
+        error: function(e) { }
+    });
 }
 
 $('.message .close').on('click', function() {

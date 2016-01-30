@@ -36,6 +36,11 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 public class TestAPIController {
 
     private ChemicalDAO chemicalDB = ChemicalDAO.getInstance();
+    
+    @RequestMapping(value="/success")
+    public @ResponseBody String success() {
+        return "success";
+    }
 
     @RequestMapping(value="/update", method=POST)
     public @ResponseBody String testUpdate(@RequestBody final UpdateRequest request, BindingResult result,

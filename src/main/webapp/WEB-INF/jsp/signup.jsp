@@ -11,7 +11,7 @@
                         <span class="tagline">Sign Up!</span>
                     </h1>
                     <div class="ui hidden divider"></div>
-                    <form class="ui large form" action="/signup" method="post">
+                    <form class="ui large form" action="/signup" method="post" commandName="userForm">
                         <div class="ui stacked">
                             <div class="field">
                                 <div class="ui left icon input">

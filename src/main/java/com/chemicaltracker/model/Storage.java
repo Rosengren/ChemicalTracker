@@ -80,6 +80,13 @@ public class Storage extends AbstractStorageComponent implements StorageComponen
         this.storedItemNames.add(storedItemName);
     }
 
+    public void removeStoredItem(final String storedItemID) {
+        String itemName = this.storedItemMap.get(storedItemID);
+        this.storedItemMap.remove(storedItemID);
+        this.storedItemIDs.remove(itemName);
+        this.storedItemNames.remove(storedItemID);
+    }
+
     public void addElement(final StorageComponent element) {
         elements.add(element);
     }

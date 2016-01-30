@@ -45,7 +45,7 @@ public class StorageController {
 
         String username = principal.getName();
         model = addStorageDetailsToModel(model, username, "Locations",
-                "List of all your locations", "Add new location", "/add/location");
+                "List of all your locations", "Add new location", "/add/location", "");
 
         // Get Locations
         model.addAttribute("storages", locationDB.getAllStoragesForUser(username));
@@ -62,7 +62,7 @@ public class StorageController {
         String username = principal.getName();
         model = addStorageDetailsToModel(model, username, "Rooms",
                 "List of all the rooms in " + locationName,
-                "Add new room", "/add/room/");
+                "Add new room", "/add/room/", "");
 
         final Storage location = locationDB.getStorage(username, locationName);
         final List<String> roomIDs = location.getStoredItemIDs();
@@ -87,7 +87,7 @@ public class StorageController {
 
         model = addStorageDetailsToModel(model, username, "Cabinets",
                 "List of all the cabinets in " + roomName, "/add/room",
-                "Add new cabinet");
+                "Add new cabinet", "");
 
         final Storage room = roomDB.getStorage(username, roomID);
         final List<String> cabinetIDs = room.getStoredItemIDs();
@@ -114,7 +114,8 @@ public class StorageController {
 
         model = addStorageDetailsToModel(model, username, "Chemicals",
                 "List of all the chemicals in " + cabinetName,
-                "Add chemical", "/api/add/chemicals/to/cabinet/" + cabinetID);
+                "Add chemical", "/api/add/chemicals/to/cabinet/" + cabinetID,
+                "/api/remove/chemical/from/cabinet/" + cabinetID);
 
         final Storage cabinet = cabinetDB.getStorage(username, cabinetID);
         final List<String> chemicalNames = cabinet.getStoredItemNames();
@@ -145,7 +146,7 @@ public class StorageController {
         String cabinetID = roomDB.getStorage(username, roomID).getStoredItemID(cabinetName);
 
         model = addStorageDetailsToModel(model, username, chemicalName, "Material Safety Data Sheet",
-                "Edit Chemical", "/api/update/chemical/" + chemicalName);
+                "Edit Chemical", "/api/update/chemical/" + chemicalName, "");
 
         final Chemical chemical = chemicalDB.getChemical(chemicalName);
         model.addAttribute("chemical", chemical);
@@ -161,12 +162,14 @@ public class StorageController {
     }
 
     private Model addStorageDetailsToModel(final Model model, final String username, final String title,
-            final String subtitle, final String addTooltip, final String addURL) {
+            final String subtitle, final String addTooltip, final String addURL,
+            final String removeURL) {
         model.addAttribute("title", title);
         model.addAttribute("subtitle", subtitle);
         model.addAttribute("addTooltip", addTooltip);
         model.addAttribute("username", username);
         model.addAttribute("addURL", addURL);
+        model.addAttribute("removeURL", removeURL);
         return model;
     }
 }

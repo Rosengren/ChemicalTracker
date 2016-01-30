@@ -9,6 +9,8 @@ import com.chemicaltracker.model.Storage;
 import com.chemicaltracker.model.ChemicalQueryRequest;
 import com.chemicaltracker.model.User;
 
+import com.chemicaltracker.model.RemoveChemicalRequest;
+
 import com.chemicaltracker.persistence.ChemicalDAO;
 import com.chemicaltracker.persistence.UserDAO;
 
@@ -108,7 +110,7 @@ public class APIController {
     }
 
     @RequestMapping(value="/add/chemicals/to/cabinet/{cabinetID}")
-    public @ResponseBody String addChemical(@PathVariable("cabinetID") final String cabinetID,
+    public @ResponseBody String addChemicalToCabinet(@PathVariable("cabinetID") final String cabinetID,
             @RequestBody final List<String> chemicalNames, BindingResult result, Model model, Principal principal) {
 
         Storage cabinet = cabinetDB.getStorage(principal.getName(), cabinetID);
@@ -119,6 +121,22 @@ public class APIController {
 
         cabinetDB.addStorage(cabinet);
 
+        return "success";
+    }
+
+    @RequestMapping(value="/remove/chemical/from/cabinet/{cabinetID}")
+    public @ResponseBody String removeChemicalFromCabinet(@PathVariable("cabinetID") final String cabinetID,
+        @RequestBody final RemoveChemicalRequest request, BindingResult result, Model model, Principal principal) {
+
+        Storage cabinet = cabinetDB.getStorage(principal.getName(), cabinetID);
+        cabinet.removeStoredItem(request.getChemicalName());
+        cabinetDB.addStorage(cabinet);
+
+        return "success";
+    }
+
+    @RequestMapping(value="/success")
+    public @ResponseBody String success() {
         return "success";
     }
 }

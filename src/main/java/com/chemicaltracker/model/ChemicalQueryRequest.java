@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.ArrayList;
 import org.json.simple.JSONArray;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+//import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-@JsonIgnoreProperties(ignoreUnknown = true)
+//@JsonIgnoreProperties(ignoreUnknown = true)
 public class ChemicalQueryRequest {
 
     //private List<String> chemicals;

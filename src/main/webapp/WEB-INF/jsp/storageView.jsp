@@ -1,4 +1,5 @@
 <%@include file="templates/header.jsp" %>
+<%@include file="templates/menu.jsp" %>
 
 <body id="ctrackr" class="index popup pusher storage" ontouchstart>
     <div class="ui modal addStorageModal">
@@ -104,6 +105,7 @@
                 <i class="add icon"></i>
             </div>
         </div>
+
         <div class="ui container">
             <div class="ui four column stackable centered grid">
                 <c:if test="${empty storages}">
@@ -142,10 +144,19 @@
                             <div class="extra content">
                                 <a class="right floated created" href="/report/generate/${storage.name}">
                                   Generate Report
-                              </a>
-                              <a id="editStorage">
-                                  <i class="edit icon"></i>Edit
                                 </a>
+
+                                <div class="ui dropdown">
+                                  <div class="text">Options</div>
+                                  <i class="dropdown icon"></i>
+                                  <div class="menu">
+                                    <div class="item remove">Remove</div>
+                                    <div class="item" id="editStorage">Edit</div>
+                                  </div>
+                                </div>
+                              <!-- <a id="editStorage">
+                                  <i class="edit icon"></i>Edit
+                                </a> -->
                             </div>
                         </div>
                     </div>

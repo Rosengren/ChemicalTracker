@@ -1,8 +1,9 @@
 <%@include file="templates/header.jsp" %>
+<%@include file="templates/menu.jsp" %>
 
 <body id="ctrackr" class="index popup pusher storage" ontouchstart>
 
-    <div class="ui modal">
+    <div class="ui modal addChemicalModal">
         <div class="header">
             Select chemicals to add to this Cabinet
         </div>
@@ -23,6 +24,26 @@
             </div>
             <div class="ui positive button" id="submitAddChemicalsToCabinet">
                 Submit
+            </div>
+        </div>
+    </div>
+
+    <div class="ui basic modal confirm">
+        <i class="close icon"></i>
+        <div class="header">
+            Are you sure?
+        </div>
+        <div class="description">
+            <p>Are you sure you would like to remove this chemical?</p>
+        </div>
+        <div class="actions">
+            <div class="ui red basic inverted button">
+                <i class="remove icon"></i>
+                    No
+            </div>
+            <div class="ui green ok inverted button" id="confirmRemove">
+                <i class="checkmark icon"></i>
+                Yes
             </div>
         </div>
     </div>
@@ -75,7 +96,7 @@
                                 <div class="description">description...</div>
                             </div>
                             <div class="extra content">
-                              <a class="right floated created" onclick="alert('remove')">
+                              <a class="right floated created remove" data="${chemical.name}">
                                   Remove
                               </a>
                               <a class="" onclick="alert('todo: add ability to edit')">
@@ -94,4 +115,5 @@
 <div type="hidden" id="csrf" value="${_csrf.token}"></div>
 <div type="hidden" id="username" value="${username}"></div>
 <div type="hidden" id="addURL" value="${addURL}"></div>
+<div type="hidden" id="removeURL" value="${removeURL}"></div>
 <%@include file="templates/footer.jsp" %>
