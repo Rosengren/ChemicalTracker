@@ -4,12 +4,14 @@ import java.util.List;
 import java.util.UUID;
 import java.util.HashMap;
 
-import com.chemicaltracker.util.Evaluator;
+import com.chemicaltracker.util.FireDiamondEvaluator;
+import com.chemicaltracker.util.StorageEvaluator;
 
 import com.chemicaltracker.model.Chemical;
 import com.chemicaltracker.model.Storage;
 import com.chemicaltracker.model.ChemicalQueryRequest;
 import com.chemicaltracker.model.User;
+import com.chemicaltracker.model.StorageTag;
 
 import com.chemicaltracker.model.RemoveChemicalRequest;
 
@@ -42,6 +44,12 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @Controller
 @RequestMapping("/api")
 public class APIController {
+
+    private static final StorageEvaluator storageEvaluator =
+        new StorageEvaluator();
+
+    private static final FireDiamondEvaluator fireDiamondEvaluator =
+        new FireDiamondEvaluator();
 
     private static final StorageDAO locationDB =
         StorageFactory.getStorage("LOCATIONS");
@@ -145,17 +153,34 @@ public class APIController {
         return "success";
     }
 
+    // TODO: move this to a new class
     private Storage evaluateCabinet(Storage cabinet) {
-        // TODO: evaluate for flammability and stuff
-        // then add tags
 
         List<Chemical> chemicals = 
             chemicalDB.batchGetChemicals(cabinet.getStoredItemNames());
 
-        Evaluator evaluator = new Evaluator();
+        if (fireDiamondEvaluator.checkFlammability(chemicals)) {
+            cabinet.addTag(StorageTag.FLAMMABLE);
+        }
 
-        if (evaluator.checkFlammability(chemicals)) {
-            cabinet.addTag("FLAMMABLE");
+        if (fireDiamondEvaluator.checkInstability(chemicals)) {
+            cabinet.addTag(StorageTag.UNSTABLE);
+        }
+
+        if (fireDiamondEvaluator.checkHealth(chemicals)) {
+            cabinet.addTag(StorageTag.HEALTH);
+        }
+
+        if (storageEvaluator.containsOxidizingAgent(cabinet.getStoredItemNames())) {
+            cabinet.addTag(StorageTag.OXIDIZING_AGENTS);
+        }
+
+        if (storageEvaluator.containsReductionAgent(cabinet.getStoredItemNames())) {
+            cabinet.addTag(StorageTag.REDUCTION_AGENTS);
+        }
+
+        if (storageEvaluator.containsIncompatibleChemicals(cabinet.getStoredItemNames())) {
+            cabinet.addTag(StorageTag.INCOMPATIBLE);
         }
 
         return cabinet;

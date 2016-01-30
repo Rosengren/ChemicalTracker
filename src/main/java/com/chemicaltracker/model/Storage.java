@@ -104,6 +104,10 @@ public class Storage extends AbstractStorageComponent implements StorageComponen
         return elements;
     }
 
+    public void addTag(final StorageTag tag) {
+        tags.add(tag);
+    }
+
     public void addTag(final String tag) {
 
         if (tag.equals("FLAMMABLE")) {
@@ -112,6 +116,12 @@ public class Storage extends AbstractStorageComponent implements StorageComponen
             tags.add(StorageTag.UNSTABLE);
         } else if (tag.equals("HEALTH")) {
             tags.add(StorageTag.HEALTH);
+        } else if (tag.equals("INCOMPATIBLE")) {
+            tags.add(StorageTag.INCOMPATIBLE);
+        } else if (tag.equals("OXIDIZING_AGENTS")) {
+            tags.add(StorageTag.OXIDIZING_AGENTS);    
+        } else if (tag.equals("REDUCTION_AGENTS")) {
+            tags.add(StorageTag.REDUCTION_AGENTS);
         }
     }
 

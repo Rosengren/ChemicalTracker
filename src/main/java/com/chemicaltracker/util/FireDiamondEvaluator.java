@@ -6,9 +6,9 @@ import com.chemicaltracker.model.Chemical;
 import com.chemicaltracker.model.FireDiamond;
 import com.chemicaltracker.model.Storage;
 
-public class Evaluator {
+public class FireDiamondEvaluator {
 
-	public Evaluator() {
+	public FireDiamondEvaluator() {
 
 	}
 
