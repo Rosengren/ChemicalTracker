@@ -148,7 +148,7 @@ public class Storage extends AbstractStorageComponent implements StorageComponen
     public List<String> getTagNames() {
         List<String> tagNames = new ArrayList<String>();
         for (StorageTag tag : tags) {
-            tagNames.add(tag.getTitle());
+            tagNames.add(tag.name());
         }
         return tagNames;
     }

@@ -1,10 +1,8 @@
-<div class="following bar light fixed">
+<div class="following bar">
     <div class="ui container">
-        <div class="ui secondary menu">
-            <%--<a class="ui item">${username}</a>--%>
-            <div class="right menu">
-                <a class="ui item" href="/logout">Logout</a>
-            </div>
+        <div class="ui large secondary menu inverted">
+            <a class="view-ui right item">
+            <i class="sidebar icon"/></i>Menu</a>
         </div>
     </div>
 </div>

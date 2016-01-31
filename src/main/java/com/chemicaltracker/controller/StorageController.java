@@ -85,8 +85,8 @@ public class StorageController {
         String roomID = locationDB.getStorage(username, locationName).getStoredItemID(roomName);
 
         model = addStorageDetailsToModel(model, username, "Cabinets",
-                "List of all the cabinets in " + roomName, "/add/room",
-                "Add new cabinet", "");
+                "List of all the cabinets in " + roomName, "Add new cabinet",
+                "/add/cabinet/", "");
 
         final Storage room = roomDB.getStorage(username, roomID);
         final List<String> cabinetIDs = room.getStoredItemIDs();
@@ -129,9 +129,7 @@ public class StorageController {
             locationName , roomName , cabinetName});
         model.addAttribute("breadcrumbs", breadcrumbs);
 
-        // List<String> names = chemicalDB.getAllChemicalNames();
-        List<String> names = new ArrayList<String>();
-        model.addAttribute("chemicalNames", names);
+        model.addAttribute("chemicalNames", chemicalDB.getAllChemicalNames());
         model.addAttribute("chemicals", chemicals);
 
         return "chemicalsView";

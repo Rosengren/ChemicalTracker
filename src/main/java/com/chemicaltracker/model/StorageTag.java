@@ -2,6 +2,7 @@ package com.chemicaltracker.model;
 
 public enum StorageTag {
 
+	IGNORE("", "", "", false),
 	FLAMMABLE("Flammable", "red", "", true),
 	UNSTABLE("Unstable", "yellow", "", true),
 	HEALTH("A Health Hazard", "blue", "", true),

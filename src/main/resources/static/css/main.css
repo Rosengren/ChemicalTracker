@@ -12,7 +12,7 @@
     -webkit-overflow-scrolling: auto;
   }
 }
-#ctrackr > .pusher {
+/*#ctrackr > .pusher {
   display: block;
   min-height: 0px;
   flex-direction: initial;
@@ -20,13 +20,86 @@
 #ctrackr > .pusher > .full.height {
   display: block;
   flex: none !important;
-}
+}*/
 
 .storage-message {
 
     font-weight: normal;
     color: darkgrey;
 }
+
+/*--------------
+    Following
+---------------*/
+
+#ctrackr.index .following.bar {
+  position: fixed;
+  top: 0px;
+  z-index: 900;
+  left: 0%;
+  padding: 1em 0em;
+  width: 100%;
+  box-shadow: 0px 0px 0px 0px transparent;
+  border-bottom: 1px solid transparent;
+  transition:
+    padding 0.5s ease,
+    background 0.5s ease,
+    box-shadow 0.5s ease,
+    border 0.5s ease;
+}
+
+#ctrackr.index .following.bar > .menu .item {
+  transition: all 0.5s ease;
+}
+#ctrackr.index.pushed .following.bar .menu .item,
+#ctrackr.index.pushed .following.bar {
+  transition: none;
+}
+#ctrackr.index .following.bar .additional.item[data-site="learn"]:hover {
+  color: #D9499A;
+}
+#ctrackr.index .following.bar span.additional.item {
+  cursor: default;
+  color: rgba(0, 0, 0, 0.2);
+}
+#ctrackr.index .following.bar .inverted span.additional.item {
+  color: rgba(255, 255, 255, 0.2);
+}
+#ctrackr.index .following.bar .column > .menu {
+  margin-top: 0px;
+  height: 35px;
+}
+#ctrackr.index .following.bar .network.menu .item {
+  font-weight: bold;
+}
+#ctrackr.index .following.bar .item iframe {
+  margin-left: 10px;
+}
+#ctrackr.index .following.bar .network.menu .view-ui {
+  margin-right: 1em;
+}
+#ctrackr.index .light.following.bar .network.menu .view-ui {
+  color: #00B5AD;
+}
+#ctrackr.index .light.following.bar .inverted.network.menu .view-ui {
+  color: #6DFFFF;
+}
+#ctrackr.index .following .logo {
+  float: left;
+  width: 35px;
+  margin-right: 1em;
+}
+#ctrackr.index .following .logo .side {
+  width: 35px;
+}
+#ctrackr .masthead .version.label:after {
+  background-color: #000000 !important;
+}
+#ctrackr.index .following .version.label {
+  margin: 0.25em 0px 0px 1em;
+}
+
+
 
 /*--------------
     Masthead

@@ -158,3 +158,42 @@ $('.message .close').on('click', function() {
 $('#editStorage').on('click', function() {
     $('.ui.modal.editStorageModal').modal('show');
 });
+
+$('body')
+      .visibility({
+        offset         : -10,
+        observeChanges : false,
+        once           : false,
+        continuous     : false,
+        onTopPassed: function() {
+          requestAnimationFrame(function() {
+            $('.following.bar')
+              .addClass('light fixed')
+              .find('.menu')
+                .removeClass('inverted')
+            ;
+            $('.following .additional.item')
+              .transition('scale in', 750)
+            ;
+          });
+        },
+        onTopPassedReverse: function() {
+          requestAnimationFrame(function() {
+            $('.following.bar')
+              .removeClass('light fixed')
+              .find('.menu')
+                .addClass('inverted')
+                .find('.additional.item')
+                  .transition('hide')
+            ;
+          });
+        }
+      });
+
+$menu = $('#sidebar');
+$menu.sidebar('attach events', '.view-ui');
+$menu.sidebar({
+      dimPage          : true,
+      transition       : 'overlay',
+      mobileTransition : 'uncover'
+    });

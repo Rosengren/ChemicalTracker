@@ -149,12 +149,13 @@ public class StorageDAO {
     }
 
     public void addStorage(final Storage storage) {
-
+        logger.info("ADDING STORAGE");
         final Map<String, AttributeValue> item = convertStorageToItem(storage);
         final PutItemRequest putItemRequest = new PutItemRequest()
             .withTableName(tableName)
             .withItem(item);
 
+        logger.info("ADDING: " + item.toString());
         try {
             amazonDynamoDBClient.putItem(putItemRequest);
         } catch (Exception e) {
@@ -179,7 +180,13 @@ public class StorageDAO {
         item.put(Storage.NAME, new AttributeValue(storage.getName()));
         item.put(tableRangeKey, new AttributeValue(storage.getID()));
         item.put(Storage.DESCRIPTION, new AttributeValue(storage.getDescription()));
-        item.put(Storage.TAGS, new AttributeValue(storage.getTagNames()));
+
+        List<String> tagNames = storage.getTagNames(); // DB elements cannot be empty
+        if (tagNames.isEmpty()) {
+            tagNames.add(" ");
+        }
+
+        item.put(Storage.TAGS, new AttributeValue(tagNames));
         item.put(Storage.IMAGE_URL, new AttributeValue(storage.getImageURL()));
 
         final Map<String, AttributeValue> storedItems = new HashMap<String, AttributeValue>();
@@ -188,6 +195,7 @@ public class StorageDAO {
         }
 
         item.put(storedItemTitle, new AttributeValue().withM(storedItems));
+        logger.info("ITEM: " + item.toString());
         return item;
     }
 

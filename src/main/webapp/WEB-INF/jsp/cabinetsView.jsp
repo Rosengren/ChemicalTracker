@@ -148,7 +148,6 @@
                                             ${tag.title}
                                         </div>
                                     </c:forEach>
-                                    <div>${storage.description}</div>
                                 </div>
                             </div>
                             <div class="extra content">

@@ -142,7 +142,7 @@ public class APIController {
         cabinet.removeStoredItem(request.getChemicalName());
 
         cabinet = evaluateCabinet(cabinet);
-        
+
         cabinetDB.addStorage(cabinet);
 
         return "success";
@@ -158,6 +158,9 @@ public class APIController {
 
         List<Chemical> chemicals = 
             chemicalDB.batchGetChemicals(cabinet.getStoredItemNames());
+
+        System.out.println("EVALUATING CABINET: " + cabinet.getName() + " with chemicals: " +
+            chemicals.toString());
 
         if (fireDiamondEvaluator.checkFlammability(chemicals)) {
             cabinet.addTag(StorageTag.FLAMMABLE);
