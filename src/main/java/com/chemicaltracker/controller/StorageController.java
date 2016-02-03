@@ -33,9 +33,9 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RequestMapping(value = {"/home", "/Home"})
 public class StorageController {
 
-    private StorageDAO locationDB = StorageFactory.getStorage("LOCATIONS");
-    private StorageDAO roomDB = StorageFactory.getStorage("ROOMS");
-    private StorageDAO cabinetDB = StorageFactory.getStorage("CABINETS");
+    private static final StorageDAO locationDB = StorageFactory.getStorage("LOCATIONS");
+    private static final StorageDAO roomDB = StorageFactory.getStorage("ROOMS");
+    private static final StorageDAO cabinetDB = StorageFactory.getStorage("CABINETS");
 
     private ChemicalDAO chemicalDB = ChemicalDAO.getInstance();
 

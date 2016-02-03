@@ -1,4 +1,4 @@
-package com.chemicaltracker.model.requests;
+package com.chemicaltracker.model.request;
 
 public class PartialChemicalQueryRequest {
 

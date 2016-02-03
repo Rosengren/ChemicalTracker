@@ -1,15 +1,12 @@
 package com.chemicaltracker.controller;
 
-import java.util.List;
-import java.util.ArrayList;
+import java.util.*;
 
 import com.chemicaltracker.model.Chemical;
+import com.chemicaltracker.model.Storage;
 import com.chemicaltracker.model.UpdateStatus;
-import com.chemicaltracker.model.requests.UpdateRequest;
-import com.chemicaltracker.model.responses.UpdateResponse;
-import com.chemicaltracker.model.responses.PartialChemicalQueryResponse;
-import com.chemicaltracker.model.requests.PartialChemicalQueryRequest;
-import com.chemicaltracker.model.requests.ChemicalQueryRequest;
+import com.chemicaltracker.model.request.*;
+import com.chemicaltracker.model.response.*;
 
 import com.chemicaltracker.persistence.ChemicalDAO;
 
@@ -40,7 +37,10 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RequestMapping("/api/test")
 public class TestAPIController {
 
-    private ChemicalDAO chemicalDB = ChemicalDAO.getInstance();
+    private static final ChemicalDAO chemicalDB = ChemicalDAO.getInstance();
+    private static final StorageDAO locationDB = StorageFactory.getStorage("LOCATIONS");
+    private static final StorageDAO roomDB = StorageFactory.getStorage("ROOMS");
+    private static final StorageDAO cabinetDB = StorageFactory.getStorage("CABINETS");
     
     @RequestMapping(value="/success")
     public @ResponseBody String success() {
@@ -102,5 +102,32 @@ public class TestAPIController {
         }
 
         return response;
+    }
+
+    @RequestMapping(value="/userTree", method=POST)
+    public @ResponseBody UserTreeResponse userTreeRequest(@RequestBody final UserTreeRequest request, BindingResult result,
+        Model model, Principal principal) {
+
+        // Instead of making multiple calls, get all of the 
+        // rooms and map them to the appropriate locations
+        final List<Storage> rooms = roomDB.getAllStoragesForUser(request.getUsername());
+        final List<Storage> locations = locationDB.getAllStoragesForUser(request.getUsername());
+
+        final Map<String, List<String>> roomMap = new HashMap<String, List<String>>();
+        for (Storage room : rooms) {
+            roomMap.put(room.getName(), room.getStoredItemNames());
+        }
+
+        final Map<String, Map<String, List<String>>> locationMap = new HashMap<String, Map<String, List<String>>>();
+        for (Storage location : locations) {
+
+            Map<String, List<String>> roomsInLocation = new HashMap<String, List<String>>();
+            for (String roomName : location.getStoredItemNames()) {
+                roomsInLocation.put(roomName, roomMap.get(roomName));
+            }
+            locationMap.put(location.getName(), roomsInLocation);
+        }
+
+        return new UserTreeResponse(locationMap);
     }
 }

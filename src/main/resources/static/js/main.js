@@ -42,9 +42,6 @@ $(".addModal").click(function() {
     }).modal('show');
 });
 
-// $('.addChemicalModal.modal')
-//   .modal('attach events', '.ui.modal.searchChemicalModal');
-
 /** Required for making AJAX POST requests **/
 $(function () {
     var token = $("#csrf").attr("value");

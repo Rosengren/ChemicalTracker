@@ -11,12 +11,10 @@ import com.chemicaltracker.util.StorageEvaluator;
 import com.chemicaltracker.model.Chemical;
 import com.chemicaltracker.model.UpdateStatus;
 import com.chemicaltracker.model.Storage;
-import com.chemicaltracker.model.requests.ChemicalQueryRequest;
-import com.chemicaltracker.model.responses.UpdateResponse;
+import com.chemicaltracker.model.request.*;
+import com.chemicaltracker.model.response.*;
 import com.chemicaltracker.model.User;
 import com.chemicaltracker.model.StorageTag;
-
-import com.chemicaltracker.model.requests.RemoveChemicalRequest;
 
 import com.chemicaltracker.persistence.ChemicalDAO;
 import com.chemicaltracker.persistence.UserDAO;
@@ -54,12 +52,9 @@ public class APIController {
     private static final FireDiamondEvaluator fireDiamondEvaluator =
         new FireDiamondEvaluator();
 
-    private static final StorageDAO locationDB =
-        StorageFactory.getStorage("LOCATIONS");
-    private static final StorageDAO roomDB =
-        StorageFactory.getStorage("ROOMS");
-    private static final StorageDAO cabinetDB =
-        StorageFactory.getStorage("CABINETS");
+    private static final StorageDAO locationDB = StorageFactory.getStorage("LOCATIONS");
+    private static final StorageDAO roomDB = StorageFactory.getStorage("ROOMS");
+    private static final StorageDAO cabinetDB = StorageFactory.getStorage("CABINETS");
 
     private ChemicalDAO chemicalDB = ChemicalDAO.getInstance();
 
@@ -85,7 +80,6 @@ public class APIController {
 
         final List<Chemical> chemicals = chemicalDB.searchPartialChemicalName(request.getChemical());
 
-        // Get Names
         List<String> chemicalNames = new ArrayList<String>();
         for (Chemical chemical : chemicals) {
             chemicalNames.add(chemical.getName());

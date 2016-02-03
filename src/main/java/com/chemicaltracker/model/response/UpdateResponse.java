@@ -1,4 +1,4 @@
-package com.chemicaltracker.model.responses;
+package com.chemicaltracker.model.response;
 
 import com.chemicaltracker.model.*;
 
