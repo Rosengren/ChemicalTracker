@@ -1,6 +1,7 @@
 package com.chemicaltracker.controller;
 
 import java.util.List;
+import java.util.ArrayList;
 import java.util.UUID;
 import java.util.HashMap;
 
@@ -8,12 +9,14 @@ import com.chemicaltracker.util.FireDiamondEvaluator;
 import com.chemicaltracker.util.StorageEvaluator;
 
 import com.chemicaltracker.model.Chemical;
+import com.chemicaltracker.model.UpdateStatus;
 import com.chemicaltracker.model.Storage;
-import com.chemicaltracker.model.ChemicalQueryRequest;
+import com.chemicaltracker.model.requests.ChemicalQueryRequest;
+import com.chemicaltracker.model.responses.UpdateResponse;
 import com.chemicaltracker.model.User;
 import com.chemicaltracker.model.StorageTag;
 
-import com.chemicaltracker.model.RemoveChemicalRequest;
+import com.chemicaltracker.model.requests.RemoveChemicalRequest;
 
 import com.chemicaltracker.persistence.ChemicalDAO;
 import com.chemicaltracker.persistence.UserDAO;
@@ -69,11 +72,26 @@ public class APIController {
     }
 
     @RequestMapping(value="/query", method=POST)
-    public @ResponseBody String testQuery(@RequestBody final ChemicalQueryRequest request, BindingResult result,
+    public @ResponseBody String queryRequest(@RequestBody final ChemicalQueryRequest request, BindingResult result,
             Model model, Principal principal) {
 
         final Chemical chemical = chemicalDB.getChemical(request.getChemical());
         return chemical.toJSONString();
+    }
+
+    @RequestMapping(value="/partialQuery", method=POST)
+    public @ResponseBody String partialQueryRequest(@RequestBody final ChemicalQueryRequest request, BindingResult result,
+            Model model, Principal principal) {
+
+        final List<Chemical> chemicals = chemicalDB.searchPartialChemicalName(request.getChemical());
+
+        // Get Names
+        List<String> chemicalNames = new ArrayList<String>();
+        for (Chemical chemical : chemicals) {
+            chemicalNames.add(chemical.getName());
+        }
+
+        return chemicalNames.toString();
     }
 
     // TODO: Below may need to be deprecated
@@ -120,7 +138,7 @@ public class APIController {
     }
 
     @RequestMapping(value="/add/chemicals/to/cabinet/{cabinetID}")
-    public @ResponseBody String addChemicalToCabinet(@PathVariable("cabinetID") final String cabinetID,
+    public @ResponseBody UpdateResponse addChemicalToCabinet(@PathVariable("cabinetID") final String cabinetID,
             @RequestBody final List<String> chemicalNames, BindingResult result, Model model, Principal principal) {
 
         Storage cabinet = cabinetDB.getStorage(principal.getName(), cabinetID);
@@ -131,7 +149,7 @@ public class APIController {
 
         cabinet = evaluateCabinet(cabinet);
         cabinetDB.addStorage(cabinet);
-        return "success";
+        return new UpdateResponse(UpdateStatus.ADDED_CHEMICAL);
     }
 
     @RequestMapping(value="/remove/chemical/from/cabinet/{cabinetID}")

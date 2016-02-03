@@ -129,7 +129,7 @@ public class StorageController {
             locationName , roomName , cabinetName});
         model.addAttribute("breadcrumbs", breadcrumbs);
 
-        model.addAttribute("chemicalNames", chemicalDB.getAllChemicalNames());
+        model.addAttribute("searchChemicalURL", "/api/test/partialQuery/");
         model.addAttribute("chemicals", chemicals);
 
         return "chemicalsView";

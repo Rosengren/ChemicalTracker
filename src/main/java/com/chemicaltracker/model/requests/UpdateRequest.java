@@ -1,4 +1,6 @@
-package com.chemicaltracker.model;
+package com.chemicaltracker.model.requests;
+
+import com.chemicaltracker.model.*;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

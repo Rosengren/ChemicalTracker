@@ -16,8 +16,6 @@ $(".remove").click(function() {
 });
 
 $("#confirmRemove").click(function() {
-    // TODO: add AJAX to permanently remove from DB
-    // Use selectedChemicalName in AJAX Call
     if (selectedChemical) {
         selectedChemical.remove();
         removeChemical(selectedChemicalName);
@@ -37,8 +35,15 @@ $(".tooltip").popup({
 
 $(".addModal").click(function() {
     $('.ui.modal.addStorageModal').modal('show');
-    $('.ui.modal.addChemicalModal').modal('show');
+    $('.ui.modal.searchChemicalModal').modal({
+        onApprove : function() {
+            return false;
+        }
+    }).modal('show');
 });
+
+// $('.addChemicalModal.modal')
+//   .modal('attach events', '.ui.modal.searchChemicalModal');
 
 /** Required for making AJAX POST requests **/
 $(function () {
@@ -51,6 +56,47 @@ $(function () {
 
 $('.ui.dropdown')
   .dropdown();
+
+$("#submitChemicalSearch").click(function() {
+
+    var url = $("#searchChemicalURL").attr("value");
+    var request = {
+        "chemical" : $("#chemicalQuery").val()
+    };
+
+    $results = $("#chemicalSearchResults");
+    $results.empty();
+    $.ajax({
+        type: "POST",
+        dataType: "json",
+        contentType: "application/json",
+        mimeType: "application/json",
+        url: url,
+        data: JSON.stringify(request),
+        success: function(response) {
+            console.log(response);
+
+            if (response.match) {
+                response.chemicalNames.forEach(function(elem) {
+                    $('<a/>', {
+                        text  : elem,
+                        class : 'item',
+                        click : function() {
+                            addChemical($(this).html());
+                        }
+                    }).appendTo($results);
+                });
+            } else {
+                $results.append("No Matches Found!");
+            }
+        },
+        error: function(response) {
+            $results.append("Invalid Query");
+            console.log("ERROR:");
+            console.log(response);
+        }
+    });
+});
 
 $("#submitCreateStorage").click(function() {
 
@@ -89,27 +135,13 @@ $("#submitCreateStorage").click(function() {
     });
 });
 
-$("#submitAddChemicalsToCabinet").click(function() {
+function addChemical(name) {
 
     var username = $("#username").attr("value");
     var url = $("#addURL").attr("value");
 
     var selectedChemicals = [];
-
-    // var inputs = document.querySelectorAll("input[type='checkbox']");
-    // for(var i = 0; i < inputs.length; i++) {
-    //     if (inputs[i].checked == true) {
-    //         selectedChemicals.push(inputs[i].name);
-    //     }
-    // }
-
-    // if (selectedChemicals.length == 0) {
-    //     alert("No chemicals selected");
-    //     return;
-    // }
-
-    var selectedChemicals = [];
-    selectedChemicals.push($("#selectedAddChemical").html());
+    selectedChemicals.push(name);
 
     $.ajax({
         url: url,
@@ -118,10 +150,24 @@ $("#submitAddChemicalsToCabinet").click(function() {
         contentType: "application/json",
         mimeType: "application/json",
         data: JSON.stringify(selectedChemicals),
-        success: function(response) { },
-        error: function(e) { }
+        success: function(response) {
+            console.log(response);
+            var card = $("#cardTemplate").clone();
+            card.attr("id", "")
+                .appendTo("#chemicalCards")
+                .find(".header").html(name);
+
+            card.find(".description").html("Description Here");
+            card.find(".image").click(function() { window.location+='/' + name});
+            card.find(".imageURL").attr("src", response.imageURL);
+            card.show();
+        },
+        error: function(e) {
+            console.log("ERROR:");
+            console.log(response);
+        }
     });
-});
+}
 
 function progressHandlingFunction(e) {
     if (e.lengthComputable) {
@@ -136,8 +182,7 @@ function removeChemical(chemicalName) {
 
     var username = $("#username").attr("value");
     var url = $("#removeURL").attr("value");
-    console.log(JSON.stringify(chemicalName));
-    console.log({"chemicalName": chemicalName});
+
     $.ajax({
         url: url,
         type: "POST",

@@ -1,10 +1,15 @@
 package com.chemicaltracker.controller;
 
+import java.util.List;
+import java.util.ArrayList;
+
 import com.chemicaltracker.model.Chemical;
 import com.chemicaltracker.model.UpdateStatus;
-import com.chemicaltracker.model.UpdateRequest;
-import com.chemicaltracker.model.UpdateResponse;
-import com.chemicaltracker.model.ChemicalQueryRequest;
+import com.chemicaltracker.model.requests.UpdateRequest;
+import com.chemicaltracker.model.responses.UpdateResponse;
+import com.chemicaltracker.model.responses.PartialChemicalQueryResponse;
+import com.chemicaltracker.model.requests.PartialChemicalQueryRequest;
+import com.chemicaltracker.model.requests.ChemicalQueryRequest;
 
 import com.chemicaltracker.persistence.ChemicalDAO;
 
@@ -43,44 +48,39 @@ public class TestAPIController {
     }
 
     @RequestMapping(value="/update", method=POST)
-    public @ResponseBody String testUpdate(@RequestBody final UpdateRequest request, BindingResult result,
+    public @ResponseBody UpdateResponse testUpdate(@RequestBody final UpdateRequest request, BindingResult result,
             Model model, Principal principal) {
 
         final String requestType = request.getRequestType();
-        UpdateResponse response = new UpdateResponse();
-
-        //System.out.println(request.toJSONString());
 
         if (!requestType.equals("ADD") && !requestType.equals("REMOVE")) {
-            response = new UpdateResponse(UpdateStatus.INVALID_REQUEST_TYPE);
+            return new UpdateResponse(UpdateStatus.INVALID_REQUEST_TYPE);
         } else if (request.getUsername().equals("invalid") || request.getUsername().equals("")) {
-            response = new UpdateResponse(UpdateStatus.INVALID_USERNAME);
+            return new UpdateResponse(UpdateStatus.INVALID_USERNAME);
         } else if (request.getLocation().equals("invalid") || request.getLocation().equals("") ||
                     request.getRoom().equals("invalid") || request.getRoom().equals("") ||
                     request.getCabinet().equals("invalid") || request.getCabinet().equals("")) {
-            response = new UpdateResponse(UpdateStatus.MISSING_STORAGE_FIELD);
+            return new UpdateResponse(UpdateStatus.MISSING_STORAGE_FIELD);
         } else {
             if (request.getChemical().equals("valid")) {
                 if (requestType.equals("ADD")) {
-                    response = new UpdateResponse(UpdateStatus.ADDED_CHEMICAL);
+                    return new UpdateResponse(UpdateStatus.ADDED_CHEMICAL);
                 } else {
-                    response = new UpdateResponse(UpdateStatus.REMOVED_CHEMICAL);
+                    return new UpdateResponse(UpdateStatus.REMOVED_CHEMICAL);
                 }
             } else {
                 final Chemical chemical = chemicalDB.getChemical(request.getChemical());
                 if (chemical.getName().equals("")) {
-                    response = new UpdateResponse(UpdateStatus.INVALID_CHEMICAL);
+                    return new UpdateResponse(UpdateStatus.INVALID_CHEMICAL);
                 } else {
                     if (requestType.equals("ADD")) {
-                        response = new UpdateResponse(UpdateStatus.ADDED_CHEMICAL);
+                        return new UpdateResponse(UpdateStatus.ADDED_CHEMICAL);
                     } else {
-                        response = new UpdateResponse(UpdateStatus.REMOVED_CHEMICAL);
+                        return new UpdateResponse(UpdateStatus.REMOVED_CHEMICAL);
                     }
                 }
             }
         }
-
-        return response.toJSONString();
     }
 
     @RequestMapping(value="/query", method=POST)
@@ -89,5 +89,18 @@ public class TestAPIController {
 
         final Chemical chemical = chemicalDB.getChemical(request.getChemical());
         return chemical.toJSONString();
+    }
+
+    @RequestMapping(value="/partialQuery", method=POST)
+    public @ResponseBody PartialChemicalQueryResponse partialQueryRequest(@RequestBody final PartialChemicalQueryRequest request, BindingResult result,
+            Model model, Principal principal) {
+
+        final List<Chemical> chemicals = chemicalDB.searchPartialChemicalName(request.getChemical());
+        final PartialChemicalQueryResponse response = new PartialChemicalQueryResponse();
+        for (Chemical chemical : chemicals) {
+            response.addChemicalName(chemical.getName());
+        }
+
+        return response;
     }
 }

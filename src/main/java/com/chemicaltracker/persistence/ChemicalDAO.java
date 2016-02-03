@@ -131,6 +131,37 @@ public class ChemicalDAO {
         return new Chemical();
     }
 
+    // TODO: add another method for partial queries that return entire chemical objects.
+    public List<Chemical> searchPartialChemicalName(final String partialName) {
+        
+        final Map<String, AttributeValue> expressionAttributeValues = 
+            new HashMap<String, AttributeValue>();
+        expressionAttributeValues.put(":val", new AttributeValue().withS(partialName));
+
+        final Map<String, String> expressionAttributeNames =
+            new HashMap<String, String>();
+
+        expressionAttributeNames.put("#name", "Name");
+                
+        ScanRequest scanRequest = new ScanRequest()
+            .withTableName("Chemicals")
+            .withFilterExpression("contains (#name, :val)")
+            .withExpressionAttributeNames(expressionAttributeNames)
+            .withExpressionAttributeValues(expressionAttributeValues);
+
+        logger.info("REQUEST: " + scanRequest.toString());        
+        ScanResult result = amazonDynamoDBClient.scan(scanRequest);
+
+        final List<Chemical> chemicals = new ArrayList<Chemical>();
+        for (Map<String, AttributeValue> item : result.getItems()) {
+            chemicals.add(convertItemToChemical(item));
+        }
+
+        logger.info("FOUND: " + chemicals.toString());
+
+        return chemicals;
+    }
+
     public void updateChemical(final Chemical chemical) {
         addChemical(chemical);
     }
