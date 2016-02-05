@@ -63,12 +63,4 @@ public class FireDiamond {
     public void setNotice(String notice) {
         this.notice = notice;
     }
-
-    public String toJSONString() {
-        return "{ \"flammability\" : " + this.flammability +
-                ", \"health\" : " + this.health +
-                ", \"instability\" : " + this.instability +
-                ", \"notice\" : \"" + this.notice + "\"" +
-                "}";
-    }
 }

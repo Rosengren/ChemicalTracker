@@ -23,27 +23,6 @@ public class UpdateRequest {
         chemical = "";
     }
 
-    public UpdateRequest(final String requestType, final String username, final String location,
-            final String room, final String cabinet, final String chemical) {
-
-        this.requestType = requestType;
-        this.username = username;
-        this.location = location;
-        this.room = room;
-        this.cabinet = cabinet;
-        this.chemical = chemical;
-    }
-
-    public String toJSONString() {
-        return "{ \"requestType\" : \"" + this.requestType + "\"" +
-                ", \"username\" : \"" + this.username + "\"" +
-                ", \"location\" : \"" + this.location + "\"" +
-                ", \"room\" : \"" + this.room + "\"" +
-                ", \"cabinet\" : \"" + this.cabinet + "\"" +
-                ", \"chemical\" : \"" + this.chemical + "\"" +
-                "}";
-    }
-
     public String getUsername() {
         return this.username;
     }

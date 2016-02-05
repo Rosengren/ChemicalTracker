@@ -155,12 +155,10 @@ public class ChemicalDAO {
                 
         final ScanRequest scanRequest = new ScanRequest()
             .withTableName("Chemicals")
-            // .withFilterExpression("contains (#name, :val)")
             .withFilterExpression(filterExpression)
             .withExpressionAttributeNames(expressionAttributeNames)
             .withExpressionAttributeValues(expressionAttributeValues);
 
-        logger.info("REQUEST: " + scanRequest.toString());        
         ScanResult result = amazonDynamoDBClient.scan(scanRequest);
 
         final List<Chemical> chemicals = new ArrayList<Chemical>();
@@ -168,12 +166,9 @@ public class ChemicalDAO {
             chemicals.add(convertItemToChemical(item));
         }
 
-        logger.info("FOUND: " + chemicals.toString()); 
-
         return chemicals;
     }
 
-    // TODO: add another method for partial queries that return entire chemical objects.
     public List<Chemical> searchPartialChemicalName(final String partialName) {
         
         final Map<String, AttributeValue> expressionAttributeValues = 
@@ -185,14 +180,13 @@ public class ChemicalDAO {
 
         expressionAttributeNames.put("#name", "Name");
                 
-        ScanRequest scanRequest = new ScanRequest()
+        final ScanRequest scanRequest = new ScanRequest()
             .withTableName("Chemicals")
             .withFilterExpression("contains (#name, :val)")
             .withExpressionAttributeNames(expressionAttributeNames)
             .withExpressionAttributeValues(expressionAttributeValues);
 
-        logger.info("REQUEST: " + scanRequest.toString());        
-        ScanResult result = amazonDynamoDBClient.scan(scanRequest);
+        final ScanResult result = amazonDynamoDBClient.scan(scanRequest);
 
         final List<Chemical> chemicals = new ArrayList<Chemical>();
         for (Map<String, AttributeValue> item : result.getItems()) {

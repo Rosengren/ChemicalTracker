@@ -3,9 +3,8 @@ package com.chemicaltracker.persistence;
 import java.util.Map;
 import java.util.HashMap;
 
-import java.util.Arrays;
-
 import java.util.List;
+import java.util.Arrays;
 import java.util.ArrayList;
 
 import com.amazonaws.auth.AWSCredentials;

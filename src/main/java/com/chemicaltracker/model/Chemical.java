@@ -28,31 +28,6 @@ public class Chemical extends AbstractStorageComponent implements StorageCompone
         this.imageURL = "https://s3-us-west-2.amazonaws.com/chemical-images/placeholder.png";
     }
 
-    public Chemical(String name) {
-        this();
-        this.name = name;
-        this.match = true;
-    }
-
-    public Chemical(String name, FireDiamond fireDiamond) {
-        this(name);
-        this.match = true;
-        this.fireDiamond = fireDiamond;
-    }
-
-    public Chemical(String name, FireDiamond fireDiamond, Map<String, Map<String, String>> properties) {
-        this.name = name;
-        this.match = true;
-        this.fireDiamond = fireDiamond;
-        this.properties.setProperties(properties);
-    }
-
-    public String toJSONString() {
-        return "{ \"match\" :  \"" + this.match.toString() + "\"" +
-                ", \"chemical\" : \"" + this.name + "\"" +
-                ", \"properties\" : " + this.fireDiamond.toJSONString() + "}";
-    }
-
     @Override
     public Phrase getFormattedPDF(final int level) {
         Paragraph content = new Paragraph();
@@ -63,13 +38,12 @@ public class Chemical extends AbstractStorageComponent implements StorageCompone
 
     @Override
     public String getDescription() {
-        String desc = "";
-        desc += "Flammability: " + fireDiamond.getFlammability()
-            + ", Health: " + fireDiamond.getHealth()
-            + ", Instability: " + fireDiamond.getInstability()
-            + ", Notice: " + fireDiamond.getNotice();
+        String desc = "Flammability: " + fireDiamond.getFlammability()
+                    + ", Health: " + fireDiamond.getHealth()
+                    + ", Instability: " + fireDiamond.getInstability()
+                    + ", Notice: " + fireDiamond.getNotice();
 
-        Map<String, String> handlingAndStorage = properties.getProperty("Handling and Storage");
+        final Map<String, String> handlingAndStorage = properties.getProperty("Handling and Storage");
 
         desc += "\n\nStorage:\n" + handlingAndStorage.get("Storage");
         return desc;

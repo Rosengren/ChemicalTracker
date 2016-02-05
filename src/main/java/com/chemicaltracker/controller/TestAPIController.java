@@ -84,11 +84,19 @@ public class TestAPIController {
     }
 
     @RequestMapping(value="/query", method=POST)
-    public @ResponseBody String testQuery(@RequestBody final ChemicalQueryRequest request, BindingResult result,
+    public @ResponseBody ChemicalResponse testQuery(@RequestBody final ChemicalQueryRequest request, BindingResult result,
             Model model, Principal principal) {
 
         final Chemical chemical = chemicalDB.getChemical(request.getChemical());
-        return chemical.toJSONString();
+
+        final ChemicalResponse.Properties properties =
+            new ChemicalResponse.Properties()
+                .withFireDiamond(chemical.getFireDiamond());
+
+        return new ChemicalResponse()
+                    .withMatch(chemical.getMatch())
+                    .withChemical(chemical.getName())
+                    .withProperties(properties);
     }
 
     @RequestMapping(value="/partialQuery", method=POST)
