@@ -8,21 +8,10 @@ import java.util.HashMap;
 import com.chemicaltracker.util.FireDiamondEvaluator;
 import com.chemicaltracker.util.StorageEvaluator;
 
-import com.chemicaltracker.model.Chemical;
-import com.chemicaltracker.model.UpdateStatus;
-import com.chemicaltracker.model.Storage;
-import com.chemicaltracker.model.Location;
+import com.chemicaltracker.model.*;
 import com.chemicaltracker.model.request.*;
 import com.chemicaltracker.model.response.*;
-import com.chemicaltracker.model.User;
-import com.chemicaltracker.model.StorageTag;
-
-import com.chemicaltracker.persistence.ChemicalDAO;
-import com.chemicaltracker.persistence.UserDAO;
-
-import com.chemicaltracker.persistence.StorageFactory;
-import com.chemicaltracker.persistence.StorageDAO;
-import com.chemicaltracker.persistence.LocationDAO;
+import com.chemicaltracker.persistence.*;
 
 import org.springframework.ui.Model;
 import java.security.Principal;
@@ -54,10 +43,9 @@ public class APIController {
     private static final FireDiamondEvaluator fireDiamondEvaluator =
         new FireDiamondEvaluator();
 
-    // private static final StorageDAO locationDB = StorageFactory.getStorage("LOCATIONS");
     private static final LocationDAO locationDB = LocationDAO.getInstance();
-    private static final StorageDAO roomDB = StorageFactory.getStorage("ROOMS");
-    private static final StorageDAO cabinetDB = StorageFactory.getStorage("CABINETS");
+    private static final RoomDAO roomDB = RoomDAO.getInstance();
+    private static final CabinetDAO cabinetDB = CabinetDAO.getInstance();
 
     private ChemicalDAO chemicalDB = ChemicalDAO.getInstance();
 
@@ -113,34 +101,34 @@ public class APIController {
 
     @RequestMapping(value="/add/room/to/location/{locationName}", method=POST)
     public @ResponseBody String addRoom(@PathVariable("locationName") final String locationName,
-            @RequestBody final Storage room, BindingResult result, Model model, Principal principal) {
+            @RequestBody final Room room, BindingResult result, Model model, Principal principal) {
 
         final Location location = locationDB.find(principal.getName(), locationName);
 
-        String uuid = UUID.randomUUID().toString();
+        final String uuid = UUID.randomUUID().toString();
         room.setID(uuid);
 
         location.addStoredItem(room.getName(), uuid);
         locationDB.create(location);
 
-        roomDB.addStorage(room);
+        roomDB.create(room);
 
         return "success";
     }
 
     @RequestMapping(value="/add/cabinet/to/room/{roomID}")
     public @ResponseBody String addCabinet(@PathVariable("roomID") final String roomID,
-            @RequestBody final Storage cabinet, BindingResult result, Model model, Principal principal) {
+            @RequestBody final Cabinet cabinet, BindingResult result, Model model, Principal principal) {
 
-        Storage room = roomDB.getStorage(principal.getName(), roomID);
+        final Room room = roomDB.find(principal.getName(), roomID);
 
-        String uuid = UUID.randomUUID().toString();
+        final String uuid = UUID.randomUUID().toString();
         cabinet.setID(uuid);
 
         room.addStoredItem(cabinet.getName(), uuid);
-        roomDB.addStorage(room);
+        roomDB.update(room);
 
-        cabinetDB.addStorage(cabinet);
+        cabinetDB.create(cabinet);
 
         return "success";
     }
@@ -149,14 +137,14 @@ public class APIController {
     public @ResponseBody UpdateResponse addChemicalToCabinet(@PathVariable("cabinetID") final String cabinetID,
             @RequestBody final List<String> chemicalNames, BindingResult result, Model model, Principal principal) {
 
-        Storage cabinet = cabinetDB.getStorage(principal.getName(), cabinetID);
+        Cabinet cabinet = cabinetDB.find(principal.getName(), cabinetID);
 
         for (String chemicalName : chemicalNames) {
             cabinet.addStoredItem(chemicalName, "https://s3-us-west-2.amazonaws.com/chemical-images/placeholder.png");
         }
 
         cabinet = evaluateCabinet(cabinet);
-        cabinetDB.addStorage(cabinet);
+        cabinetDB.update(cabinet);
         return new UpdateResponse(UpdateStatus.ADDED_CHEMICAL);
     }
 
@@ -164,12 +152,12 @@ public class APIController {
     public @ResponseBody String removeChemicalFromCabinet(@PathVariable("cabinetID") final String cabinetID,
         @RequestBody final RemoveChemicalRequest request, BindingResult result, Model model, Principal principal) {
 
-        Storage cabinet = cabinetDB.getStorage(principal.getName(), cabinetID);
+        Cabinet cabinet = cabinetDB.find(principal.getName(), cabinetID);
         cabinet.removeStoredItem(request.getChemicalName());
 
         cabinet = evaluateCabinet(cabinet);
 
-        cabinetDB.addStorage(cabinet);
+        cabinetDB.update(cabinet);
 
         return "success";
     }
@@ -180,7 +168,7 @@ public class APIController {
     }
 
     // TODO: move this to a new class
-    private Storage evaluateCabinet(final Storage cabinet) {
+    private Cabinet evaluateCabinet(final Cabinet cabinet) {
 
         final List<Chemical> chemicals = 
             chemicalDB.batchGetChemicals(cabinet.getStoredItemNames());

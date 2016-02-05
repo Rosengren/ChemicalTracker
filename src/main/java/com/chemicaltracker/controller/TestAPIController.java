@@ -2,18 +2,10 @@ package com.chemicaltracker.controller;
 
 import java.util.*;
 
-import com.chemicaltracker.model.Chemical;
-import com.chemicaltracker.model.Storage;
-import com.chemicaltracker.model.Location;
-import com.chemicaltracker.model.UpdateStatus;
+import com.chemicaltracker.model.*;
 import com.chemicaltracker.model.request.*;
 import com.chemicaltracker.model.response.*;
-
-import com.chemicaltracker.persistence.ChemicalDAO;
-
-import com.chemicaltracker.persistence.StorageFactory;
-import com.chemicaltracker.persistence.StorageDAO;
-import com.chemicaltracker.persistence.LocationDAO;
+import com.chemicaltracker.persistence.*;
 
 import org.springframework.ui.Model;
 import java.security.Principal;
@@ -40,10 +32,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 public class TestAPIController {
 
     private static final ChemicalDAO chemicalDB = ChemicalDAO.getInstance();
-    // private static final StorageDAO locationDB = StorageFactory.getStorage("LOCATIONS");
     private static final LocationDAO locationDB = LocationDAO.getInstance();
-    private static final StorageDAO roomDB = StorageFactory.getStorage("ROOMS");
-    private static final StorageDAO cabinetDB = StorageFactory.getStorage("CABINETS");
+    private static final RoomDAO roomDB = RoomDAO.getInstance();
     
     @RequestMapping(value="/success")
     public @ResponseBody String success() {
@@ -134,11 +124,11 @@ public class TestAPIController {
 
         // Instead of making multiple calls, get all of the 
         // rooms and map them to the appropriate locations
-        final List<Storage> rooms = roomDB.getAllStoragesForUser(request.getUsername());
+        final List<Room> rooms = roomDB.findAll(request.getUsername());
         final List<Location> locations = locationDB.findAll(request.getUsername());
 
         final Map<String, List<String>> roomMap = new HashMap<String, List<String>>();
-        for (Storage room : rooms) {
+        for (Room room : rooms) {
             roomMap.put(room.getName(), room.getStoredItemNames());
         }
 

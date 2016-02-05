@@ -1,23 +1,13 @@
 package com.chemicaltracker.controller;
 
-//import com.chemicaltracker.model.report.*;
-
 import java.util.List;
 import java.util.ArrayList;
 
 import java.util.Map;
 import java.util.HashMap;
 
-import com.chemicaltracker.model.Chemical;
-import com.chemicaltracker.model.Storage;
-import com.chemicaltracker.model.Location;
-import com.chemicaltracker.model.ReportDocument;
-
-import com.chemicaltracker.persistence.ChemicalDAO;
-
-import com.chemicaltracker.persistence.StorageFactory;
-import com.chemicaltracker.persistence.StorageDAO;
-import com.chemicaltracker.persistence.LocationDAO;
+import com.chemicaltracker.model.*;
+import com.chemicaltracker.persistence.*;
 
 import org.springframework.ui.Model;
 import java.security.Principal;
@@ -55,10 +45,9 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/report")
 public class ReportController {
 
-    // private final StorageDAO locationDB = StorageFactory.getStorage("LOCATIONS");
     private final LocationDAO locationDB = LocationDAO.getInstance();
-    private final StorageDAO roomDB = StorageFactory.getStorage("ROOMS");
-    private final StorageDAO cabinetDB = StorageFactory.getStorage("CABINETS");
+    private final CabinetDAO cabinetDB = CabinetDAO.getInstance();
+    private final RoomDAO roomDB = RoomDAO.getInstance();
 
     private final ChemicalDAO chemicalDB =
         ChemicalDAO.getInstance();
@@ -79,14 +68,14 @@ public class ReportController {
         Location location = locationDB.find(username, locationName);
 
         final List<String> roomIDs = location.getStoredItemIDs();
-        final List<Storage> rooms = roomDB.batchGetStorages(username, roomIDs);
+        final List<Room> rooms = roomDB.findAllRooms(username, roomIDs);
 
-        final Map<Storage, List<Storage>> roomCabinetMap = new HashMap<Storage, List<Storage>>();
+        final Map<Room, List<Cabinet>> roomCabinetMap = new HashMap<Room, List<Cabinet>>();
 
         // TODO: this logic will be moved to the Models
-        for (Storage room : rooms) {
+        for (Room room : rooms) {
 
-            for (Storage cabinet : cabinetDB.batchGetStorages(username, room.getStoredItemIDs())) {
+            for (Cabinet cabinet : cabinetDB.findAllCabinets(username, room.getStoredItemIDs())) {
 
                 for (Chemical chemical : chemicalDB.batchGetChemicals(cabinet.getStoredItemNames())) {
                     cabinet.addElement(chemical);

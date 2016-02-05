@@ -3,16 +3,9 @@ package com.chemicaltracker.controller;
 import org.springframework.ui.Model;
 import java.security.Principal;
 
-import com.chemicaltracker.model.Storage;
-import com.chemicaltracker.model.Chemical;
-import com.chemicaltracker.model.Location;
-
 import java.util.*;
-
-import com.chemicaltracker.persistence.StorageFactory;
-import com.chemicaltracker.persistence.StorageDAO;
-import com.chemicaltracker.persistence.ChemicalDAO;
-import com.chemicaltracker.persistence.LocationDAO;
+import com.chemicaltracker.model.*;
+import com.chemicaltracker.persistence.*;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -32,8 +25,8 @@ public class StorageController {
 
     // private static final StorageDAO locationDB = StorageFactory.getStorage("LOCATIONS");
     private static final LocationDAO locationDB = LocationDAO.getInstance();
-    private static final StorageDAO roomDB = StorageFactory.getStorage("ROOMS");
-    private static final StorageDAO cabinetDB = StorageFactory.getStorage("CABINETS");
+    private static final CabinetDAO cabinetDB = CabinetDAO.getInstance();
+    private static final RoomDAO roomDB = RoomDAO.getInstance();
 
     private ChemicalDAO chemicalDB = ChemicalDAO.getInstance();
 
@@ -64,7 +57,7 @@ public class StorageController {
         final Location location = locationDB.find(username, locationName);
         final List<String> roomIDs = location.getStoredItemIDs();
 
-        model.addAttribute("storages", roomDB.batchGetStorages(username, roomIDs));
+        model.addAttribute("storages", roomDB.findAllRooms(username, roomIDs));
 
         model.addAttribute("breadcrumbs", Arrays.asList(new String[] {"Home", locationName}));
 
@@ -85,13 +78,13 @@ public class StorageController {
                 "List of all the cabinets in " + roomName, "Add new cabinet",
                 "/add/cabinet/", "");
 
-        final Storage room = roomDB.getStorage(username, roomID);
+        final Room room = roomDB.find(username, roomID);
         final List<String> cabinetIDs = room.getStoredItemIDs();
 
         System.out.println("ROOM IDs: " + room.getStoredItemIDs());
         System.out.println("ROOM NAMES: " + room.getStoredItemNames());
 
-        model.addAttribute("storages", cabinetDB.batchGetStorages(username, cabinetIDs));
+        model.addAttribute("storages", cabinetDB.findAllCabinets(username, cabinetIDs));
 
         final List<String> breadcrumbs = Arrays.asList(new String[] {"Home" ,
             locationName , roomName});
@@ -109,14 +102,14 @@ public class StorageController {
 
         final String username = principal.getName();
         final String roomID = locationDB.find(username, locationName).getStoredItemID(roomName);
-        final String cabinetID = roomDB.getStorage(username, roomID).getStoredItemID(cabinetName);
+        final String cabinetID = roomDB.find(username, roomID).getStoredItemID(cabinetName);
 
         model = addStorageDetailsToModel(model, username, "Chemicals",
                 "List of all the chemicals in " + cabinetName,
                 "Add chemical", "/api/add/chemicals/to/cabinet/" + cabinetID,
                 "/api/remove/chemical/from/cabinet/" + cabinetID);
 
-        final Storage cabinet = cabinetDB.getStorage(username, cabinetID);
+        final Cabinet cabinet = cabinetDB.find(username, cabinetID);
         final List<String> chemicalNames = cabinet.getStoredItemNames();
         final List<Chemical> chemicals = chemicalDB.batchGetChemicals(chemicalNames);
 
@@ -147,7 +140,7 @@ public class StorageController {
 
         String username = principal.getName();
         String roomID = locationDB.find(username, locationName).getStoredItemID(roomName);
-        String cabinetID = roomDB.getStorage(username, roomID).getStoredItemID(cabinetName);
+        String cabinetID = roomDB.find(username, roomID).getStoredItemID(cabinetName);
 
         model = addStorageDetailsToModel(model, username, chemicalName, "Material Safety Data Sheet",
                 "Edit Chemical", "/api/update/chemical/" + chemicalName, "");

@@ -1,18 +1,13 @@
 package com.chemicaltracker.controller;
 
-import com.chemicaltracker.model.Storage;
-import com.chemicaltracker.model.Location;
+import com.chemicaltracker.model.*;
+import com.chemicaltracker.persistence.*;
+
 import java.util.UUID;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-
-import com.chemicaltracker.persistence.ImageDAO;
-
-import com.chemicaltracker.persistence.StorageDAO;
-import com.chemicaltracker.persistence.LocationDAO;
-import com.chemicaltracker.persistence.StorageFactory;
 
 import org.springframework.ui.Model;
 import java.security.Principal;
@@ -47,8 +42,8 @@ public class FileUploadController {
 
     private static final ImageDAO imageDB = ImageDAO.getInstance();
     private static final LocationDAO locationDB = LocationDAO.getInstance();
-    private static final StorageDAO roomDB = StorageFactory.getStorage("ROOMS");
-    private static final StorageDAO cabinetDB = StorageFactory.getStorage("CABINETS");
+    private static final CabinetDAO cabinetDB = CabinetDAO.getInstance();
+    private static final RoomDAO roomDB = RoomDAO.getInstance();
 
     @RequestMapping(value = "/add/location", method = POST)
     public ResponseEntity addLocationHandler(Principal principal,
@@ -105,12 +100,13 @@ public class FileUploadController {
                 parentLocation.addStoredItem(name, uuid);
                 locationDB.update(parentLocation);
 
-                roomDB.addStorage(new Storage(
-                            principal.getName(),
-                            name,
-                            uuid,
-                            description,
-                            S3_BASE_URL + filename));
+                roomDB.create(
+                    new Room()
+                        .withUsername(principal.getName())
+                        .withName(name)
+                        .withID(uuid)
+                        .withDescription(description)
+                        .withImageURL(S3_BASE_URL + filename));
 
                 return new ResponseEntity(HttpStatus.OK);
             } catch (Exception e) {
@@ -139,16 +135,17 @@ public class FileUploadController {
 
                 final String uuid = UUID.randomUUID().toString();
 
-                final Storage room = roomDB.getStorage(principal.getName(), parentID);
+                final Room room = roomDB.find(principal.getName(), parentID);
                 room.addStoredItem(name, uuid);
-                roomDB.updateStorage(room);
+                roomDB.update(room);
 
-                cabinetDB.addStorage(new Storage(
-                            principal.getName(),
-                            name,
-                            uuid,
-                            description,
-                            S3_BASE_URL + filename));
+                cabinetDB.create(
+                    new Cabinet()
+                        .withUsername(principal.getName())
+                        .withName(name)
+                        .withID(uuid)
+                        .withDescription(description)
+                        .withImageURL(S3_BASE_URL + filename));
 
                 return new ResponseEntity(HttpStatus.OK);
             } catch (Exception e) {
