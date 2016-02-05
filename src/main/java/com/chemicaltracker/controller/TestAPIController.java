@@ -4,6 +4,7 @@ import java.util.*;
 
 import com.chemicaltracker.model.Chemical;
 import com.chemicaltracker.model.Storage;
+import com.chemicaltracker.model.Location;
 import com.chemicaltracker.model.UpdateStatus;
 import com.chemicaltracker.model.request.*;
 import com.chemicaltracker.model.response.*;
@@ -12,6 +13,7 @@ import com.chemicaltracker.persistence.ChemicalDAO;
 
 import com.chemicaltracker.persistence.StorageFactory;
 import com.chemicaltracker.persistence.StorageDAO;
+import com.chemicaltracker.persistence.LocationDAO;
 
 import org.springframework.ui.Model;
 import java.security.Principal;
@@ -38,7 +40,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 public class TestAPIController {
 
     private static final ChemicalDAO chemicalDB = ChemicalDAO.getInstance();
-    private static final StorageDAO locationDB = StorageFactory.getStorage("LOCATIONS");
+    // private static final StorageDAO locationDB = StorageFactory.getStorage("LOCATIONS");
+    private static final LocationDAO locationDB = LocationDAO.getInstance();
     private static final StorageDAO roomDB = StorageFactory.getStorage("ROOMS");
     private static final StorageDAO cabinetDB = StorageFactory.getStorage("CABINETS");
     
@@ -132,7 +135,7 @@ public class TestAPIController {
         // Instead of making multiple calls, get all of the 
         // rooms and map them to the appropriate locations
         final List<Storage> rooms = roomDB.getAllStoragesForUser(request.getUsername());
-        final List<Storage> locations = locationDB.getAllStoragesForUser(request.getUsername());
+        final List<Location> locations = locationDB.findAll(request.getUsername());
 
         final Map<String, List<String>> roomMap = new HashMap<String, List<String>>();
         for (Storage room : rooms) {
@@ -140,7 +143,7 @@ public class TestAPIController {
         }
 
         final Map<String, Map<String, List<String>>> locationMap = new HashMap<String, Map<String, List<String>>>();
-        for (Storage location : locations) {
+        for (Location location : locations) {
 
             Map<String, List<String>> roomsInLocation = new HashMap<String, List<String>>();
             for (String roomName : location.getStoredItemNames()) {

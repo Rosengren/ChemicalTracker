@@ -10,12 +10,14 @@ import java.util.HashMap;
 
 import com.chemicaltracker.model.Chemical;
 import com.chemicaltracker.model.Storage;
+import com.chemicaltracker.model.Location;
 import com.chemicaltracker.model.ReportDocument;
 
 import com.chemicaltracker.persistence.ChemicalDAO;
 
 import com.chemicaltracker.persistence.StorageFactory;
 import com.chemicaltracker.persistence.StorageDAO;
+import com.chemicaltracker.persistence.LocationDAO;
 
 import org.springframework.ui.Model;
 import java.security.Principal;
@@ -53,7 +55,8 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/report")
 public class ReportController {
 
-    private final StorageDAO locationDB = StorageFactory.getStorage("LOCATIONS");
+    // private final StorageDAO locationDB = StorageFactory.getStorage("LOCATIONS");
+    private final LocationDAO locationDB = LocationDAO.getInstance();
     private final StorageDAO roomDB = StorageFactory.getStorage("ROOMS");
     private final StorageDAO cabinetDB = StorageFactory.getStorage("CABINETS");
 
@@ -73,7 +76,7 @@ public class ReportController {
         response.setContentType("application/pdf");
 
         final String username = principal.getName();
-        Storage location = locationDB.getStorage(username, locationName);
+        Location location = locationDB.find(username, locationName);
 
         final List<String> roomIDs = location.getStoredItemIDs();
         final List<Storage> rooms = roomDB.batchGetStorages(username, roomIDs);

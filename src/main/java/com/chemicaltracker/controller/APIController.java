@@ -11,6 +11,7 @@ import com.chemicaltracker.util.StorageEvaluator;
 import com.chemicaltracker.model.Chemical;
 import com.chemicaltracker.model.UpdateStatus;
 import com.chemicaltracker.model.Storage;
+import com.chemicaltracker.model.Location;
 import com.chemicaltracker.model.request.*;
 import com.chemicaltracker.model.response.*;
 import com.chemicaltracker.model.User;
@@ -21,6 +22,7 @@ import com.chemicaltracker.persistence.UserDAO;
 
 import com.chemicaltracker.persistence.StorageFactory;
 import com.chemicaltracker.persistence.StorageDAO;
+import com.chemicaltracker.persistence.LocationDAO;
 
 import org.springframework.ui.Model;
 import java.security.Principal;
@@ -52,7 +54,8 @@ public class APIController {
     private static final FireDiamondEvaluator fireDiamondEvaluator =
         new FireDiamondEvaluator();
 
-    private static final StorageDAO locationDB = StorageFactory.getStorage("LOCATIONS");
+    // private static final StorageDAO locationDB = StorageFactory.getStorage("LOCATIONS");
+    private static final LocationDAO locationDB = LocationDAO.getInstance();
     private static final StorageDAO roomDB = StorageFactory.getStorage("ROOMS");
     private static final StorageDAO cabinetDB = StorageFactory.getStorage("CABINETS");
 
@@ -60,12 +63,12 @@ public class APIController {
 
     private UserDAO userDB = UserDAO.getInstance();
 
-    @RequestMapping(value="/add/user", method=POST)
-    public @ResponseBody String addUser(@RequestBody final User user) {
-        // userDB.createUser(user.getUsername(), user.getPassword(), user.getRole());
-        userDB.create(user);
-        return "success";
-    }
+    // @RequestMapping(value="/add/user", method=POST)
+    // public @ResponseBody String addUser(@RequestBody final User user) {
+    //     // userDB.createUser(user.getUsername(), user.getPassword(), user.getRole());
+    //     userDB.create(user);
+    //     return "success";
+    // }
 
     @RequestMapping(value="/query", method=POST)
     public @ResponseBody ChemicalResponse queryRequest(@RequestBody final ChemicalQueryRequest request, BindingResult result,
@@ -100,10 +103,11 @@ public class APIController {
 
     // TODO: Below may need to be deprecated
     @RequestMapping(value="/add/location", method=POST)
-    public @ResponseBody String addLocation(@RequestBody final Storage location, BindingResult result,
+    public @ResponseBody String addLocation(@RequestBody final Location location, BindingResult result,
             Model model, Principal principal) {
         location.setID(location.getName());
-        locationDB.addStorage(location);
+        locationDB.create(location);
+
         return "success";
     }
 
@@ -111,13 +115,13 @@ public class APIController {
     public @ResponseBody String addRoom(@PathVariable("locationName") final String locationName,
             @RequestBody final Storage room, BindingResult result, Model model, Principal principal) {
 
-        final Storage location = locationDB.getStorage(principal.getName(), locationName);
+        final Location location = locationDB.find(principal.getName(), locationName);
 
         String uuid = UUID.randomUUID().toString();
         room.setID(uuid);
 
         location.addStoredItem(room.getName(), uuid);
-        locationDB.addStorage(location);
+        locationDB.create(location);
 
         roomDB.addStorage(room);
 

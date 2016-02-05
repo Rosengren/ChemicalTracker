@@ -1,6 +1,7 @@
 package com.chemicaltracker.controller;
 
 import com.chemicaltracker.model.Storage;
+import com.chemicaltracker.model.Location;
 import java.util.UUID;
 
 import java.io.BufferedOutputStream;
@@ -10,6 +11,7 @@ import java.io.FileOutputStream;
 import com.chemicaltracker.persistence.ImageDAO;
 
 import com.chemicaltracker.persistence.StorageDAO;
+import com.chemicaltracker.persistence.LocationDAO;
 import com.chemicaltracker.persistence.StorageFactory;
 
 import org.springframework.ui.Model;
@@ -44,7 +46,7 @@ public class FileUploadController {
     private static final String S3_BASE_URL = "https://s3-us-west-2.amazonaws.com/chemical-images/";
 
     private static final ImageDAO imageDB = ImageDAO.getInstance();
-    private static final StorageDAO locationDB = StorageFactory.getStorage("LOCATIONS");
+    private static final LocationDAO locationDB = LocationDAO.getInstance();
     private static final StorageDAO roomDB = StorageFactory.getStorage("ROOMS");
     private static final StorageDAO cabinetDB = StorageFactory.getStorage("CABINETS");
 
@@ -63,15 +65,17 @@ public class FileUploadController {
 
                 uploadStorageImage(image, filename, name.replace(' ', '-') + IMAGE_EXTENSION);
 
-                locationDB.addStorage(new Storage(
-                            principal.getName(),
-                            name,
-                            name, // same as name for location
-                            description,
-                            S3_BASE_URL + filename));
+                locationDB.create(
+                    new Location()
+                        .withUsername(principal.getName())
+                        .withName(name)
+                        .withID(name) // same as name for location
+                        .withDescription(description)
+                        .withImageURL(S3_BASE_URL + filename));
 
                 return new ResponseEntity(HttpStatus.OK);
             } catch (Exception e) {
+                logger.error("Error occurred while adding location", e);
                 return new ResponseEntity(e.getMessage(), HttpStatus.BAD_REQUEST);
             }
 
@@ -97,9 +101,9 @@ public class FileUploadController {
 
                 final String uuid = UUID.randomUUID().toString();
 
-                final Storage parentStorage = locationDB.getStorage(principal.getName(), parentID);
-                parentStorage.addStoredItem(name, uuid);
-                locationDB.updateStorage(parentStorage);
+                final Location parentLocation = locationDB.find(principal.getName(), parentID);
+                parentLocation.addStoredItem(name, uuid);
+                locationDB.update(parentLocation);
 
                 roomDB.addStorage(new Storage(
                             principal.getName(),

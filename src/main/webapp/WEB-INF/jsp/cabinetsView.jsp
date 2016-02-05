@@ -103,7 +103,7 @@
                 </div>
             </div>
 
-            <div class="ui container">
+            <div class="ui container bottom-padding">
                 <div class="ui four column stackable centered grid">
                     <div class="ui center aligned grid container" id="noStorages">
                         <c:if test="${empty storages}">

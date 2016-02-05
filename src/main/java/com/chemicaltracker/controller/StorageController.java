@@ -61,7 +61,6 @@ public class StorageController {
                 "List of all the rooms in " + locationName,
                 "Add new room", "/add/room/", "");
 
-        // final Location location = locationDB.getStorage(username, locationName);
         final Location location = locationDB.find(username, locationName);
         final List<String> roomIDs = location.getStoredItemIDs();
 
