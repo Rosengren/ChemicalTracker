@@ -69,7 +69,7 @@ public class TestAPIController {
                     return new UpdateResponse(UpdateStatus.REMOVED_CHEMICAL);
                 }
             } else {
-                final Chemical chemical = chemicalDB.getChemical(request.getChemical());
+                final Chemical chemical = chemicalDB.find(request.getChemical());
                 if (chemical.getName().equals("")) {
                     return new UpdateResponse(UpdateStatus.INVALID_CHEMICAL);
                 } else {
@@ -87,7 +87,7 @@ public class TestAPIController {
     public @ResponseBody ChemicalResponse testQuery(@RequestBody final ChemicalQueryRequest request, BindingResult result,
             Model model, Principal principal) {
 
-        final Chemical chemical = chemicalDB.getChemical(request.getChemical());
+        final Chemical chemical = chemicalDB.find(request.getChemical());
 
         final ChemicalResponse.Properties properties =
             new ChemicalResponse.Properties()

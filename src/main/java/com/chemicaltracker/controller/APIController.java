@@ -62,7 +62,8 @@ public class APIController {
 
     @RequestMapping(value="/add/user", method=POST)
     public @ResponseBody String addUser(@RequestBody final User user) {
-        userDB.createUser(user.getUsername(), user.getPassword(), user.getRole());
+        // userDB.createUser(user.getUsername(), user.getPassword(), user.getRole());
+        userDB.create(user);
         return "success";
     }
 
@@ -70,7 +71,7 @@ public class APIController {
     public @ResponseBody ChemicalResponse queryRequest(@RequestBody final ChemicalQueryRequest request, BindingResult result,
             Model model, Principal principal) {
 
-        final Chemical chemical = chemicalDB.getChemical(request.getChemical());
+        final Chemical chemical = chemicalDB.find(request.getChemical());
 
         final ChemicalResponse.Properties properties =
             new ChemicalResponse.Properties()
@@ -110,7 +111,7 @@ public class APIController {
     public @ResponseBody String addRoom(@PathVariable("locationName") final String locationName,
             @RequestBody final Storage room, BindingResult result, Model model, Principal principal) {
 
-        Storage location = locationDB.getStorage(principal.getName(), locationName);
+        final Storage location = locationDB.getStorage(principal.getName(), locationName);
 
         String uuid = UUID.randomUUID().toString();
         room.setID(uuid);

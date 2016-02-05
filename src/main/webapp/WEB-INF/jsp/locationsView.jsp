@@ -80,7 +80,7 @@
                 <div class="ui container">
                     <div class="introduction">
                         <h1 class="ui inverted header">
-                            <span class="library">${title}</span>
+                            <span class="library">Locations</span>
                             <span class="tagline">${subtitle}</span>
                         </h1>
                         <div class="ui hidden divider"></div>

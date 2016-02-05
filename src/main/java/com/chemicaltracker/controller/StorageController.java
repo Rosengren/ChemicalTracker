@@ -63,9 +63,7 @@ public class StorageController {
 
         model.addAttribute("storages", roomDB.batchGetStorages(username, roomIDs));
 
-        // TODO; make more efficient
-        final List<String> breadcrumbs = Arrays.asList(new String[] {"Home", locationName});
-        model.addAttribute("breadcrumbs", breadcrumbs);
+        model.addAttribute("breadcrumbs", Arrays.asList(new String[] {"Home", locationName}));
 
         model.addAttribute("parentID", location.getID());
 
@@ -102,9 +100,9 @@ public class StorageController {
             @PathVariable("roomName") String roomName, @PathVariable("cabinetName") String cabinetName,
             Model model, Principal principal) {
 
-        String username = principal.getName();
-        String roomID = locationDB.getStorage(username, locationName).getStoredItemID(roomName);
-        String cabinetID = roomDB.getStorage(username, roomID).getStoredItemID(cabinetName);
+        final String username = principal.getName();
+        final String roomID = locationDB.getStorage(username, locationName).getStoredItemID(roomName);
+        final String cabinetID = roomDB.getStorage(username, roomID).getStoredItemID(cabinetName);
 
         model = addStorageDetailsToModel(model, username, "Chemicals",
                 "List of all the chemicals in " + cabinetName,
@@ -147,7 +145,7 @@ public class StorageController {
         model = addStorageDetailsToModel(model, username, chemicalName, "Material Safety Data Sheet",
                 "Edit Chemical", "/api/update/chemical/" + chemicalName, "");
 
-        final Chemical chemical = chemicalDB.getChemical(chemicalName);
+        final Chemical chemical = chemicalDB.find(chemicalName);
         model.addAttribute("chemical", chemical);
 
         final List<String> breadcrumbs = Arrays.asList(new String[] {"Home",

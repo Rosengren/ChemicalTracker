@@ -1,6 +1,5 @@
 package com.chemicaltracker.persistence;
 
-import com.chemicaltracker.model.FireDiamond;
 import com.chemicaltracker.model.Chemical;
 
 import java.util.Map;
@@ -11,52 +10,18 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
 
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.profile.ProfileCredentialsProvider;
-import com.amazonaws.regions.Region;
-import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
-import com.amazonaws.services.dynamodbv2.model.PutItemRequest;
-import com.amazonaws.services.dynamodbv2.model.PutItemResult;
-import com.amazonaws.services.dynamodbv2.model.DeleteItemRequest;
-import com.amazonaws.services.dynamodbv2.model.DeleteItemResult;
 import com.amazonaws.services.dynamodbv2.model.GetItemRequest;
 import com.amazonaws.services.dynamodbv2.model.GetItemResult;
-import com.amazonaws.services.dynamodbv2.model.ScanRequest;
-import com.amazonaws.services.dynamodbv2.model.ScanResult;
-import com.amazonaws.services.dynamodbv2.document.Table;
-import com.amazonaws.services.dynamodbv2.document.Item;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 
-import org.apache.log4j.Logger;
-
-import com.amazonaws.AmazonClientException;
-import com.amazonaws.AmazonServiceException;
-
-public class ChemicalDAO {
+public class ChemicalDAO extends DynamoDBDAO<Chemical> {
 
     private static volatile ChemicalDAO instance;
 
-    private static final Logger logger = Logger.getLogger(ChemicalDAO.class);
-
     private static final String CHEMICALS_TABLE_NAME = "Chemicals";
     private static final String CHEMICALS_TABLE_INDEX = "Name";
-
-    private DynamoDBMapper mapper;
-    private AmazonDynamoDBClient amazonDynamoDBClient;
-
-    private ChemicalDAO() {
-
-        try {
-            initializeDBConnection();
-        } catch (Exception e) {
-            logger.error("Error occured while initializing DB Connection", e);
-        }
-    }
 
     public static ChemicalDAO getInstance() {
 
@@ -71,42 +36,9 @@ public class ChemicalDAO {
         return instance;
     }
 
-    public void initializeDBConnection() throws AmazonClientException {
-
-        AWSCredentials credentials = null;
-
-        try {
-            credentials = new ProfileCredentialsProvider().getCredentials();
-        } catch (Exception e) {
-            throw new AmazonClientException("Could not load credentials", e);
-        }
-
-        try {
-            amazonDynamoDBClient = new AmazonDynamoDBClient(credentials);
-        } catch (Exception e) {
-            throw new AmazonClientException("The provided credentials were not valid", e);
-        }
-
-        final Region usWest2 = Region.getRegion(Regions.US_WEST_2);
-        amazonDynamoDBClient.setRegion(usWest2);
-
-        mapper = new DynamoDBMapper(amazonDynamoDBClient);
-    }
-
-    public Chemical getChemical(final String name) {
-
-        final Chemical partitionKeyKeyValues = new Chemical();
-        partitionKeyKeyValues.setName(name);
-
-        final DynamoDBQueryExpression<Chemical> queryExpression = new DynamoDBQueryExpression<Chemical>()
-            .withHashKeyValues(partitionKeyKeyValues);
-
-        final List<Chemical> itemList = mapper.query(Chemical.class, queryExpression);
-
-        if (itemList.isEmpty()) {
-            return new Chemical().withMatch(false);
-        }
-        return itemList.get(0); // return first match
+    @Override
+    public Class getObjectClass() {
+        return Chemical.class;
     }
 
     public List<Chemical> searchPartialChemicalName(final List<String> partialNames) {
@@ -156,18 +88,6 @@ public class ChemicalDAO {
             .withExpressionAttributeValues(expressionAttributeValues);
 
         return mapper.scan(Chemical.class, scanRequest);
-    }
-
-    public void updateChemical(final Chemical chemical) {
-        addChemical(chemical);
-    }
-
-    public void deleteChemical(final Chemical chemical) {
-        mapper.delete(chemical);
-    }
-
-    public void addChemical(final Chemical chemical) {
-        mapper.save(chemical);
     }
 
     public List<String> getAllChemicalNames() {

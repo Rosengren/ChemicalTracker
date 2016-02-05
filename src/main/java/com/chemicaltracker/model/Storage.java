@@ -2,7 +2,6 @@ package com.chemicaltracker.model;
 
 import com.chemicaltracker.model.StorageTag;
 
-// import com.itextpdf.text.List;
 import com.itextpdf.text.ListItem;
 import com.itextpdf.text.Paragraph;
 import com.itextpdf.text.Phrase;
@@ -71,11 +70,6 @@ public class Storage extends AbstractStorageComponent implements StorageComponen
     public Storage(final String username, final String name, final String id,
             final String description, final String imageURL) {
         this(username, name, id, description, new ArrayList<String>(), new HashMap<String, String>(), imageURL);
-    }
-
-    public Storage(final String username, final String name, final String id, final String description,
-            final Map<String, String> storedItemMap) {
-        this(username, name, id, description, new ArrayList<String>(), storedItemMap, "placeholder.jpg");
     }
 
     public void setStoredItemMap(final Map<String, String> storedItemMap) {

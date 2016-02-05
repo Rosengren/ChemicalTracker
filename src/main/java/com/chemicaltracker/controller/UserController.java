@@ -47,7 +47,7 @@ public class UserController {
 
     @RequestMapping(value="/signup", method=POST)
     public String signupPost(@ModelAttribute("userForm") final User user, Model model) {
-        userDB.createUser(user.getUsername(), user.getPassword(), user.getRole());
+        userDB.create(user);
         return "welcome";
     }
 
