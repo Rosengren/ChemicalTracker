@@ -1,12 +1,5 @@
 package com.chemicaltracker.model.request;
 
-import com.chemicaltracker.model.*;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.ArrayList;
-import org.json.simple.JSONArray;
-
 public class ChemicalQueryRequest {
 
     private String chemical;

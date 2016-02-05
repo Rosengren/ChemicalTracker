@@ -194,6 +194,8 @@ function removeChemical(chemicalName) {
     var username = $("#username").attr("value");
     var url = $("#removeURL").attr("value");
 
+    console.log("REMOVING: " + chemicalName);
+
     $.ajax({
         url: url,
         type: "POST",

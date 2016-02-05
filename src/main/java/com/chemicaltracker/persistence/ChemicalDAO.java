@@ -28,6 +28,10 @@ import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.document.Item;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
+
 import org.apache.log4j.Logger;
 
 import com.amazonaws.AmazonClientException;
@@ -42,6 +46,7 @@ public class ChemicalDAO {
     private static final String CHEMICALS_TABLE_NAME = "Chemicals";
     private static final String CHEMICALS_TABLE_INDEX = "Name";
 
+    private DynamoDBMapper mapper;
     private AmazonDynamoDBClient amazonDynamoDBClient;
 
     private ChemicalDAO() {
@@ -65,6 +70,7 @@ public class ChemicalDAO {
 
         return instance;
     }
+
     public void initializeDBConnection() throws AmazonClientException {
 
         AWSCredentials credentials = null;
@@ -83,64 +89,35 @@ public class ChemicalDAO {
 
         final Region usWest2 = Region.getRegion(Regions.US_WEST_2);
         amazonDynamoDBClient.setRegion(usWest2);
-    }
 
-    public List<Chemical> getAllChemicals() {
-
-        final List<Chemical> chemicals = new ArrayList<Chemical>();
-        final ScanRequest scanRequest = new ScanRequest()
-            .withTableName(CHEMICALS_TABLE_NAME);
-
-        try {
-            final ScanResult result = amazonDynamoDBClient.scan(scanRequest);
-
-            for (Map<String, AttributeValue> item : result.getItems()) {
-                chemicals.add(convertItemToChemical(item));
-            }
-
-        } catch (Exception e) {
-            logger.error("Error occurred while scanning for all chemicals in table: " + CHEMICALS_TABLE_NAME, e);
-        }
-
-        return chemicals;
+        mapper = new DynamoDBMapper(amazonDynamoDBClient);
     }
 
     public Chemical getChemical(final String name) {
 
-        final Map<String, AttributeValue> key = new HashMap<String, AttributeValue>();
-        key.put(CHEMICALS_TABLE_INDEX, new AttributeValue().withS(name));
+        final Chemical partitionKeyKeyValues = new Chemical();
+        partitionKeyKeyValues.setName(name);
 
-        final GetItemRequest request = new GetItemRequest()
-            .withTableName(CHEMICALS_TABLE_NAME)
-            .withKey(key);
+        final DynamoDBQueryExpression<Chemical> queryExpression = new DynamoDBQueryExpression<Chemical>()
+            .withHashKeyValues(partitionKeyKeyValues);
 
-        try {
-            final GetItemResult result = amazonDynamoDBClient.getItem(request);
+        final List<Chemical> itemList = mapper.query(Chemical.class, queryExpression);
 
-            if (result.getItem() == null) {
-                return new Chemical();
-            } else {
-                return convertItemToChemical(result.getItem());
-            }
-
-        } catch (Exception e) {
-            logger.error("Error occurred while getting chemical: " + name + " from table: " + CHEMICALS_TABLE_NAME);
+        if (itemList.isEmpty()) {
+            return new Chemical().withMatch(false);
         }
-        // not sure if returning an empty obect is better than no object.
-        // From the user's point of view, at least it will display something
-        return new Chemical();
+        return itemList.get(0); // return first match
     }
 
     public List<Chemical> searchPartialChemicalName(final List<String> partialNames) {
-
-        final Map<String, AttributeValue> expressionAttributeValues = 
-            new HashMap<String, AttributeValue>();
-        
 
         final Map<String, String> expressionAttributeNames =
             new HashMap<String, String>();
 
         expressionAttributeNames.put("#name", "Name");
+
+        final Map<String, AttributeValue> expressionAttributeValues = 
+            new HashMap<String, AttributeValue>();
 
         int count = 0;
         String filterExpression = "";
@@ -152,21 +129,14 @@ public class ChemicalDAO {
             expressionAttributeValues.put(":val" + count, new AttributeValue().withS(partialName));
             count += 1;
         }
-                
-        final ScanRequest scanRequest = new ScanRequest()
-            .withTableName("Chemicals")
+
+        final DynamoDBScanExpression scanRequest = new DynamoDBScanExpression()
             .withFilterExpression(filterExpression)
             .withExpressionAttributeNames(expressionAttributeNames)
             .withExpressionAttributeValues(expressionAttributeValues);
 
-        ScanResult result = amazonDynamoDBClient.scan(scanRequest);
 
-        final List<Chemical> chemicals = new ArrayList<Chemical>();
-        for (Map<String, AttributeValue> item : result.getItems()) {
-            chemicals.add(convertItemToChemical(item));
-        }
-
-        return chemicals;
+        return mapper.scan(Chemical.class, scanRequest);
     }
 
     public List<Chemical> searchPartialChemicalName(final String partialName) {
@@ -180,20 +150,12 @@ public class ChemicalDAO {
 
         expressionAttributeNames.put("#name", "Name");
                 
-        final ScanRequest scanRequest = new ScanRequest()
-            .withTableName("Chemicals")
+        final DynamoDBScanExpression scanRequest = new DynamoDBScanExpression()
             .withFilterExpression("contains (#name, :val)")
             .withExpressionAttributeNames(expressionAttributeNames)
             .withExpressionAttributeValues(expressionAttributeValues);
 
-        final ScanResult result = amazonDynamoDBClient.scan(scanRequest);
-
-        final List<Chemical> chemicals = new ArrayList<Chemical>();
-        for (Map<String, AttributeValue> item : result.getItems()) {
-            chemicals.add(convertItemToChemical(item));
-        }
-
-        return chemicals;
+        return mapper.scan(Chemical.class, scanRequest);
     }
 
     public void updateChemical(final Chemical chemical) {
@@ -201,35 +163,11 @@ public class ChemicalDAO {
     }
 
     public void deleteChemical(final Chemical chemical) {
-
-        final Map<String, AttributeValue> key = new HashMap<String, AttributeValue>();
-        key.put(CHEMICALS_TABLE_INDEX, new AttributeValue().withS(chemical.getName()));
-
-        final DeleteItemRequest deleteItemRequest = new DeleteItemRequest()
-            .withTableName(CHEMICALS_TABLE_NAME)
-            .withKey(key);
-
-        try {
-            amazonDynamoDBClient.deleteItem(deleteItemRequest);
-        } catch (AmazonServiceException e) {
-            logger.error("Error occured while trying to delete chemical: " +
-                    chemical.getName() + " from table: " + CHEMICALS_TABLE_NAME);
-        }
+        mapper.delete(chemical);
     }
 
     public void addChemical(final Chemical chemical) {
-
-        final Map<String, AttributeValue> item = convertChemicalToItem(chemical);
-        final PutItemRequest putItemRequest = new PutItemRequest()
-            .withTableName(CHEMICALS_TABLE_NAME)
-            .withItem(item);
-
-        try {
-            amazonDynamoDBClient.putItem(putItemRequest);
-        } catch (AmazonServiceException e) {
-            logger.error("Error occurred while trying to add chemical: " +
-                    chemical.getName() + " to table: " + CHEMICALS_TABLE_NAME, e);
-        }
+        mapper.save(chemical);
     }
 
     public List<String> getAllChemicalNames() {
@@ -252,135 +190,35 @@ public class ChemicalDAO {
             logger.error("Error occurred while getting all chemical names from table: " + CHEMICALS_TABLE_NAME);
         }
 
-     
         return new ArrayList<String>();
     }
 
     public List<Chemical> batchGetChemicals(final List<String> names) {
-        final List<Chemical> chemicals = new ArrayList<Chemical>();
 
+        final Map<String, String> expressionAttributeNames =
+            new HashMap<String, String>();
+
+        expressionAttributeNames.put("#name", "Name");
+
+        final Map<String, AttributeValue> expressionAttributeValues = 
+            new HashMap<String, AttributeValue>();
+
+        int count = 0;
+        String filterExpression = "";
         for (String name : names) {
-            chemicals.add(getChemical(name));
-        }
-
-
-        return chemicals;
-    }
-
-    private Map<String, AttributeValue> convertChemicalToItem(final Chemical chemical) {
-        final FireDiamond fireDiamond = chemical.getFireDiamond();
-        final Map<String, AttributeValue> item = new HashMap<String, AttributeValue>();
-
-        item.put(CHEMICALS_TABLE_INDEX, new AttributeValue(chemical.getName()));
-        item.put(FireDiamond.FLAMMABILITY, new AttributeValue().withN(Integer.toString(fireDiamond.getFlammability())));
-        item.put(fireDiamond.HEALTH, new AttributeValue().withN(Integer.toString(fireDiamond.getHealth())));
-        item.put(fireDiamond.INSTABILITY, new AttributeValue().withN(Integer.toString(fireDiamond.getInstability())));
-        item.put(fireDiamond.NOTICE, new AttributeValue(fireDiamond.getNotice()));
-
-        try {
-            for (Map.Entry<String, Map<String, String>> entry : chemical.getProperties().entrySet()) {
-                Map<String, AttributeValue> properties = new HashMap<String, AttributeValue>();
-
-                for (Map.Entry<String, String> entry2 : entry.getValue().entrySet()) {
-                    properties.put(entry2.getKey(), new AttributeValue(entry2.getValue()));
-                }
-
-                item.put(entry.getKey(), new AttributeValue().withM(properties));
+            if (count != 0) {
+                filterExpression += " or ";
             }
-
-            item.put(Chemical.IMAGE_URL, new AttributeValue(chemical.getImageURL()));
-        } catch (Exception e) {
-            logger.error("Error occurred while converting the chemical: " + chemical.getName(), e);
+            filterExpression += "#name = :val" + count;
+            expressionAttributeValues.put(":val" + count, new AttributeValue().withS(name));
+            count += 1;
         }
 
-        return item;
-    }
+        final DynamoDBScanExpression scanRequest = new DynamoDBScanExpression()
+            .withFilterExpression(filterExpression)
+            .withExpressionAttributeNames(expressionAttributeNames)
+            .withExpressionAttributeValues(expressionAttributeValues);
 
-    private Chemical convertItemToChemical(final Map<String, AttributeValue> item) {
-
-        if (item == null) {
-            logger.error("A null object was passed as a parameter to be converted to a Chemical object");
-            return null;
-        }
-
-        final Chemical chemical = new Chemical();
-        chemical.setMatch(true);
-        chemical.setName(item.get(Chemical.NAME).getS());
-
-        try {
-            final FireDiamond fireDiamond = new FireDiamond(
-                    Integer.parseInt(item.get(FireDiamond.FLAMMABILITY).getN()),
-                    Integer.parseInt(item.get(FireDiamond.HEALTH).getN()),
-                    Integer.parseInt(item.get(FireDiamond.INSTABILITY).getN()),
-                    item.get(FireDiamond.NOTICE).getS());
-
-            chemical.setFireDiamond(fireDiamond);
-
-        } catch (Exception e) {
-            logger.error("Error occurred while creating the fire Diamond", e);
-        }
-
-        final Map<String, Map<String, String>> properties = new HashMap<String, Map<String, String>>();
-
-        try {
-
-            // Add properties to chemical
-            for (Map.Entry<String, Map<String, String>> entry : chemical.getProperties().entrySet()) {
-
-                Map<String, String> subProperties = new HashMap<String, String>();
-
-                for (Map.Entry<String, AttributeValue> entry2 : item.get(entry.getKey()).getM().entrySet()) {
-                    subProperties.put(entry2.getKey(), entry2.getValue().getS());
-                }
-
-                properties.put(entry.getKey(), subProperties);
-            }
-
-            chemical.setProperties(properties);
-
-        } catch (Exception e) {
-            logger.error("Error occured while converting a DynamoDB Item to a chemical object", e);
-        }
-
-        return chemical;
-    }
-
-    // This is a temporary method for updating the chemical row that contains
-    // all of the chemical names
-    public void updateChemicalNames() {
-
-        // Query for all elements in the Database
-        final List<String> chemicalNames = new ArrayList<String>();
-        final ScanRequest scanRequest = new ScanRequest()
-            .withTableName(CHEMICALS_TABLE_NAME);
-
-
-        try {
-            final ScanResult result = amazonDynamoDBClient.scan(scanRequest);
-
-            for (Map<String, AttributeValue> item : result.getItems()) {
-                chemicalNames.add(item.get(Chemical.NAME).getS());
-            }
-
-        } catch (AmazonServiceException e) {
-            logger.error("Error occurred while trying to get all the chemical names for the table: " +
-                    CHEMICALS_TABLE_NAME);
-        }
- 
-        logger.info("Updating All Chemicals row");
-        final Map<String, AttributeValue> item = new HashMap<String, AttributeValue>();
-
-        item.put("Name", new AttributeValue("All"));
-        item.put("Chemicals", new AttributeValue(chemicalNames));
-        
-        final PutItemRequest putItemRequest = new PutItemRequest()
-            .withTableName(CHEMICALS_TABLE_NAME)
-            .withItem(item);
-
-        try {
-            amazonDynamoDBClient.putItem(putItemRequest);
-        } catch (AmazonServiceException e) {
-            logger.error("Error occurred while trying to add chemical: " + " to table: " + CHEMICALS_TABLE_NAME, e);
-        }
+        return mapper.scan(Chemical.class, scanRequest);
     }
 }

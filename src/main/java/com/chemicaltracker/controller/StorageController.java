@@ -113,13 +113,12 @@ public class StorageController {
 
         final Storage cabinet = cabinetDB.getStorage(username, cabinetID);
         final List<String> chemicalNames = cabinet.getStoredItemNames();
-
         final List<Chemical> chemicals = chemicalDB.batchGetChemicals(chemicalNames);
 
         final Set<String> checklist = new HashSet<String>();
         for (Chemical chemical : chemicals) {
             chemical.setImageURL(cabinet.getStoredItemID(chemical.getName()));
-            checklist.add(chemical.getProperty("Handling and Storage").get("Storage"));
+            checklist.add(chemical.getHandlingAndStorage().get("Storage"));
         }
 
         final List<String> breadcrumbs = Arrays.asList(new String[] {"Home" ,

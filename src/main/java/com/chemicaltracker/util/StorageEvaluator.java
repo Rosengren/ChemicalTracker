@@ -73,7 +73,7 @@ public class StorageEvaluator {
 	}
 
 	private String getpHProperty(Chemical chemical) {
-		final Map<String, String> property = chemical.getProperty("Physical and Chemical Properties");
+		final Map<String, String> property = chemical.getPhysicalAndChemicalProperties();
 		return property.get("pH (1% soln/water)").toLowerCase();
 	}
 }

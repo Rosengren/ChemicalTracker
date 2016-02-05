@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 public class FireDiamond {
 
-
+    // TODO: remove these
     public static final String FLAMMABILITY = "Flammability";
     public static final String HEALTH = "Health";
     public static final String INSTABILITY = "Instability";

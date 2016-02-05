@@ -82,6 +82,7 @@ public class APIController {
                     .withProperties(properties);
     }
 
+    // TODO replace responseBody with response object
     @RequestMapping(value="/partialQuery", method=POST)
     public @ResponseBody String partialQueryRequest(@RequestBody final ChemicalQueryRequest request, BindingResult result,
             Model model, Principal principal) {
@@ -174,13 +175,10 @@ public class APIController {
     }
 
     // TODO: move this to a new class
-    private Storage evaluateCabinet(Storage cabinet) {
+    private Storage evaluateCabinet(final Storage cabinet) {
 
-        List<Chemical> chemicals = 
+        final List<Chemical> chemicals = 
             chemicalDB.batchGetChemicals(cabinet.getStoredItemNames());
-
-        System.out.println("EVALUATING CABINET: " + cabinet.getName() + " with chemicals: " +
-            chemicals.toString());
 
         if (fireDiamondEvaluator.checkFlammability(chemicals)) {
             cabinet.addTag(StorageTag.FLAMMABLE);

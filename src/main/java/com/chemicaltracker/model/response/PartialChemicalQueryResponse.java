@@ -42,4 +42,9 @@ public class PartialChemicalQueryResponse {
 	public Boolean getMatch() { return this.match; }
 	public void setMatch(Boolean match) { this.match = match; }
 
+	public PartialChemicalQueryResponse withChemicalNames(final List<String> chemicalNames) {
+		this.chemicalNames = chemicalNames;
+		return this;
+	}
+
 }
