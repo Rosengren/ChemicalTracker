@@ -93,6 +93,11 @@ public abstract class DynamoDBDAO<T> implements GenericDAO<T> {
     }
 
     @Override
+    public T find(final Object hash, final Object range) {
+        return (T) mapper.load(getObjectClass(), hash, range);
+    }
+
+    @Override
     public void delete(final T t) {
     	mapper.delete(t);
     }

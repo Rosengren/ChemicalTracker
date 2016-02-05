@@ -5,12 +5,14 @@ import java.security.Principal;
 
 import com.chemicaltracker.model.Storage;
 import com.chemicaltracker.model.Chemical;
+import com.chemicaltracker.model.Location;
 
 import java.util.*;
 
 import com.chemicaltracker.persistence.StorageFactory;
 import com.chemicaltracker.persistence.StorageDAO;
 import com.chemicaltracker.persistence.ChemicalDAO;
+import com.chemicaltracker.persistence.LocationDAO;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -28,7 +30,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RequestMapping(value = {"/home", "/Home"})
 public class StorageController {
 
-    private static final StorageDAO locationDB = StorageFactory.getStorage("LOCATIONS");
+    // private static final StorageDAO locationDB = StorageFactory.getStorage("LOCATIONS");
+    private static final LocationDAO locationDB = LocationDAO.getInstance();
     private static final StorageDAO roomDB = StorageFactory.getStorage("ROOMS");
     private static final StorageDAO cabinetDB = StorageFactory.getStorage("CABINETS");
 
@@ -42,7 +45,7 @@ public class StorageController {
                 "List of all your locations", "Add new location", "/add/location", "");
 
         // Get Locations
-        model.addAttribute("storages", locationDB.getAllStoragesForUser(username));
+        model.addAttribute("storages", locationDB.findAll(username));
 
         final List<String> breadcrumbs = Arrays.asList(new String[] {"Home"});
         model.addAttribute("breadcrumbs", breadcrumbs);
@@ -58,7 +61,8 @@ public class StorageController {
                 "List of all the rooms in " + locationName,
                 "Add new room", "/add/room/", "");
 
-        final Storage location = locationDB.getStorage(username, locationName);
+        // final Location location = locationDB.getStorage(username, locationName);
+        final Location location = locationDB.find(username, locationName);
         final List<String> roomIDs = location.getStoredItemIDs();
 
         model.addAttribute("storages", roomDB.batchGetStorages(username, roomIDs));
@@ -75,14 +79,18 @@ public class StorageController {
             @PathVariable("roomName") String roomName, Model model, Principal principal) {
 
         String username = principal.getName();
-        String roomID = locationDB.getStorage(username, locationName).getStoredItemID(roomName);
+        String roomID = locationDB.find(username, locationName).getStoredItemID(roomName);
 
+        System.out.println("ROOM ID: " + roomID);
         model = addStorageDetailsToModel(model, username, "Cabinets",
                 "List of all the cabinets in " + roomName, "Add new cabinet",
                 "/add/cabinet/", "");
 
         final Storage room = roomDB.getStorage(username, roomID);
         final List<String> cabinetIDs = room.getStoredItemIDs();
+
+        System.out.println("ROOM IDs: " + room.getStoredItemIDs());
+        System.out.println("ROOM NAMES: " + room.getStoredItemNames());
 
         model.addAttribute("storages", cabinetDB.batchGetStorages(username, cabinetIDs));
 
@@ -101,7 +109,7 @@ public class StorageController {
             Model model, Principal principal) {
 
         final String username = principal.getName();
-        final String roomID = locationDB.getStorage(username, locationName).getStoredItemID(roomName);
+        final String roomID = locationDB.find(username, locationName).getStoredItemID(roomName);
         final String cabinetID = roomDB.getStorage(username, roomID).getStoredItemID(cabinetName);
 
         model = addStorageDetailsToModel(model, username, "Chemicals",
@@ -139,7 +147,7 @@ public class StorageController {
             Model model, Principal principal) {
 
         String username = principal.getName();
-        String roomID = locationDB.getStorage(username, locationName).getStoredItemID(roomName);
+        String roomID = locationDB.find(username, locationName).getStoredItemID(roomName);
         String cabinetID = roomDB.getStorage(username, roomID).getStoredItemID(cabinetName);
 
         model = addStorageDetailsToModel(model, username, chemicalName, "Material Safety Data Sheet",
