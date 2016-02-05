@@ -99,8 +99,6 @@
   margin: 0.25em 0px 0px 1em;
 }
 
-
-
 /*--------------
     Masthead
 ---------------*/
@@ -425,4 +423,18 @@ a.diamond .text {
 
 .diamond.white {
    background: #FFF;
+}
+
+/**
+  Scrollable List
+**/
+.ui.list.scrollable {
+  overflow-y:auto;
+  white-space:nowrap;
+  max-height: 300px;
+}
+
+.fixedLoader {
+  position: fixed!important;
+  z-index: 9999!important;
 }

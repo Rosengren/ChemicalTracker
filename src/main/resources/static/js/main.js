@@ -36,6 +36,7 @@ $(".tooltip").popup({
 $(".addModal").click(function() {
     $('.ui.modal.addStorageModal').modal('show');
     $('.ui.modal.searchChemicalModal').modal({
+        observeChanges: true,
         onApprove : function() {
             return false;
         }
@@ -127,6 +128,7 @@ $("#submitCreateStorage").click(function() {
             $('#formSubmissionMsg').removeClass("success");
         },
         complete: function() {
+            $("#noStorages").hide();
             $('#formSubmissionMsg').show();
         }
     });
@@ -139,6 +141,8 @@ function addChemical(name) {
 
     var selectedChemicals = [];
     selectedChemicals.push(name);
+
+    $(".fixedLoader").addClass('active');
 
     $.ajax({
         url: url,
@@ -157,11 +161,21 @@ function addChemical(name) {
             card.find(".description").html("Description Here");
             card.find(".image").click(function() { window.location+='/' + name});
             card.find(".imageURL").attr("src", response.imageURL);
+            card.find(".remove").attr("data", name);
+            card.find(".remove").click(function() {
+                selectedChemicalName = $(this).attr("data");
+                selectedChemical = $(this).closest(".column");
+                $('.ui.basic.modal.confirm').modal('show');
+            });
             card.show();
+            $("#noStorages").hide();
         },
         error: function(e) {
             console.log("ERROR:");
             console.log(response);
+        },
+        complete: function(e) {
+            $(".fixedLoader").removeClass('active');
         }
     });
 }

@@ -1,6 +1,6 @@
 package com.chemicaltracker.util;
 
-import java.util.List;
+import java.util.*;
 
 import com.chemicaltracker.model.Chemical;
 import com.chemicaltracker.model.FireDiamond;
@@ -40,5 +40,40 @@ public class StorageEvaluator {
 			return true;
 		}
 		return false;
+	}
+
+	public boolean isAcidic(final Chemical chemical) {
+		return getpHProperty(chemical).contains("acid");
+	}
+
+	public boolean containsAcids(final List<Chemical> chemicals) {
+		for (Chemical chemical : chemicals) {
+			if (isAcidic(chemical)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean isBasic(final Chemical chemical) {
+		return getpHProperty(chemical).contains("basic");
+	}
+
+	public boolean containsBasics(final List<Chemical> chemicals) {
+		for (Chemical chemical : chemicals) {
+			if (isBasic(chemical)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public boolean containsAcidsAndBases(final List<Chemical> chemicals) {
+		return containsBasics(chemicals) && containsAcids(chemicals);
+	}
+
+	private String getpHProperty(Chemical chemical) {
+		final Map<String, String> property = chemical.getProperty("Physical and Chemical Properties");
+		return property.get("pH (1% soln/water)").toLowerCase();
 	}
 }

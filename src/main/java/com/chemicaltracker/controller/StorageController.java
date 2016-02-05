@@ -6,12 +6,7 @@ import java.security.Principal;
 import com.chemicaltracker.model.Storage;
 import com.chemicaltracker.model.Chemical;
 
-import java.util.Map;
-import java.util.HashMap;
-
-import java.util.List;
-import java.util.Arrays;
-import java.util.ArrayList;
+import java.util.*;
 
 import com.chemicaltracker.persistence.StorageFactory;
 import com.chemicaltracker.persistence.StorageDAO;
@@ -121,13 +116,19 @@ public class StorageController {
 
         final List<Chemical> chemicals = chemicalDB.batchGetChemicals(chemicalNames);
 
+        final Set<String> checklist = new HashSet<String>();
         for (Chemical chemical : chemicals) {
             chemical.setImageURL(cabinet.getStoredItemID(chemical.getName()));
+            checklist.add(chemical.getProperty("Handling and Storage").get("Storage"));
         }
 
         final List<String> breadcrumbs = Arrays.asList(new String[] {"Home" ,
             locationName , roomName , cabinetName});
         model.addAttribute("breadcrumbs", breadcrumbs);
+
+        model.addAttribute("tags", cabinet.getTags());
+        model.addAttribute("checklist", checklist);
+
 
         model.addAttribute("searchChemicalURL", "/api/test/partialQuery/");
         model.addAttribute("chemicals", chemicals);

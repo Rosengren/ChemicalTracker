@@ -109,19 +109,8 @@ public class Storage extends AbstractStorageComponent implements StorageComponen
     }
 
     public void addTag(final String tag) {
-
-        if (tag.equals("FLAMMABLE")) {
-            tags.add(StorageTag.FLAMMABLE);
-        } else if (tag.equals("UNSTABLE")) {
-            tags.add(StorageTag.UNSTABLE);
-        } else if (tag.equals("HEALTH")) {
-            tags.add(StorageTag.HEALTH);
-        } else if (tag.equals("INCOMPATIBLE")) {
-            tags.add(StorageTag.INCOMPATIBLE);
-        } else if (tag.equals("OXIDIZING_AGENTS")) {
-            tags.add(StorageTag.OXIDIZING_AGENTS);    
-        } else if (tag.equals("REDUCTION_AGENTS")) {
-            tags.add(StorageTag.REDUCTION_AGENTS);
+        if (StorageTag.contains(tag)) {
+            this.tags.add(StorageTag.valueOf(tag));    
         }
     }
 

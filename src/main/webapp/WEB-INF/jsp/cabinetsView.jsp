@@ -95,15 +95,9 @@
                     <div class="header"></div>
                 </div>
             </div>
+           
             <div class="ui container bottom-padding">
-                <div class="ui breadcrumb">
-                    <c:set var="sectionLink" value="" />
-                    <c:forEach items="${breadcrumbs}" var="crumb">
-                    <c:set var="sectionLink" value="${sectionLink}/${crumb}" />
-                        <a class="section" href="${sectionLink}">${crumb}</a>
-                        <div class="divider"> / </div>
-                    </c:forEach>
-                </div>
+                <%@include file="templates/breadcrumbs.jsp" %>
                 <div class="ui icon button addModal right floated" title="${addTooltip}">
                     <i class="add icon"></i>
                 </div>
@@ -111,22 +105,21 @@
 
             <div class="ui container">
                 <div class="ui four column stackable centered grid">
-                    <c:if test="${empty storages}">
-                        <div class="ui center aligned grid container">
-
+                    <div class="ui center aligned grid container" id="noStorages">
+                        <c:if test="${empty storages}">
                             <div class="column">
                                 <h2 class="ui header">
-                                    No elements in this location
+                                    No elements in this room
                               </h2>
                               <h2 class="storage-message">Click the 
                                 <div class="ui icon button addModal center" title="${addTooltip}">
                                     <i class="add icon"></i>
                                 </div>
-                                above to to add a new location
+                                above to add a new cabinet
                               </h2>
                             </div>
+                        </c:if>
                         </div>
-                    </c:if>
                     <c:forEach items="${storages}" var="storage">
                         <div class="column">
                             <div class="ui link centered card" >
@@ -154,10 +147,6 @@
                                     </div>
                                 </div>
                                 <div class="extra content">
-                                    <a class="right floated created" href="/report/generate/${storage.name}">
-                                      Generate Report
-                                    </a>
-
                                     <div class="ui dropdown">
                                       <div class="text">Options</div>
                                       <i class="dropdown icon"></i>
@@ -166,14 +155,10 @@
                                         <div class="item" id="editStorage">Edit</div>
                                       </div>
                                     </div>
-                                  <!-- <a id="editStorage">
-                                      <i class="edit icon"></i>Edit
-                                    </a> -->
                                 </div>
                             </div>
                         </div>
                     </c:forEach>
-
                 </div>
             </div>
         </div>

@@ -104,6 +104,19 @@ public class TestAPIController {
         return response;
     }
 
+    @RequestMapping(value="/partialQueries", method=POST)
+    public @ResponseBody PartialChemicalQueriesResponse partialQueryRequest(@RequestBody final PartialChemicalQueriesRequest request, BindingResult result,
+            Model model, Principal principal) {
+
+        final List<Chemical> chemicals = chemicalDB.searchPartialChemicalName(request.getChemicals());
+        final PartialChemicalQueriesResponse response = new PartialChemicalQueriesResponse();
+        for (Chemical chemical : chemicals) {
+            response.addChemicalName(chemical.getName());
+        }
+
+        return response;
+    }
+
     @RequestMapping(value="/userTree", method=POST)
     public @ResponseBody UserTreeResponse userTreeRequest(@RequestBody final UserTreeRequest request, BindingResult result,
         Model model, Principal principal) {

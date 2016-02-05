@@ -93,15 +93,9 @@
                     <div class="header"></div>
                 </div>
             </div>
+            
             <div class="ui container bottom-padding">
-                <div class="ui breadcrumb">
-                    <c:set var="sectionLink" value="" />
-                    <c:forEach items="${breadcrumbs}" var="crumb">
-                    <c:set var="sectionLink" value="${sectionLink}/${crumb}" />
-                        <a class="section" href="${sectionLink}">${crumb}</a>
-                        <div class="divider"> / </div>
-                    </c:forEach>
-                </div>
+                <%@include file="templates/breadcrumbs.jsp" %>
                 <div class="ui icon button addModal right floated" title="${addTooltip}">
                     <i class="add icon"></i>
                 </div>
@@ -114,13 +108,13 @@
 
                             <div class="column">
                                 <h2 class="ui header">
-                                    No elements in this location
+                                    No rooms in this location
                               </h2>
                               <h2 class="storage-message">Click the 
                                 <div class="ui icon button addModal center" title="${addTooltip}">
                                     <i class="add icon"></i>
                                 </div>
-                                above to add a new location
+                                above to add a new room
                               </h2>
                             </div>
                         </div>

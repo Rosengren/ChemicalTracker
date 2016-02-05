@@ -79,6 +79,10 @@ public class Chemical extends AbstractStorageComponent implements StorageCompone
         this.properties.addProperty(name, property);
     }
 
+    public Map<String, String> getProperty(String name) {
+        return this.properties.getProperty(name);
+    }
+
     // Setters and Getters
     public void setImageURL(final String imageURL) { this.imageURL = imageURL; }
     public String getImageURL() { return this.imageURL; }

@@ -149,13 +149,13 @@ public class StorageDAO {
     }
 
     public void addStorage(final Storage storage) {
-        logger.info("ADDING STORAGE");
+
         final Map<String, AttributeValue> item = convertStorageToItem(storage);
         final PutItemRequest putItemRequest = new PutItemRequest()
             .withTableName(tableName)
             .withItem(item);
 
-        logger.info("ADDING: " + item.toString());
+
         try {
             amazonDynamoDBClient.putItem(putItemRequest);
         } catch (Exception e) {
@@ -195,7 +195,6 @@ public class StorageDAO {
         }
 
         item.put(storedItemTitle, new AttributeValue().withM(storedItems));
-        logger.info("ITEM: " + item.toString());
         return item;
     }
 

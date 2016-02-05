@@ -131,6 +131,48 @@ public class ChemicalDAO {
         return new Chemical();
     }
 
+    public List<Chemical> searchPartialChemicalName(final List<String> partialNames) {
+
+        final Map<String, AttributeValue> expressionAttributeValues = 
+            new HashMap<String, AttributeValue>();
+        
+
+        final Map<String, String> expressionAttributeNames =
+            new HashMap<String, String>();
+
+        expressionAttributeNames.put("#name", "Name");
+
+        int count = 0;
+        String filterExpression = "";
+        for (String partialName : partialNames) {
+            if (count != 0) {
+                filterExpression += " or ";
+            }
+            filterExpression += "contains (#name, :val" + count + ")";
+            expressionAttributeValues.put(":val" + count, new AttributeValue().withS(partialName));
+            count += 1;
+        }
+                
+        final ScanRequest scanRequest = new ScanRequest()
+            .withTableName("Chemicals")
+            // .withFilterExpression("contains (#name, :val)")
+            .withFilterExpression(filterExpression)
+            .withExpressionAttributeNames(expressionAttributeNames)
+            .withExpressionAttributeValues(expressionAttributeValues);
+
+        logger.info("REQUEST: " + scanRequest.toString());        
+        ScanResult result = amazonDynamoDBClient.scan(scanRequest);
+
+        final List<Chemical> chemicals = new ArrayList<Chemical>();
+        for (Map<String, AttributeValue> item : result.getItems()) {
+            chemicals.add(convertItemToChemical(item));
+        }
+
+        logger.info("FOUND: " + chemicals.toString()); 
+
+        return chemicals;
+    }
+
     // TODO: add another method for partial queries that return entire chemical objects.
     public List<Chemical> searchPartialChemicalName(final String partialName) {
         
@@ -156,8 +198,6 @@ public class ChemicalDAO {
         for (Map<String, AttributeValue> item : result.getItems()) {
             chemicals.add(convertItemToChemical(item));
         }
-
-        logger.info("FOUND: " + chemicals.toString());
 
         return chemicals;
     }

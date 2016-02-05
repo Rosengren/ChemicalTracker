@@ -1,6 +1,13 @@
 <%@include file="templates/header.jsp" %>
 
 <body id="ctrackr" class="index popup storage" ontouchstart>
+    <div class="ui container">
+        <div class="full height">
+            <div class="ui dimmer fixedLoader">
+                <div class="ui text loader">Loading</div>
+            </div>
+        </div>
+    </div>
     <%@include file="templates/sidebar.jsp" %>
     <div class="ui modal searchChemicalModal">
         <div class="header">
@@ -14,7 +21,7 @@
                 </div>
             </div>
             <div class="ui divider"></div>
-            <div class="ui list" id="chemicalSearchResults"></div>
+            <div class="ui list scrollable" id="chemicalSearchResults"></div>
         </div>
         <div class="actions">
             <div class="ui black deny button">
@@ -49,12 +56,13 @@
     <div class="pusher">
         <%@include file="templates/menu.jsp" %>
         <div class="full height">
+
             <div class="masthead segment bg1">
                 <div class="ui container">
                     <div class="introduction">
                         <h1 class="ui inverted header">
                             <span class="library">${title}</span>
-                            <%--<span class="tagline">${subtitle}</span>--%>
+                            <span class="tagline">${subtitle}</span>
                         </h1>
                         <div class="ui hidden divider"></div>
                     </div>
@@ -62,19 +70,66 @@
             </div>
 
             <div class="ui container bottom-padding">
-                <div class="ui breadcrumb">
-                    <c:set var="sectionLink" value="" />
-                    <c:forEach items="${breadcrumbs}" var="crumb">
-                    <c:set var="sectionLink" value="${sectionLink}/${crumb}" />
-                        <a class="section" href="${sectionLink}">${crumb}</a>
-                        <div class="divider"> / </div>
-                    </c:forEach>
-                </div>
+                <%@include file="templates/breadcrumbs.jsp" %>
                 <div class="ui icon button addModal right floated" title="${addTooltip}">
                     <i class="add icon"></i>
                 </div>
             </div>
+
             <div class="ui container bottom-padding">
+                <div class="ui dividing header">
+                    Metrics
+                </div>
+                <div class="ui five statistics">
+                  <div class="statistic">
+                    <div class="value">
+                      ${fn:length(chemicals)}
+                    </div>
+                    <div class="label">Chemicals</div>
+                  </div>
+                  <div class="statistic">
+                    <div class="value">2</div>
+                    <div class="label">Acids</div>
+                  </div>
+                  <div class="statistic">
+                    <div class="value">2</div>
+                    <div class="label">Bases</div>
+                  </div>
+                  <div class="statistic">
+                    <div class="value">3</div>
+                    <div class="label">Oxidizers</div>
+                  </div>
+                  <div class="statistic">
+                    <div class="value">3</div>
+                    <div class="label">Reductors</div>
+                  </div>
+                </div>
+            </div>
+
+            <c:if test="${not empty tags}">
+                <div class="ui container bottom-padding">
+                    
+                    <div class="ui dividing header">
+                        Information and Warnings
+                    </div>
+                        <div class="ui large list">
+                        <c:forEach items="${tags}" var="tag">
+                            <div class="item">
+                                <i class="large asterisk ${tag.color} icon"></i>
+                                <div class="content">
+                                    <div class="header">${tag.title}</div>
+                                    <div class="description">${tag.description}</div>
+                                </div>
+                            </div>
+                        </c:forEach>
+                        </div>
+                </div>
+            </c:if>
+
+            <div class="ui container bottom-padding">
+                <div class="ui dividing header">
+                    Chemicals
+                </div>
                 <div class="ui four column stackable grid container" id="chemicalCards">
                 <c:if test="${empty chemicals}">
                         <div class="ui center aligned grid container">
@@ -114,7 +169,8 @@
                                       Remove
                                   </a>
                                   <a class="" onclick="alert('todo: add ability to edit')">
-                                      <i class="edit icon"></i>Edit
+                                      <i class="edit icon"></i>
+                                      Edit
                                     </a>
                                 </div>
                             </div>
@@ -123,6 +179,26 @@
 
                 </div>
             </div>
+
+            <div class="ui container bottom-padding">
+                <c:if test="${not empty tags}">
+                    <div class="ui dividing header">
+                        Storage Checklist
+                    </div>
+                    <div class="ui large list">
+                    <c:forEach items="${checklist}" var="checklistItem">
+                        <div class="item">
+                            <i class="large checkmark green icon"></i>
+                            <div class="content">
+                                <!-- <div class="header">${chemical.title}</div> -->
+                                <div class="description">${checklistItem}</div>
+                            </div>
+                        </div>
+                    </c:forEach>
+                    </div>
+                </c:if>
+            </div>
+
         </div>
     </div>
 </body>
@@ -150,7 +226,7 @@
             <div class="description"> </div>
         </div>
         <div class="extra content">
-          <a class="right floated created remove" data="${chemical.name}">
+          <a class="right floated created remove">
               Remove
           </a>
           <a class="" onclick="alert('todo: add ability to edit')">
@@ -159,4 +235,5 @@
         </div>
     </div>
 </div>
+
 <%@include file="templates/footer.jsp" %>

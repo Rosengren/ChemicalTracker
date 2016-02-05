@@ -186,16 +186,36 @@ public class APIController {
             cabinet.addTag(StorageTag.HEALTH);
         }
 
+        boolean hasOxidizingAgents = false;
         if (storageEvaluator.containsOxidizingAgent(cabinet.getStoredItemNames())) {
             cabinet.addTag(StorageTag.OXIDIZING_AGENTS);
+            hasOxidizingAgents = true;
         }
 
+        boolean hasReductionAgents = false;
         if (storageEvaluator.containsReductionAgent(cabinet.getStoredItemNames())) {
             cabinet.addTag(StorageTag.REDUCTION_AGENTS);
+            hasReductionAgents = true;
         }
 
-        if (storageEvaluator.containsIncompatibleChemicals(cabinet.getStoredItemNames())) {
+        if (hasReductionAgents && hasOxidizingAgents) {
             cabinet.addTag(StorageTag.INCOMPATIBLE);
+        }
+
+        boolean hasBases = false;
+        if (storageEvaluator.containsBasics(chemicals)) {
+            cabinet.addTag(StorageTag.BASIC);
+            hasBases = true;
+        }
+
+        boolean hasAcids = false;
+        if (storageEvaluator.containsAcids(chemicals)) {
+            cabinet.addTag(StorageTag.ACIDIC);
+            hasAcids = true;
+        }
+
+        if (hasAcids && hasBases) {
+            cabinet.addTag(StorageTag.ACIDS_AND_BASES);
         }
 
         return cabinet;
