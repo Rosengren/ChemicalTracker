@@ -1,6 +1,6 @@
 package com.chemicaltracker.model.response;
 
-import com.chemicaltracker.model.*;
+import com.chemicaltracker.model.storage.*;
 
 public class ChemicalResponse {
 

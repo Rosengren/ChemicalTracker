@@ -1,6 +1,6 @@
 package com.chemicaltracker.persistence;
 
-import com.chemicaltracker.model.User;
+import com.chemicaltracker.model.storage.User;
 
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.core.userdetails.UserDetailsService;

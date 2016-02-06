@@ -1,4 +1,4 @@
-package com.chemicaltracker.model;
+package com.chemicaltracker.model.storage;
 
 import com.itextpdf.text.List;
 import com.itextpdf.text.ListItem;
@@ -171,7 +171,6 @@ public class Chemical extends AbstractStorageComponent implements StorageCompone
     @DynamoDBIgnore
     public Phrase getFormattedPDF(final int level) {
         Paragraph content = new Paragraph();
-
         addHeader(content, level);
         return content;
     }

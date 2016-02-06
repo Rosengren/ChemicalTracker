@@ -3,8 +3,8 @@ package com.chemicaltracker.controller;
 import org.springframework.ui.Model;
 import java.security.Principal;
 
-import com.chemicaltracker.persistence.UserDAO;
-import com.chemicaltracker.model.User;
+import com.chemicaltracker.persistence.*;
+import com.chemicaltracker.model.storage.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

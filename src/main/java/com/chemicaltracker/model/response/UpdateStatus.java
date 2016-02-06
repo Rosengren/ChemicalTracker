@@ -1,4 +1,4 @@
-package com.chemicaltracker.model;
+package com.chemicaltracker.model.response;
 
 public enum UpdateStatus {
     INVALID_REQUEST_TYPE(false, "The request type is invalid"),

@@ -5,6 +5,7 @@ import java.security.Principal;
 
 import java.util.*;
 import com.chemicaltracker.model.*;
+import com.chemicaltracker.model.storage.*;
 import com.chemicaltracker.persistence.*;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -73,16 +74,12 @@ public class StorageController {
         String username = principal.getName();
         String roomID = locationDB.find(username, locationName).getStoredItemID(roomName);
 
-        System.out.println("ROOM ID: " + roomID);
         model = addStorageDetailsToModel(model, username, "Cabinets",
                 "List of all the cabinets in " + roomName, "Add new cabinet",
                 "/add/cabinet/", "");
 
         final Room room = roomDB.find(username, roomID);
         final List<String> cabinetIDs = room.getStoredItemIDs();
-
-        System.out.println("ROOM IDs: " + room.getStoredItemIDs());
-        System.out.println("ROOM NAMES: " + room.getStoredItemNames());
 
         model.addAttribute("storages", cabinetDB.findAllCabinets(username, cabinetIDs));
 

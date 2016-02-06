@@ -1,4 +1,4 @@
-package com.chemicaltracker.model;
+package com.chemicaltracker.model.storage;
 
 public enum StorageTag {
 

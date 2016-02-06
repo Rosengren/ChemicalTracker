@@ -1,13 +1,8 @@
 package com.chemicaltracker.util;
 
 import java.util.*;
-
-import com.chemicaltracker.model.Chemical;
-import com.chemicaltracker.model.FireDiamond;
-import com.chemicaltracker.model.Storage;
-
-import com.chemicaltracker.persistence.OxidizingAgentDAO;
-import com.chemicaltracker.persistence.ReductionAgentDAO;
+import com.chemicaltracker.model.storage.*;
+import com.chemicaltracker.persistence.*;
 
 public class StorageEvaluator {
 

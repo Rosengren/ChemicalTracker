@@ -136,13 +136,15 @@
                                 <div class="content">
                                     <div class="header">${storage.name}</div>
                                     <div class="description">
-                                        <c:if test="${not empty storage.tags}">
+                                        <c:if test="${fn:length(storage.tags) > 1}">
                                             <div class="item"><b>Contains chemicals that are:</b></div>
                                         </c:if>
                                         <c:forEach items="${storage.tags}" var="tag">
-                                            <div class="item"><i class="warning sign icon ${tag.color}"></i>
-                                                ${tag.title}
-                                            </div>
+                                            <c:if test="${tag.brief}">
+                                                <div class="item"><i class="warning sign icon ${tag.color}"></i>
+                                                    ${tag.title}
+                                                </div>
+                                            </c:if>
                                         </c:forEach>
                                     </div>
                                 </div>

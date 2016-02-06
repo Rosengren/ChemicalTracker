@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.HashMap;
 
 import com.chemicaltracker.model.*;
+import com.chemicaltracker.model.storage.*;
 import com.chemicaltracker.persistence.*;
 
 import org.springframework.ui.Model;

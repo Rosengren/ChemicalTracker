@@ -1,6 +1,6 @@
 package com.chemicaltracker.persistence;
 
-import com.chemicaltracker.model.Chemical;
+import com.chemicaltracker.model.storage.Chemical;
 
 import java.util.Map;
 import java.util.HashMap;

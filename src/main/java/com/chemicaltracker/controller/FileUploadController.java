@@ -1,6 +1,7 @@
 package com.chemicaltracker.controller;
 
 import com.chemicaltracker.model.*;
+import com.chemicaltracker.model.storage.*;
 import com.chemicaltracker.persistence.*;
 
 import java.util.UUID;

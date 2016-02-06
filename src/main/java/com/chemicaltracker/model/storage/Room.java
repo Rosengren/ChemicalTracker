@@ -1,6 +1,4 @@
-package com.chemicaltracker.model;
-
-import com.chemicaltracker.model.StorageTag;
+package com.chemicaltracker.model.storage;
 
 import com.itextpdf.text.ListItem;
 import com.itextpdf.text.Paragraph;
@@ -24,8 +22,8 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
  */
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-@DynamoDBTable(tableName="Cabinets")
-public class Cabinet extends AbstractStorageComponent implements StorageComponent {
+@DynamoDBTable(tableName="Rooms")
+public class Room extends AbstractStorageComponent implements StorageComponent {
 
     private List<StorageComponent> elements;
 
@@ -36,7 +34,7 @@ public class Cabinet extends AbstractStorageComponent implements StorageComponen
     private Set<StorageTag> tags;
     private Map<String, String> roomNames; // REMOVE UNUSED VARIABLES
 
-    public Cabinet() {
+    public Room() {
         imageURL = "https://s3-us-west-2.amazonaws.com/chemical-images/placeholder.png";
         elements = new ArrayList<StorageComponent>();
         tags = new HashSet<StorageTag>();
@@ -46,28 +44,28 @@ public class Cabinet extends AbstractStorageComponent implements StorageComponen
     @DynamoDBHashKey(attributeName="Username")
     public String getUsername() { return this.username; }
     public void setUsername(final String username) { this.username = username; }
-    public Cabinet withUsername(final String username) { setUsername(username); return this; }
+    public Room withUsername(final String username) { setUsername(username); return this; }
    
-    @DynamoDBRangeKey(attributeName="Cabinet ID")
+    @DynamoDBRangeKey(attributeName="Room ID")
     public String getID() { return this.id; }
     public void setID(final String id) { this.id = id; }
-    public Cabinet withID(final String id) { setID(id); return this; }
+    public Room withID(final String id) { setID(id); return this; }
 
     @DynamoDBAttribute(attributeName="Image URL")
     public String getImageURL() { return this.imageURL; }    
     public void setImageURL(final String imageURL) { this.imageURL = imageURL; }
-    public Cabinet withImageURL(final String imageURL) { setImageURL(imageURL); return this; }
+    public Room withImageURL(final String imageURL) { setImageURL(imageURL); return this; }
 
     @DynamoDBAttribute(attributeName="Name")
     public String getName() { return this.name; }
     public void setName(final String name) { this.name = name; }
-    public Cabinet withName(final String name) { setName(name); return this; }
+    public Room withName(final String name) { setName(name); return this; }
 
     @Override
     @DynamoDBAttribute(attributeName="Description")
     public String getDescription() { return this.description; }
     public void setDescription(final String description) { this.description = description; }
-    public Cabinet withDescription(final String desc) { setDescription(desc); return this; }
+    public Room withDescription(final String desc) { setDescription(desc); return this; }
 
     @DynamoDBIgnore
     public void addStoredItem(final String storedItemID, final String storedItemName) {
@@ -187,8 +185,8 @@ public class Cabinet extends AbstractStorageComponent implements StorageComponen
     public List<String> getStoredItemNames() { 
         return new ArrayList<String>(roomNames.keySet()); 
     }
- 
-    @DynamoDBAttribute(attributeName="Chemical Names")
+
+    @DynamoDBAttribute(attributeName="Cabinet Names")
     public Map<String, String> getRoomNames() { return this.roomNames; }
     public void setRoomNames(final Map<String, String> roomNames) { this.roomNames = roomNames; }
 }

@@ -9,6 +9,7 @@ import com.chemicaltracker.util.FireDiamondEvaluator;
 import com.chemicaltracker.util.StorageEvaluator;
 
 import com.chemicaltracker.model.*;
+import com.chemicaltracker.model.storage.*;
 import com.chemicaltracker.model.request.*;
 import com.chemicaltracker.model.response.*;
 import com.chemicaltracker.persistence.*;

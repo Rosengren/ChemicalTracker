@@ -1,15 +1,9 @@
-package com.chemicaltracker.model;
+package com.chemicaltracker.model.storage;
 
 import java.util.Map;
 import java.util.HashMap;
 
 public class FireDiamond {
-
-    // TODO: remove these
-    public static final String FLAMMABILITY = "Flammability";
-    public static final String HEALTH = "Health";
-    public static final String INSTABILITY = "Instability";
-    public static final String NOTICE = "Notice";
 
     public static final Integer DEFAULT_VALUE = 0;
 
@@ -23,13 +17,6 @@ public class FireDiamond {
         health = DEFAULT_VALUE;
         instability = DEFAULT_VALUE;
         notice = "";
-    }
-
-    public FireDiamond(int flammability, int health, int instability, String notice) {
-        this.flammability = flammability;
-        this.health = health;
-        this.instability = instability;
-        this.notice = notice;
     }
 
     public int getFlammability() {

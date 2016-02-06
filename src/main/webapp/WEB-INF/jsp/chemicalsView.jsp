@@ -114,13 +114,15 @@
                     </div>
                         <div class="ui large list">
                         <c:forEach items="${tags}" var="tag">
-                            <div class="item">
-                                <i class="large asterisk ${tag.color} icon"></i>
-                                <div class="content">
-                                    <div class="header">${tag.title}</div>
-                                    <div class="description">${tag.description}</div>
+                            <c:if test="${not empty tag.title}">
+                                <div class="item">
+                                    <i class="large asterisk ${tag.color} icon"></i>
+                                    <div class="content">
+                                        <div class="header">${tag.title}</div>
+                                        <div class="description">${tag.description}</div>
+                                    </div>
                                 </div>
-                            </div>
+                            </c:if>
                         </c:forEach>
                         </div>
                 </div>
