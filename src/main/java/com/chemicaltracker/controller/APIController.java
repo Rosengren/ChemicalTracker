@@ -59,6 +59,42 @@ public class APIController {
     //     return "success";
     // }
 
+    @RequestMapping(value="/update", method=POST)
+    public @ResponseBody UpdateResponse testUpdate(@RequestBody final UpdateRequest request, BindingResult result,
+            Model model, Principal principal) {
+
+        final String requestType = request.getRequestType();
+
+        if (!requestType.equals("ADD") && !requestType.equals("REMOVE")) {
+            return new UpdateResponse(UpdateStatus.INVALID_REQUEST_TYPE);
+        } else if (request.getUsername().equals("invalid") || request.getUsername().equals("")) {
+            return new UpdateResponse(UpdateStatus.INVALID_USERNAME);
+        } else if (request.getLocation().equals("invalid") || request.getLocation().equals("") ||
+                    request.getRoom().equals("invalid") || request.getRoom().equals("") ||
+                    request.getCabinet().equals("invalid") || request.getCabinet().equals("")) {
+            return new UpdateResponse(UpdateStatus.MISSING_STORAGE_FIELD);
+        } else {
+            if (request.getChemical().equals("valid")) {
+                if (requestType.equals("ADD")) {
+                    return new UpdateResponse(UpdateStatus.ADDED_CHEMICAL);
+                } else {
+                    return new UpdateResponse(UpdateStatus.REMOVED_CHEMICAL);
+                }
+            } else {
+                final Chemical chemical = chemicalDB.find(request.getChemical());
+                if (chemical.getName().equals("")) {
+                    return new UpdateResponse(UpdateStatus.INVALID_CHEMICAL);
+                } else {
+                    if (requestType.equals("ADD")) {
+                        return new UpdateResponse(UpdateStatus.ADDED_CHEMICAL);
+                    } else {
+                        return new UpdateResponse(UpdateStatus.REMOVED_CHEMICAL);
+                    }
+                }
+            }
+        }
+    }
+
     @RequestMapping(value="/query", method=POST)
     public @ResponseBody ChemicalResponse queryRequest(@RequestBody final ChemicalQueryRequest request, BindingResult result,
             Model model, Principal principal) {
