@@ -31,6 +31,9 @@ import org.springframework.validation.BindingResult;
 
 import org.springframework.web.bind.annotation.PathVariable;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
+
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -59,8 +62,13 @@ public class APIController {
     //     return "success";
     // }
 
+    @RequestMapping(value="/login", method=POST)
+    public @ResponseBody ResponseEntity login() {
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
     @RequestMapping(value="/update", method=POST)
-    public @ResponseBody UpdateResponse testUpdate(@RequestBody final UpdateRequest request, BindingResult result,
+    public @ResponseBody UpdateResponse update(@RequestBody final UpdateRequest request, BindingResult result,
             Model model, Principal principal) {
 
         final String requestType = request.getRequestType();
