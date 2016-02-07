@@ -2,7 +2,6 @@ package com.chemicaltracker.model.response;
 
 public enum UpdateStatus {
     INVALID_REQUEST_TYPE(false, "The request type is invalid"),
-    INVALID_USERNAME(false, "The username does not exist"),
     INVALID_CHEMICAL(false, "The chemical does not exist in the database"),
     MISSING_STORAGE_FIELD(false, "One or more storage fields are missing!"),
     ADDED_CHEMICAL(true, "Successfully added chemical!"),

@@ -49,8 +49,6 @@ public class TestAPIController {
 
         if (!requestType.equals("ADD") && !requestType.equals("REMOVE")) {
             return new UpdateResponse(UpdateStatus.INVALID_REQUEST_TYPE);
-        } else if (request.getUsername().equals("invalid") || request.getUsername().equals("")) {
-            return new UpdateResponse(UpdateStatus.INVALID_USERNAME);
         } else if (request.getLocation().equals("invalid") || request.getLocation().equals("") ||
                     request.getRoom().equals("invalid") || request.getRoom().equals("") ||
                     request.getCabinet().equals("invalid") || request.getCabinet().equals("")) {

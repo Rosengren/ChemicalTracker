@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class UpdateRequest {
 
     private String requestType; // ADD or REMOVE
-    private String username;
+    // private String username;
     private String location;
     private String room;
     private String cabinet;
@@ -16,20 +16,20 @@ public class UpdateRequest {
 
     public UpdateRequest() {
         requestType = "";
-        username = "";
+        // username = "";
         location = "";
         room = "";
         cabinet = "";
         chemical = "";
     }
 
-    public String getUsername() {
-        return this.username;
-    }
+    // public String getUsername() {
+    //     return this.username;
+    // }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+    // public void setUsername(String username) {
+    //     this.username = username;
+    // }
 
     public String getRequestType() {
         return requestType;
