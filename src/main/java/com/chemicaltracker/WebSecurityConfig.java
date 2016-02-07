@@ -19,6 +19,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private UserDetailsService users = UserDAO.getInstance();
 
     protected void configure(HttpSecurity http) throws Exception {
+
+        // Authentication for website
         http.authorizeRequests()
             .antMatchers("/css/**", "/js/**", "/img/**", "/", "/homepage",
                          "/api/test/**", "/signup").permitAll()
@@ -31,6 +33,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         .logout()
             .permitAll();
 
+        // Basic Authentication for Android devices
+        http
+            .authorizeRequests()
+                .antMatchers("/api/**")
+                    .hasRole("USER")
+                    .and()
+                .httpBasic();
+
+        // Ignore CSRF Token requirement for Android
         http.csrf().ignoringAntMatchers("/api/**");
     }
 
