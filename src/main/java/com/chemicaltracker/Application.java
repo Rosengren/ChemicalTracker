@@ -1,4 +1,4 @@
-package com.chemicaltracker.controller;
+package com.chemicaltracker;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

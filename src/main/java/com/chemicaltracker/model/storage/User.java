@@ -25,6 +25,8 @@ public class User implements UserDetails {
     private List<GrantedAuthority> authorities;
 
     public User() {
+        username = "";
+        password = "";
         authorities = new ArrayList<GrantedAuthority>();
     }
 
@@ -40,7 +42,7 @@ public class User implements UserDetails {
     public String getRole() { return role; }
     public void setRole(String role) { 
         this.role = role;
-        authorities.add(new SimpleGrantedAuthority(role));
+        // authorities.add(new SimpleGrantedAuthority(role));
     }
 
     @DynamoDBIgnore

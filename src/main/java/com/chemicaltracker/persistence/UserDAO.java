@@ -31,9 +31,13 @@ public class UserDAO extends DynamoDBDAO<User> implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
+        logger.info("Looking up username: " + username);
         final User user = find(username);
         if (user == null) {
+            logger.warn("Did not find username " + username + " in DB");
             throw new UsernameNotFoundException("Could not find username: " + username);
+        } else {
+            logger.info("Successfully found user in DB!");
         }
         return user;
     }

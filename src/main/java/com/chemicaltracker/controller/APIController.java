@@ -3,7 +3,6 @@ package com.chemicaltracker.controller;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.UUID;
-import java.util.HashMap;
 
 import com.chemicaltracker.util.FireDiamondEvaluator;
 import com.chemicaltracker.util.StorageEvaluator;
@@ -21,12 +20,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.validation.BindingResult;
 
 import org.springframework.web.bind.annotation.PathVariable;
@@ -47,23 +43,15 @@ public class APIController {
     private static final FireDiamondEvaluator fireDiamondEvaluator =
         new FireDiamondEvaluator();
 
+    private static final RoomDAO roomDB         = RoomDAO.getInstance();
+    private static final UserDAO userDB         = UserDAO.getInstance();
+    private static final CabinetDAO cabinetDB   = CabinetDAO.getInstance();
+    private static final ChemicalDAO chemicalDB = ChemicalDAO.getInstance();
     private static final LocationDAO locationDB = LocationDAO.getInstance();
-    private static final RoomDAO roomDB = RoomDAO.getInstance();
-    private static final CabinetDAO cabinetDB = CabinetDAO.getInstance();
 
-    private ChemicalDAO chemicalDB = ChemicalDAO.getInstance();
-
-    private UserDAO userDB = UserDAO.getInstance();
-
-    // @RequestMapping(value="/add/user", method=POST)
-    // public @ResponseBody String addUser(@RequestBody final User user) {
-    //     // userDB.createUser(user.getUsername(), user.getPassword(), user.getRole());
-    //     userDB.create(user);
-    //     return "success";
-    // }
-
-    @RequestMapping(value="/login", method=POST)
-    public @ResponseBody ResponseEntity login() {
+    @RequestMapping(value="/authorize", method=POST)
+    public @ResponseBody ResponseEntity authorize() {
+        // Used to verify if basic authentication credentials are correct
         return new ResponseEntity(HttpStatus.OK);
     }
 
@@ -202,11 +190,6 @@ public class APIController {
 
         cabinetDB.update(cabinet);
 
-        return "success";
-    }
-
-    @RequestMapping(value="/success")
-    public @ResponseBody String success() {
         return "success";
     }
 

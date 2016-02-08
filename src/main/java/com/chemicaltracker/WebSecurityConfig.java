@@ -1,52 +1,69 @@
-package com.chemicaltracker.controller;
+package com.chemicaltracker;
 
 import com.chemicaltracker.persistence.UserDAO;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.annotation.web.servlet.configuration.EnableWebMvcSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.core.annotation.Order;
+
 import org.springframework.security.core.userdetails.UserDetailsService;
 
+@Configuration
 @EnableWebSecurity
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfig {
 
-    private UserDetailsService users = UserDAO.getInstance();
-
-    protected void configure(HttpSecurity http) throws Exception {
-
-        // Authentication for website
-        http.authorizeRequests()
-            .antMatchers("/css/**", "/js/**", "/img/**", "/", "/homepage",
-                         "/api/test/**", "/signup").permitAll()
-            .anyRequest().authenticated()
-            .and()
-        .formLogin()
-            .loginPage("/login")
-            .permitAll()
-            .and()
-        .logout()
-            .permitAll();
-
-        // Basic Authentication for Android devices
-        http
-            .authorizeRequests()
-                .antMatchers("/api/**")
-                    .hasRole("USER")
-                    .and()
-                .httpBasic();
-
-        // Ignore CSRF Token requirement for Android
-        http.csrf().ignoringAntMatchers("/api/**");
-    }
+    protected UserDetailsService users = UserDAO.getInstance();
 
     @Autowired
-    public void configure(AuthenticationManagerBuilder auth) throws Exception {
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(users);
+    }
+
+    @Configuration
+    @EnableWebSecurity
+    @Order(1)
+    public static class ApiWebSecurityConfig extends WebSecurityConfigurerAdapter{
+        @Override
+        protected void configure(HttpSecurity http) throws Exception {
+            http.csrf().disable() // Disable CSRF Tokens for API users
+                    .antMatcher("/api/**")
+                    .authorizeRequests()
+                        .anyRequest().authenticated()
+                        .and()
+                    .httpBasic()
+                    .authenticationEntryPoint(new RestAuthenticationEntryPoint());
+        }
+    }
+
+    @Configuration
+    @EnableWebSecurity
+    @Order(2)
+    public static class FormWebSecurityConfig extends WebSecurityConfigurerAdapter{
+
+        @Override
+        public void configure(WebSecurity web) throws Exception {
+            web.ignoring().antMatchers("/css/**", "/js/**", "/img/**", "/lib/**");
+        }
+
+        @Override
+        protected void configure(HttpSecurity http) throws Exception {
+            http.csrf().disable()
+                    .authorizeRequests()
+                        .antMatchers("/", "/register", "/homepage").permitAll()
+                        .antMatchers("/admin/**").hasRole("ADMIN")
+                        .anyRequest().authenticated()
+                        .and()
+                    .formLogin()
+                        .loginPage("/login").permitAll()
+                        .and()
+                    .logout().permitAll();
+        }
     }
 }
