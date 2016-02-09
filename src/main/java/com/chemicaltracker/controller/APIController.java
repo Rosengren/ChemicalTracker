@@ -95,6 +95,10 @@ public class APIController {
 
         final Chemical chemical = chemicalDB.find(request.getChemical());
 
+        if (chemical == null) {
+            return new ChemicalResponse().withMatch(false);
+        }
+
         final ChemicalResponse.Properties properties =
             new ChemicalResponse.Properties()
                 .withFireDiamond(chemical.getFireDiamond());

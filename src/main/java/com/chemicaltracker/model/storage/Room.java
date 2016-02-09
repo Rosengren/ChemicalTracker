@@ -16,11 +16,6 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIgnore;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 
-/*
- * This class is used to represent a general storage object for chemicals 
- * Example: room, cabinet, location, etc.
- */
-
 @JsonIgnoreProperties(ignoreUnknown = true)
 @DynamoDBTable(tableName="Rooms")
 public class Room extends AbstractStorageComponent implements StorageComponent {

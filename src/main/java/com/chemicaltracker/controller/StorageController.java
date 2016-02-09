@@ -24,12 +24,11 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RequestMapping(value = {"/home", "/Home"})
 public class StorageController {
 
-    // private static final StorageDAO locationDB = StorageFactory.getStorage("LOCATIONS");
+    private static final ChemicalDAO chemicalDB = ChemicalDAO.getInstance();
     private static final LocationDAO locationDB = LocationDAO.getInstance();
-    private static final CabinetDAO cabinetDB = CabinetDAO.getInstance();
-    private static final RoomDAO roomDB = RoomDAO.getInstance();
+    private static final CabinetDAO cabinetDB   = CabinetDAO.getInstance();
+    private static final RoomDAO roomDB         = RoomDAO.getInstance();
 
-    private ChemicalDAO chemicalDB = ChemicalDAO.getInstance();
 
     @RequestMapping("")
     public String home(Model model, Principal principal) {

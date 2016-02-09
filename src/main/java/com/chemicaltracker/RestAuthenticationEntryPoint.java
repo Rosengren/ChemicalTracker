@@ -22,5 +22,4 @@ public final class RestAuthenticationEntryPoint implements AuthenticationEntryPo
         PrintWriter writer = response.getWriter();
         writer.println("HTTP Status 401 - " + authException.getMessage());
     }
-
 }

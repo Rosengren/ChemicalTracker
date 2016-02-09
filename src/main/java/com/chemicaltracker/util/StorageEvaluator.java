@@ -6,12 +6,8 @@ import com.chemicaltracker.persistence.*;
 
 public class StorageEvaluator {
 
-	private OxidizingAgentDAO oxidizingDB = OxidizingAgentDAO.getInstance();
-	private ReductionAgentDAO reductionDB = ReductionAgentDAO.getInstance();
-
-	public StorageEvaluator() {
-
-	}
+	private static final OxidizingAgentDAO oxidizingDB = OxidizingAgentDAO.getInstance();
+	private static final ReductionAgentDAO reductionDB = ReductionAgentDAO.getInstance();
 
 	public boolean containsOxidizingAgent(final List<String> chemicalNames) {
 		return oxidizingDB.containsAgent(chemicalNames);
@@ -67,7 +63,7 @@ public class StorageEvaluator {
 		return containsBasics(chemicals) && containsAcids(chemicals);
 	}
 
-	private String getpHProperty(Chemical chemical) {
+	private String getpHProperty(final Chemical chemical) {
 		final Map<String, String> property = chemical.getPhysicalAndChemicalProperties();
 		return property.get("pH (1% soln/water)").toLowerCase();
 	}

@@ -2,11 +2,6 @@ package com.chemicaltracker.model;
 
 import com.chemicaltracker.model.storage.*;
 
-import java.util.ArrayList;
-
-import java.util.Map;
-import java.util.HashMap;
-
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
@@ -40,7 +35,6 @@ public class ReportDocument {
     private static Font FOOTER = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD);
     private static Font TIMESTAMP = new Font(Font.FontFamily.HELVETICA, 10, Font.BOLD);
 
-    //public static Document createPDF(final String file, final String title, final Storage location, final Map<Storage, java.util.List<Storage>> roomCabinetMap) {
     public static Document createPDF(final String file, final String title, final StorageComponent component) {
 
         Document document = null;
