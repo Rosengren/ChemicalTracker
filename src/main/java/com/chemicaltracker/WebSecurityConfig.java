@@ -15,6 +15,13 @@ import org.springframework.core.annotation.Order;
 
 import org.springframework.security.core.userdetails.UserDetailsService;
 
+/*
+ *
+ * For more information on how the config file works, visit:
+ * http://docs.spring.io/spring-security/site/docs/current/reference/html/jc.html
+ */
+
+
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig {

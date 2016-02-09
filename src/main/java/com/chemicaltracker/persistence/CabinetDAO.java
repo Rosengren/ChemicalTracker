@@ -49,11 +49,5 @@ public class CabinetDAO extends DynamoDBDAO<Cabinet>  {
         }
 
         return cabinets;
-    } 
-
-
-    @Override
-    public Class getObjectClass() {
-        return Cabinet.class;
     }
 }

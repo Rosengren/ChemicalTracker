@@ -24,11 +24,6 @@ public class UserDAO extends DynamoDBDAO<User> implements UserDetailsService {
     }
 
     @Override
-    public Class getObjectClass() {
-        return User.class;
-    }
-
-    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         logger.info("Looking up username: " + username);

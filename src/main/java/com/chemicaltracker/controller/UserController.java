@@ -29,7 +29,6 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 public class UserController {
-
     private UserDAO userDB = UserDAO.getInstance();
 
     @RequestMapping("/login")

@@ -49,10 +49,5 @@ public class RoomDAO extends DynamoDBDAO<Room>  {
         }
 
         return rooms;
-    } 
-
-    @Override
-    public Class getObjectClass() {
-        return Room.class;
     }
 }

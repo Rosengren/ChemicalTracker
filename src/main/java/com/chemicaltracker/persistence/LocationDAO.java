@@ -39,9 +39,4 @@ public class LocationDAO extends DynamoDBDAO<Location>  {
         
         return mapper.scan(Location.class, scanExpression);
     }
-
-    @Override
-    public Class getObjectClass() {
-        return Location.class;
-    }
 }

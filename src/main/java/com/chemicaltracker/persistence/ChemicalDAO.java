@@ -36,11 +36,6 @@ public class ChemicalDAO extends DynamoDBDAO<Chemical> {
         return instance;
     }
 
-    @Override
-    public Class getObjectClass() {
-        return Chemical.class;
-    }
-
     public List<Chemical> searchPartialChemicalName(final List<String> partialNames) {
 
         final Map<String, String> expressionAttributeNames =

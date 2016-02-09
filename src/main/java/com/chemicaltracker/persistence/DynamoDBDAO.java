@@ -1,49 +1,28 @@
 package com.chemicaltracker.persistence;
 
-
-// TODO: remove all unused imports
-import java.util.Map;
-import java.util.HashMap;
-
-import java.util.Arrays;
-
-import java.util.List;
-import java.util.ArrayList;
-
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.amazonaws.auth.AWSCredentials;
+import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
-import com.amazonaws.services.dynamodbv2.model.PutItemRequest;
-import com.amazonaws.services.dynamodbv2.model.PutItemResult;
-import com.amazonaws.services.dynamodbv2.model.DeleteItemRequest;
-import com.amazonaws.services.dynamodbv2.model.DeleteItemResult;
-import com.amazonaws.services.dynamodbv2.model.GetItemRequest;
-import com.amazonaws.services.dynamodbv2.model.GetItemResult;
-import com.amazonaws.services.dynamodbv2.model.ScanRequest;
-import com.amazonaws.services.dynamodbv2.model.ScanResult;
-import com.amazonaws.services.dynamodbv2.document.Table;
-import com.amazonaws.services.dynamodbv2.document.Item;
-
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBQueryExpression;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
+import com.amazonaws.AmazonClientException;
+
+import org.springframework.core.GenericTypeResolver;
 
 import org.apache.log4j.Logger;
 
-import com.amazonaws.AmazonClientException;
-import com.amazonaws.AmazonServiceException;
-
 public abstract class DynamoDBDAO<T> implements GenericDAO<T> {
 
-	protected final Logger logger = Logger.getLogger(this.getClass());
+    protected Class<T> clazz;
+
+	protected final Logger logger = Logger.getLogger(getClass());
 
     protected DynamoDBMapper mapper;
     protected AmazonDynamoDBClient amazonDynamoDBClient;
 
  	protected DynamoDBDAO() {
+        this.clazz = (Class<T>) GenericTypeResolver.resolveTypeArgument(getClass(), DynamoDBDAO.class);
 
 		try {
             initializeDBConnection();
@@ -73,8 +52,6 @@ public abstract class DynamoDBDAO<T> implements GenericDAO<T> {
         mapper = new DynamoDBMapper(amazonDynamoDBClient);
     }
 
-    public abstract Class getObjectClass();
-
     @Override
     public T create(final T t) {
     	mapper.save(t);
@@ -89,12 +66,12 @@ public abstract class DynamoDBDAO<T> implements GenericDAO<T> {
 
     @Override
     public T find(final Object id) {
-    	return (T) mapper.load(getObjectClass(), id);
+    	return (T) mapper.load(this.clazz, id);
     }
 
     @Override
     public T find(final Object hash, final Object range) {
-        return (T) mapper.load(getObjectClass(), hash, range);
+        return (T) mapper.load(this.clazz, hash, range);
     }
 
     @Override
