@@ -1,6 +1,7 @@
 package com.chemicaltracker.controller;
 
-import org.springframework.ui.Model;
+
+// Annotations
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -8,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class WelcomeController {
 
     @RequestMapping("/")
-    public String welcome(Model model) {
+    public String welcome() {
         return "welcome";
     }
 }

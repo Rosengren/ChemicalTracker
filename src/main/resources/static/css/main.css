@@ -2,25 +2,16 @@
             Homepage
 *******************************/
 
-#ctrackr.index .pusher > .page {
-  background-color: #FFFFFF;
+#chemicalTracker.index .pusher > .page {
+    background-color: #FFFFFF;
 }
 
 @media only screen and (max-width: 992px) {
-  html {
-    overflow-x: visible;
-    -webkit-overflow-scrolling: auto;
-  }
+    html {
+        overflow-x: visible;
+        -webkit-overflow-scrolling: auto;
+    }
 }
-/*#ctrackr > .pusher {
-  display: block;
-  min-height: 0px;
-  flex-direction: initial;
-}
-#ctrackr > .pusher > .full.height {
-  display: block;
-  flex: none !important;
-}*/
 
 .storage-message {
 
@@ -32,296 +23,293 @@
     Following
 ---------------*/
 
-#ctrackr.index .following.bar {
-  position: fixed;
-  top: 0px;
-  z-index: 900;
-  left: 0%;
-  padding: 1em 0em;
-  width: 100%;
-  box-shadow: 0px 0px 0px 0px transparent;
-  border-bottom: 1px solid transparent;
-  transition:
-    padding 0.5s ease,
-    background 0.5s ease,
-    box-shadow 0.5s ease,
-    border 0.5s ease;
+#chemicalTracker.index .following.bar {
+    position: fixed;
+    top: 0;
+    z-index: 900;
+    left: 0;
+    padding: 1em 0;
+    width: 100%;
+    box-shadow: 0 0 0 0 transparent;
+    border-bottom: 1px solid transparent;
+    transition:
+            padding 0.5s ease,
+            background 0.5s ease,
+            box-shadow 0.5s ease,
+            border 0.5s ease;
 }
 
-#ctrackr.index .following.bar > .menu .item {
-  transition: all 0.5s ease;
+#chemicalTracker.index .following.bar > .menu .item {
+    transition: all 0.5s ease;
 }
-#ctrackr.index.pushed .following.bar .menu .item,
-#ctrackr.index.pushed .following.bar {
-  transition: none;
+#chemicalTracker.index.pushed .following.bar .menu .item,
+#chemicalTracker.index.pushed .following.bar {
+    transition: none;
 }
-#ctrackr.index .following.bar .additional.item[data-site="learn"]:hover {
-  color: #D9499A;
+#chemicalTracker.index .following.bar .additional.item[data-site="learn"]:hover {
+    color: #D9499A;
 }
-#ctrackr.index .following.bar span.additional.item {
-  cursor: default;
-  color: rgba(0, 0, 0, 0.2);
+#chemicalTracker.index .following.bar span.additional.item {
+    cursor: default;
+    color: rgba(0, 0, 0, 0.2);
 }
-#ctrackr.index .following.bar .inverted span.additional.item {
-  color: rgba(255, 255, 255, 0.2);
+#chemicalTracker.index .following.bar .inverted span.additional.item {
+    color: rgba(255, 255, 255, 0.2);
 }
-#ctrackr.index .following.bar .column > .menu {
-  margin-top: 0px;
-  height: 35px;
+#chemicalTracker.index .following.bar .column > .menu {
+    margin-top: 0;
+    height: 35px;
 }
-#ctrackr.index .following.bar .network.menu .item {
-  font-weight: bold;
+#chemicalTracker.index .following.bar .network.menu .item {
+    font-weight: bold;
 }
-#ctrackr.index .following.bar .item iframe {
-  margin-left: 10px;
+#chemicalTracker.index .following.bar .item iframe {
+    margin-left: 10px;
 }
-#ctrackr.index .following.bar .network.menu .view-ui {
-  margin-right: 1em;
+#chemicalTracker.index .following.bar .network.menu .view-ui {
+    margin-right: 1em;
 }
-#ctrackr.index .light.following.bar .network.menu .view-ui {
-  color: #00B5AD;
+#chemicalTracker.index .light.following.bar .network.menu .view-ui {
+    color: #00B5AD;
 }
-#ctrackr.index .light.following.bar .inverted.network.menu .view-ui {
-  color: #6DFFFF;
+#chemicalTracker.index .light.following.bar .inverted.network.menu .view-ui {
+    color: #6DFFFF;
 }
-#ctrackr.index .following .logo {
-  float: left;
-  width: 35px;
-  margin-right: 1em;
+#chemicalTracker.index .following .logo {
+    float: left;
+    width: 35px;
+    margin-right: 1em;
 }
-#ctrackr.index .following .logo .side {
-  width: 35px;
+#chemicalTracker.index .following .logo .side {
+    width: 35px;
 }
-#ctrackr .masthead .version.label:after {
-  background-color: #000000 !important;
+#chemicalTracker .masthead .version.label:after {
+    background-color: #000000 !important;
 }
-#ctrackr.index .following .version.label {
-  margin: 0.25em 0px 0px 1em;
+#chemicalTracker.index .following .version.label {
+    margin: 0.25em 0 0 1em;
 }
 
 /*--------------
     Masthead
 ---------------*/
 
-#ctrackr.index .masthead.segment.zoomed h1 {
-  text-shadow: 0px 0px 4px rgba(0, 0, 0, 0);
-  color: rgba(255, 255, 255, 1);
+#chemicalTracker.index .masthead.segment.zoomed h1 {
+    text-shadow: 0 0 4px rgba(0, 0, 0, 0);
+    color: rgba(255, 255, 255, 1);
 }
-#ctrackr.index .masthead.zoomed:after {
-  opacity: 0;
+#chemicalTracker.index .masthead.zoomed:after {
+    opacity: 0;
 }
-#ctrackr.index .masthead.zoomed {
-  background-color: #25282A;
-}
-
-#ctrackr.index .masthead {
-  position: relative;
-  /* overflow: hidden; */
-  text-align: center;
-  padding: 0em;
-  color: rgba(255, 255, 255, 0.9);
-  margin-bottom: 0px;
-  /* border-bottom: none; */
-  background-color: #000000;
-  background-position: 50% 50%;
-  -webkit-transform: translate3d(0, 0, 0);
-  transform: translate3d(0, 0, 0);
+#chemicalTracker.index .masthead.zoomed {
+    background-color: #25282A;
 }
 
-#ctrackr.index .masthead:after {
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  z-index: -1;
-  width: 100%;
-  height: 100%;
-  content: '';
-  background-size: cover;
-
-  /*opacity: 0.45;*/
-  opacity: 0.35;
+#chemicalTracker.index .masthead {
+    position: relative;
+    text-align: center;
+    padding: 0;
+    color: rgba(255, 255, 255, 0.9);
+    margin-bottom: 0;
+    background-color: #000;
+    background-position: 50% 50%;
+    -webkit-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
 }
 
-#ctrackr.index .masthead.bg1:after {
-  background-color: grey;
+#chemicalTracker.index .masthead:after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: -1;
+    width: 100%;
+    height: 100%;
+    content: '';
+    background-size: cover;
+
+    /*opacity: 0.45;*/
+    opacity: 0.35;
 }
 
-#ctrackr.index .masthead,
-#ctrackr.index .masthead:after {
-  -ms-transition:
-    background 6s cubic-bezier(0.680, -0.550, 0.265, 1.4) 0s,
-    opacity 6s cubic-bezier(0.680, -0.550, 0.265, 1.4) 0s
-  ;
-  -moz-transition:
-    background 6s cubic-bezier(0.680, -0.550, 0.265, 1.4) 0s,
-    opacity 6s cubic-bezier(0.680, -0.550, 0.265, 1.4) 0s
-  ;
-  -webkit-transition:
-    background 6s cubic-bezier(0.680, -0.550, 0.265, 1.4) 0s,
-    opacity 6s cubic-bezier(0.680, -0.550, 0.265, 1.4) 0s
-  ;
-  transition:
-    background 6s cubic-bezier(0.680, -0.550, 0.265, 1.4) 0s,
-    opacity 6s cubic-bezier(0.680, -0.550, 0.265, 1.4) 0s
-  ;
+#chemicalTracker.index .masthead.bg1:after {
+    background-color: grey;
 }
 
-#ctrackr.welcome .masthead .container {
-  height: 100vh;
+#chemicalTracker.index .masthead,
+#chemicalTracker.index .masthead:after {
+    -ms-transition:
+            background 6s cubic-bezier(0.680, -0.550, 0.265, 1.4) 0s,
+            opacity 6s cubic-bezier(0.680, -0.550, 0.265, 1.4) 0s
+;
+    -moz-transition:
+            background 6s cubic-bezier(0.680, -0.550, 0.265, 1.4) 0s,
+            opacity 6s cubic-bezier(0.680, -0.550, 0.265, 1.4) 0s
+;
+    -webkit-transition:
+            background 6s cubic-bezier(0.680, -0.550, 0.265, 1.4) 0s,
+            opacity 6s cubic-bezier(0.680, -0.550, 0.265, 1.4) 0s
+;
+    transition:
+            background 6s cubic-bezier(0.680, -0.550, 0.265, 1.4) 0s,
+            opacity 6s cubic-bezier(0.680, -0.550, 0.265, 1.4) 0s
+;
 }
 
-#ctrackr.storage .masthead .container,
-#ctrackr.chemical .masthead .container {
-  height: 30vh;
-  margin-bottom: 30px;
-  padding-top: 100px;
-  padding-bottom: 100px;
+#chemicalTracker.welcome .masthead .container {
+    height: 100vh;
 }
 
-#ctrackr.storage .bottom-padding,
-#ctrackr.chemical .bottom-padding {
-  margin-bottom: 40px;
+#chemicalTracker.storage .masthead .container,
+#chemicalTracker.chemical .masthead .container {
+    height: 30vh;
+    margin-bottom: 30px;
+    padding-top: 100px;
+    padding-bottom: 100px;
 }
 
-#ctrackr.index .masthead .container {
-  margin-left: auto !important;
-  margin-right: auto !important;
-  /*min-height: 600px;*/
-
-  -webkit-box-align: center;
-  -webkit-align-items: center;
-  -ms-flex-align: center;
-  align-items: center;
-  display: -webkit-box;
-  display: -webkit-flex;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: center;
-  -webkit-justify-content: center;
-  -ms-flex-pack: center;
-  justify-content: center;
-}
-#ctrackr .masthead .container {
-  padding: 15rem 0em;
-}
-	
-#ctrackr.index .following.bar .menu .item {
-  display: block;
-}
-#ctrackr.index.pushed .masthead,
-#ctrackr.index.pushed .following.bar {
-  -webkit-transform: translate3d(0, 0, 0);
-  -moz-transform: translate3d(0, 0, 0);
-  transform: translate3d(0, 0, 0);
+#chemicalTracker.storage .bottom-padding,
+#chemicalTracker.chemical .bottom-padding {
+    margin-bottom: 40px;
 }
 
-#ctrackr.index > .pusher > .footer {
-  padding-left: 0em;
+#chemicalTracker.index .masthead .container {
+    margin-left: auto !important;
+    margin-right: auto !important;
+    /*min-height: 600px;*/
+
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: center;
+    -webkit-justify-content: center;
+    -ms-flex-pack: center;
+    justify-content: center;
+}
+#chemicalTracker .masthead .container {
+    padding: 15rem 0;
 }
 
-#ctrackr.index .light.following.bar {
-  padding: 1em 0em;
-  background-color: #FFFFFF;
-  border-bottom: 1px solid #DDDDDD;
-  box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.04);
+#chemicalTracker.index .following.bar .menu .item {
+    display: block;
+}
+#chemicalTracker.index.pushed .masthead,
+#chemicalTracker.index.pushed .following.bar {
+    -webkit-transform: translate3d(0, 0, 0);
+    -moz-transform: translate3d(0, 0, 0);
+    transform: translate3d(0, 0, 0);
 }
 
-#ctrackr.index .masthead.segment .typed-cursor {
-  position: relative;
-  top: -0.05em;
-  left: -0.25em;
-  visibility: hidden;
-  opacity: 1;
-  -webkit-animation: blink 0.7s infinite;
-  -moz-animation: blink 0.7s infinite;
-  animation: blink 0.7s infinite;
-  -webkit-transition: opacity 0.7s ease;
-  -moz-transition: opacity 0.7s ease;
-  transition: opacity 0.7s ease;
+#chemicalTracker.index > .pusher > .footer {
+    padding-left: 0;
 }
-#ctrackr.index .masthead.segment .typed-cursor.stop {
-  opacity: 0;
-  -moz-animation-duration: 0s;
-  -webkit-animation-duration: 0s;
-  animation-duration: 0s;
+
+#chemicalTracker.index .light.following.bar {
+    padding: 1em 0;
+    background-color: #FFFFFF;
+    border-bottom: 1px solid #DDDDDD;
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.04);
+}
+
+#chemicalTracker.index .masthead.segment .typed-cursor {
+    position: relative;
+    top: -0.05em;
+    left: -0.25em;
+    visibility: hidden;
+    opacity: 1;
+    -webkit-animation: blink 0.7s infinite;
+    -moz-animation: blink 0.7s infinite;
+    animation: blink 0.7s infinite;
+    -webkit-transition: opacity 0.7s ease;
+    -moz-transition: opacity 0.7s ease;
+    transition: opacity 0.7s ease;
+}
+#chemicalTracker.index .masthead.segment .typed-cursor.stop {
+    opacity: 0;
+    -moz-animation-duration: 0s;
+    -webkit-animation-duration: 0s;
+    animation-duration: 0s;
 }
 @keyframes blink {
-  0% { opacity:1; }
-  50% { opacity:0; }
-  100% { opacity:1; }
+    0% { opacity:1; }
+    50% { opacity:0; }
+    100% { opacity:1; }
 }
 @-webkit-keyframes blink {
-  0% { opacity:1; }
-  50% { opacity:0; }
-  100% { opacity:1; }
+    0% { opacity:1; }
+    50% { opacity:0; }
+    100% { opacity:1; }
 }
 @-moz-keyframes blink {
-  0% { opacity:1; }
-  50% { opacity:0; }
-  100% { opacity:1; }
+    0% { opacity:1; }
+    50% { opacity:0; }
+    100% { opacity:1; }
 }
 
-#ctrackr.index .vertical.segment {
-  box-shadow: none;
+#chemicalTracker.index .vertical.segment {
+    box-shadow: none;
 }
 
-#ctrackr.index .masthead.segment h1 {
-  font-size: 3em;
-  color: rgba(255, 255, 255, 1);
-  line-height: 1.2;
-  margin: 0px 0px 0px;
-  padding-bottom: 0px;
-  -moz-perspective: 500px;
-  -webkit-perspective: 500px;
-  perspective: 500px;
+#chemicalTracker.index .masthead.segment h1 {
+    font-size: 3em;
+    color: rgba(255, 255, 255, 1);
+    line-height: 1.2;
+    margin: 0 0 0;
+    padding-bottom: 0;
+    -moz-perspective: 500px;
+    -webkit-perspective: 500px;
+    perspective: 500px;
 
-  text-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+    text-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 
-  -moz-transform-style: preserve-3d;
-  -webkit-transform-style: preserve-3d;
-  transform-style: preserve-3d;
+    -webkit-transform-style: preserve-3d;
+    transform-style: preserve-3d;
 }
-#ctrackr.index .masthead.segment h1 .tagline {
-  font-size: 0.75em;
+#chemicalTracker.index .masthead.segment h1 .tagline {
+    font-size: 0.75em;
 }
-#ctrackr.index .masthead.segment h1 > .library {
-  display: block;
-  font-size: 1.75em;
-  font-weight: bold;
+#chemicalTracker.index .masthead.segment h1 > .library {
+    display: block;
+    font-size: 1.75em;
+    font-weight: bold;
 }
-#ctrackr.index .masthead.segment h1 b {
-  display: inline-block;
-  font-weight: 500;
+#chemicalTracker.index .masthead.segment h1 b {
+    display: inline-block;
+    font-weight: 500;
 }
-#ctrackr.index .masthead.segment h1 .text {
-  display: inline-block;
-  font-weight: 300;
-  margin-left: -0.4em;
+#chemicalTracker.index .masthead.segment h1 .text {
+    display: inline-block;
+    font-weight: 300;
+    margin-left: -0.4em;
 }
-#ctrackr.index .masthead h2 {
-  font-weight: normal;
-  margin: 0px 0 16px 0px;
-  font-size: 1.75em;
-  border-bottom: none;
-  line-height: 1;
+#chemicalTracker.index .masthead h2 {
+    font-weight: normal;
+    margin: 0 0 16px 0;
+    font-size: 1.75em;
+    border-bottom: none;
+    line-height: 1;
 }
-#ctrackr.index .masthead p {
-  font-size: 1.5em;
-  margin: 1em 0em 1.5em;
-  padding: 0px;
+#chemicalTracker.index .masthead p {
+    font-size: 1.5em;
+    margin: 1em 0 1.5em;
+    padding: 0;
 }
-#ctrackr.index .ui.header {
-  font-weight: normal;
+#chemicalTracker.index .ui.header {
+    font-weight: normal;
 }
 
-#ctrackr.index .introduction {
-  position: relative;
-  clear: both;
-  display: block;
-  text-align: center;
+#chemicalTracker.index .introduction {
+    position: relative;
+    clear: both;
+    display: block;
+    text-align: center;
 }
-#ctrackr.index .introduction .buttons {
-  margin-top: 3em;
+#chemicalTracker.index .introduction .buttons {
+    margin-top: 3em;
 }
 
 /*
@@ -410,31 +398,31 @@ a.diamond .text {
 }
 
 .diamond.red {
-   background: #FF6666;
+    background: #FF6666;
 }
 
 .diamond.blue {
-   background: #6691FF;
+    background: #6691FF;
 }
 
 .diamond.yellow {
-   background: #FCFF66;
+    background: #FCFF66;
 }
 
 .diamond.white {
-   background: #FFF;
+    background: #FFF;
 }
 
 /**
   Scrollable List
 **/
 .ui.list.scrollable {
-  overflow-y:auto;
-  white-space:nowrap;
-  max-height: 300px;
+    overflow-y:auto;
+    white-space:nowrap;
+    max-height: 300px;
 }
 
 .fixedLoader {
-  position: fixed!important;
-  z-index: 9999!important;
+    position: fixed!important;
+    z-index: 9999!important;
 }

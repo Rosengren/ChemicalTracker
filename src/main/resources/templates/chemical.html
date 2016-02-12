@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header"></head>
+<body id="chemicalTracker" class="index popup pusher chemical">
+<div th:replace="fragments/sidebar :: sidebar"></div>
+
+<div class="pusher">
+    <div th:replace="fragments/menu :: menu"></div>
+    <div class="full height">
+        <div class="masthead segment bg1">
+            <div class="ui container">
+                <div class="introduction">
+                    <h1 class="ui inverted header">
+                        <span class="library" th:text="${title}"></span>
+                        <span class="tagline">Material Safety Data Sheet</span>
+                    </h1>
+                    <div class="ui hidden divider"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ui container bottom-padding">
+            <div class="ui breadcrumb">
+                <a class="section" th:href="'/Home'" th:text="'Home'"></a>
+                <i class="right angle icon divider"></i>
+                <a class="section" th:href="'/Home/'+${location}" th:text="${location}"></a>
+                <i class="right angle icon divider"></i>
+                <a class="section" th:href="'/Home/'+${location}+'/'+${room}" th:text="${room}"></a>
+                <i class="right angle icon divider"></i>
+                <a class="section" th:href="'/Home/'+${location}+'/'+${room} +'/'+${cabinet}" th:text="${cabinet}"></a>
+                <i class="right angle icon divider"></i>
+                <div class="active section" th:text="${title}"></div>
+            </div>
+
+            <div class="ui hidden divider"></div>
+
+            <div class="ui container">
+                <div class="ui relaxed divided items">
+                    <div class="item">
+                        <div class="ui small image">
+
+                            <ul class="diamond-grid">
+                                <li class="tooltip" title="Flammability">
+                                    <a class="diamond red">
+                                        <div class="text" th:text="${fireDiamond.flammability}"></div>
+                                    </a>
+                                </li>
+                                <li class="tooltip" title="Health">
+                                    <a class="diamond blue">
+                                        <div class="text" th:text="${fireDiamond.health}"></div>
+                                    </a>
+                                </li>
+                                <li class="tooltip" title="Instability/Reactivity">
+                                    <a class="diamond yellow">
+                                        <div class="text" th:text="${fireDiamond.instability}"></div>
+                                    </a>
+                                </li>
+                                <li class="tooltip" title="Personal Protection">
+                                    <a class="diamond white">
+                                        <div class="text" th:text="${fireDiamond.notice}"></div>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="content">
+                            <h2>Material Safety Diamond</h2>
+                            <div class="description noBullets">
+                                <ul>
+                                    <li th:text="'Flammability: ' + ${fireDiamond.flammability}"></li>
+                                    <li th:text="'Health: ' + ${fireDiamond.health}"></li>
+                                    <li th:text="'Instability: ' + ${fireDiamond.instability}"></li>
+                                    <li th:text="'Personal Protection: ' + ${fireDiamond.notice}"></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div th:each="property : ${chemical.properties}" class="topPadding">
+                <h2 class="ui dividing header" th:text="${property.key}"></h2>
+                <div class="ui two column stackable grid container">
+                    <div th:each="subProperty : ${property.value}" class="column">
+                        <h3 th:text="${subProperty.key}"></h3>
+                        <p th:text="${subProperty.value}"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div type="hidden" id="csrf" th:value="${_csrf.token}"></div>
+<div type="hidden" id="username" th:value="${username}"></div>
+<div type="hidden" id="addURL" th:value="${addURL}"></div>
+</body>
+<script th:replace="fragments/footer :: scripts"></script>
+</html>

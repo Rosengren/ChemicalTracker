@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head th:replace="fragments/header :: header"></head>
+<body id="chemicalTracker" class="index popup storage">
+<div th:replace="fragments/menu :: menu"></div>
+<div th:replace="fragments/sidebar :: sidebar"></div>
+
+<div class="ui modal addStorageModal">
+    <div class="header">
+        Add new room
+    </div>
+    <div class="content">
+
+        <form id="storageForm" class="ui form" method="POST" th:action="${formLink}" enctype="multipart/form-data">
+            <div class="field">
+                <label>Photo</label>
+                <input type="file" name="Image" />
+            </div>
+            <div class="field">
+                <label>Name</label>
+                <input type="text" name="Name" />
+            </div>
+            <div class="field">
+                <label>Description</label>
+                <input type="text" name="Description" />
+            </div>
+            <input type="hidden" name="Room" />
+            <input type="hidden" name="ParentID" th:value="${parentID}" />
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        </form>
+
+        <div class="actions">
+            <div class="ui black deny button">
+                Cancel
+            </div>
+            <div class="ui positive button" id="submitCreateStorage">
+                Submit
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="pusher">
+    <div class="full height">
+        <div class="masthead segment bg1">
+            <div class="ui container">
+                <div class="introduction">
+                    <h1 class="ui inverted header">
+                        <span class="library" th:text="${title}"></span>
+                        <span class="tagline" th:text="${subtitle}"></span>
+                    </h1>
+                    <div class="ui hidden divider"></div>
+                </div>
+            </div>
+        </div>
+        <div class="ui container">
+            <div id="formSubmissionMsg" class="ui hidden positive message bottom-padding">
+                <i class="close icon"></i>
+                <div class="header"></div>
+            </div>
+        </div>
+
+        <div class="ui container bottom-padding">
+            <div class="ui breadcrumb">
+                <a class="section" th:href="'/Home'" th:text="'Home'"></a>
+                <i class="right angle icon divider"></i>
+                <div class="active section" th:href="'/Home/'+${location}" th:text="${location}"></div>
+            </div>
+            <div class="ui icon button addModal right floated" title="Add new room">
+                <i class="add icon"></i>
+            </div>
+        </div>
+
+        <div class="ui container">
+            <div class="ui four column stackable centered grid">
+                <div th:if="${#lists.isEmpty(rooms)}" class="ui center aligned grid container">
+                    <div class="column">
+                        <h2 class="ui header">
+                            No rooms in this location
+                        </h2>
+                        <h2 class="storage-message">Click the
+                            <div class="ui icon button addModal center" title="Add new room">
+                                <i class="add icon"></i>
+                            </div>
+                            above to add a new room
+                        </h2>
+                    </div>
+                </div>
+
+                <div th:each="room : ${rooms}" class="column">
+                    <div class="ui link centered card" >
+                        <div class="blurring dimmable image" th:onclick="'window.location+=\'/'+${room.name}+'\''">
+                            <div class="ui dimmer">
+                                <div class="content">
+                                    <div class="center">
+                                        <div class="ui inverted button">View Details</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <img th:src="${room.imageURL}" />
+                        </div>
+                        <div class="content">
+                            <div class="header" th:text="${room.name}"></div>
+                            <div class="description" th:text="${room.description}"></div>
+                        </div>
+                        <div class="extra content">
+                            <a class="right floated created" th:href="'/report/generate/'+${room.name}">
+                                Generate Report
+                            </a>
+
+                            <div class="ui dropdown">
+                                <div class="text">Options</div>
+                                <i class="dropdown icon"></i>
+                                <div class="menu">
+                                    <div class="item remove">Remove</div>
+                                    <div class="item" id="editStorage">Edit</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div type="hidden" id="csrf" th:value="${_csrf.token}"></div>
+<div type="hidden" id="username" th:value="${username}"></div>
+<div type="hidden" id="addURL" value="/add/room/"></div>
+</body>
+<script th:replace="fragments/footer :: scripts"></script>
+</html>

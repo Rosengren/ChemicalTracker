@@ -1,0 +1,44 @@
+buildscript {
+	ext {
+		springBootVersion = '1.3.2.RELEASE'
+	}
+	repositories {
+		mavenCentral()
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'spring-boot' 
+
+jar {
+	baseName = 'ChemicalTracker'
+	version = '1.0.0-SNAPSHOT'
+}
+
+repositories {
+	mavenCentral()
+	maven { url "https://repo.spring.io/snapshot" }
+	maven { url "https://repo.spring.io/milestone" }
+}
+
+dependencies {
+	compile('com.amazonaws:aws-java-sdk-core:1.10.50')
+	compile('com.amazonaws:aws-java-sdk-iam:1.10.50')
+	compile('com.amazonaws:aws-java-sdk-s3:1.10.50')
+	compile('com.amazonaws:aws-java-sdk-ec2:1.10.50')
+	compile('com.amazonaws:aws-java-sdk-dynamodb:1.10.50')
+	compile('com.amazonaws:aws-java-sdk-elasticbeanstalk:1.10.50')
+	compile('org.springframework.boot:spring-boot-starter-security')
+	compile('org.springframework.boot:spring-boot-starter-thymeleaf')
+	compile('org.springframework.boot:spring-boot-starter-web')
+	compile('com.itextpdf:itextpdf:5.0.6')
+	testCompile('org.springframework.boot:spring-boot-starter-test') 
+}
+
+
+task wrapper(type: Wrapper) {
+	gradleVersion = '2.9'
+}

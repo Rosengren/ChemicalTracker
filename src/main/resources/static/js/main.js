@@ -3,7 +3,7 @@ $(document).ready(function() {
 });
 
 $(".clickableContainer").click(function() {
-    window.location = $(this).find("a").attr("href"); 
+    window.location = $(this).find("a").attr("href");
     return false;
 });
 
@@ -53,7 +53,7 @@ $(function () {
 });
 
 $('.ui.dropdown')
-  .dropdown();
+    .dropdown();
 
 $("#submitChemicalSearch").click(function() {
 
@@ -210,7 +210,7 @@ function removeChemical(chemicalName) {
 
 $('.message .close').on('click', function() {
     $(this).closest('.message')
-           .transition('fade');
+        .transition('fade');
 });
 
 $('#editStorage').on('click', function() {
@@ -218,40 +218,40 @@ $('#editStorage').on('click', function() {
 });
 
 $('body')
-      .visibility({
+    .visibility({
         offset         : -10,
         observeChanges : false,
         once           : false,
         continuous     : false,
         onTopPassed: function() {
-          requestAnimationFrame(function() {
-            $('.following.bar')
-              .addClass('light fixed')
-              .find('.menu')
-                .removeClass('inverted')
-            ;
-            $('.following .additional.item')
-              .transition('scale in', 750)
-            ;
-          });
+            requestAnimationFrame(function() {
+                $('.following.bar')
+                    .addClass('light fixed')
+                    .find('.menu')
+                    .removeClass('inverted')
+                ;
+                $('.following .additional.item')
+                    .transition('scale in', 750)
+                ;
+            });
         },
         onTopPassedReverse: function() {
-          requestAnimationFrame(function() {
-            $('.following.bar')
-              .removeClass('light fixed')
-              .find('.menu')
-                .addClass('inverted')
-                .find('.additional.item')
-                  .transition('hide')
-            ;
-          });
+            requestAnimationFrame(function() {
+                $('.following.bar')
+                    .removeClass('light fixed')
+                    .find('.menu')
+                    .addClass('inverted')
+                    .find('.additional.item')
+                    .transition('hide')
+                ;
+            });
         }
-      });
+    });
 
 $menu = $('#sidebar');
 $menu.sidebar('attach events', '.view-ui');
 $menu.sidebar({
-      dimPage          : true,
-      transition       : 'overlay',
-      mobileTransition : 'uncover'
-    });
+    dimPage          : true,
+    transition       : 'overlay',
+    mobileTransition : 'uncover'
+});

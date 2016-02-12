@@ -2,6 +2,10 @@
 
 target/
 build-tools/
+build/
+.gradle/
+.idea/
+*.iml
 
 # Elastic Beanstalk Files
 .elasticbeanstalk/*

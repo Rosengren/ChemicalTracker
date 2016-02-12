@@ -2,7 +2,7 @@ use strict;
 use warnings;
 
 #Useful Script for converting multiple files:
-#    ls *.txt | xargs -n1 perl pros.pl
+#    ls *.txt | xargs -n1 perl msdsToJson.pl
 
 my $DEBUG = 0; # Set to one when debugging to get terminal output
 

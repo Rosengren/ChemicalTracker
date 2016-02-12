@@ -2,8 +2,6 @@ package com.chemicaltracker;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import org.springframework.http.MediaType;
-
 import java.io.IOException;
 
 public class TestUtil {

@@ -1,39 +1,27 @@
 package com.chemicaltracker.controller;
 
 import java.util.List;
-import java.util.ArrayList;
-
-import java.util.Map;
-import java.util.HashMap;
-
-import com.chemicaltracker.model.*;
-import com.chemicaltracker.model.storage.*;
-import com.chemicaltracker.persistence.*;
-
-import org.springframework.ui.Model;
 import java.security.Principal;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
+import com.chemicaltracker.model.ReportDocument;
+import com.chemicaltracker.persistence.dao.CabinetDao;
+import com.chemicaltracker.persistence.dao.ChemicalDao;
+import com.chemicaltracker.persistence.dao.LocationDao;
+import com.chemicaltracker.persistence.dao.RoomDao;
+import com.chemicaltracker.persistence.model.Cabinet;
+import com.chemicaltracker.persistence.model.Chemical;
+import com.chemicaltracker.persistence.model.Location;
+import com.chemicaltracker.persistence.model.Room;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.validation.BindingResult;
 
 import org.springframework.web.bind.annotation.PathVariable;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -46,39 +34,35 @@ import javax.servlet.http.HttpServletResponse;
 @RequestMapping("/report")
 public class ReportController {
 
-    private final LocationDAO locationDB = LocationDAO.getInstance();
-    private final CabinetDAO cabinetDB = CabinetDAO.getInstance();
-    private final RoomDAO roomDB = RoomDAO.getInstance();
-
-    private final ChemicalDAO chemicalDB =
-        ChemicalDAO.getInstance();
+    private final LocationDao locationsDB = LocationDao.getInstance();
+    private final CabinetDao cabinetsDB = CabinetDao.getInstance();
+    private final RoomDao roomsDB = RoomDao.getInstance();
+    private final ChemicalDao chemicalsDB = ChemicalDao.getInstance();
 
     @RequestMapping(value = "/generate/{locationName}", method=GET)
     public void downloadPDF(@PathVariable("locationName") String locationName,
-            HttpServletRequest request, HttpServletResponse response,
-            Principal principal) throws IOException {
+                            HttpServletRequest request, HttpServletResponse response,
+                            Principal principal) throws IOException {
 
         final ServletContext servletContext = request.getSession().getServletContext();
         final File tempDirectory = (File) servletContext.getAttribute("javax.servlet.context.tempdir");
-        final String temperotyFilePath = tempDirectory.getAbsolutePath();
+        final String temporaryFilePath = tempDirectory.getAbsolutePath();
 
         final String fileName = locationName + "-report.pdf";
         response.setContentType("application/pdf");
 
         final String username = principal.getName();
-        Location location = locationDB.find(username, locationName);
+        Location location = locationsDB.find(username, locationName);
 
         final List<String> roomIDs = location.getStoredItemIDs();
-        final List<Room> rooms = roomDB.findAllRooms(username, roomIDs);
-
-        final Map<Room, List<Cabinet>> roomCabinetMap = new HashMap<Room, List<Cabinet>>();
+        final List<Room> rooms = roomsDB.findAllByIds(username, roomIDs);
 
         // TODO: this logic will be moved to the Models
         for (Room room : rooms) {
 
-            for (Cabinet cabinet : cabinetDB.findAllCabinets(username, room.getStoredItemIDs())) {
+            for (Cabinet cabinet : cabinetsDB.findAllByIds(username, room.getStoredItemIDs())) {
 
-                for (Chemical chemical : chemicalDB.batchGetChemicals(cabinet.getStoredItemNames())) {
+                for (Chemical chemical : chemicalsDB.findByNames(cabinet.getStoredItemNames())) {
                     cabinet.addElement(chemical);
                 }
 
@@ -89,9 +73,9 @@ public class ReportController {
         }
 
         try {
-            ReportDocument.createPDF(temperotyFilePath+"\\"+fileName, ReportDocument.DEFAULT_TITLE, location);
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            baos = convertPDFToByteArrayOutputStream(temperotyFilePath+"\\"+fileName);
+            ReportDocument.createPDF(temporaryFilePath+"\\"+fileName, ReportDocument.DEFAULT_TITLE, location);
+            ByteArrayOutputStream baos;
+            baos = convertPDFToByteArrayOutputStream(temporaryFilePath+"\\"+fileName);
             OutputStream os = response.getOutputStream();
             baos.writeTo(os);
             os.flush();
@@ -115,8 +99,6 @@ public class ReportController {
                 baos.write(buffer, 0, bytesRead);
             }
 
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

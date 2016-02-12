@@ -1,9 +1,9 @@
 #Chemical Tracker
 
 A chemical inventory server that allows users to dynamically develop an inventory of chemicals as
-well as retrieve information on specific chemicals from any place where Internet is availabled.
+well as retrieve information on specific chemicals from any place where Internet is available.
 
-Potential use cases include giviing first responders the ability to identify hazardous materials;
+Potential use cases include giving first responders the ability to identify hazardous materials;
 allowing laboratory auditors to inventory chemicals that are found in labs; or providing users
 with information about chemicals.
 

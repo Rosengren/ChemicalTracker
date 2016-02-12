@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header"></head>
+
+<body id="chemicalTracker" class="index popup storage">
+<div class="ui container">
+    <div class="full height">
+        <div class="ui dimmer fixedLoader">
+            <div class="ui text loader">Loading</div>
+        </div>
+    </div>
+</div>
+<div th:replace="fragments/sidebar :: sidebar"></div>
+<div class="ui modal searchChemicalModal">
+    <div class="header">
+        Search for chemicals to add to this Cabinet
+    </div>
+    <div class="content">
+        <div class="ui form">
+            <div class="field">
+                <label>Search Chemical</label>
+                <input id="chemicalQuery" type="text" name="chemical" placeholder="Chemical Name" />
+            </div>
+        </div>
+        <div class="ui divider"></div>
+        <div class="ui list scrollable" id="chemicalSearchResults"></div>
+    </div>
+    <div class="actions">
+        <div class="ui black deny button">
+            Cancel
+        </div>
+        <div class="ui positive button" id="submitChemicalSearch">
+            Search
+        </div>
+    </div>
+</div>
+
+<div class="ui basic modal confirm">
+    <i class="close icon"></i>
+    <div class="header">
+        Are you sure?
+    </div>
+    <div class="description">
+        <p>Are you sure you would like to remove this chemical?</p>
+    </div>
+    <div class="actions">
+        <div class="ui red basic inverted button">
+            <i class="remove icon"></i>
+            No
+        </div>
+        <div class="ui green ok inverted button" id="confirmRemove">
+            <i class="checkmark icon"></i>
+            Yes
+        </div>
+    </div>
+</div>
+
+<div class="pusher">
+    <div th:replace="fragments/menu :: menu"></div>
+    <div class="full height">
+
+        <div class="masthead segment bg1">
+            <div class="ui container">
+                <div class="introduction">
+                    <h1 class="ui inverted header">
+                        <span class="library" th:text="${title}"></span>
+                        <span class="tagline" th:text="${subtitle}"></span>
+                    </h1>
+                    <div class="ui hidden divider"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ui container bottom-padding">
+            <div class="ui breadcrumb">
+                <a class="section" th:href="'/Home'" th:text="'Home'"></a>
+                <i class="right angle icon divider"></i>
+                <a class="section" th:href="'/Home/'+${location}" th:text="${location}"></a>
+                <i class="right angle icon divider"></i>
+                <div class="active section" th:href="'/Home/'+${location}+'/'+${room}" th:text="${room}"></div>
+            </div>
+            <div class="ui icon button addModal right floated" title="Add chemical">
+                <i class="add icon"></i>
+            </div>
+        </div>
+
+        <div th:if="${not #lists.isEmpty(chemicals)}" class="ui container bottom-padding">
+            <div class="ui dividing header">
+                Metrics
+            </div>
+            <div class="ui five statistics">
+                <div class="statistic">
+                    <div class="value" th:text="${#lists.size(chemicals)}">
+                    </div>
+                    <div class="label">Chemicals</div>
+                </div>
+                <div class="statistic">
+                    <div class="value">2</div>
+                    <div class="label">Acids</div>
+                </div>
+                <div class="statistic">
+                    <div class="value">2</div>
+                    <div class="label">Bases</div>
+                </div>
+                <div class="statistic">
+                    <div class="value">3</div>
+                    <div class="label">Oxidizers</div>
+                </div>
+                <div class="statistic">
+                    <div class="value">3</div>
+                    <div class="label">Reductors</div>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${not #lists.isEmpty(tags)}" class="ui container bottom-padding">
+
+            <div class="ui dividing header">
+                Information and Warnings
+            </div>
+            <div class="ui large list">
+                <div th:each="tag : ${tags}" th:if="${not #strings.isEmpty(tag.title)}" class="item">
+                    <i th:class="'large asterisk ' + ${tag.color} + ' icon'"></i>
+                    <div class="content">
+                        <div class="header" th:text="${tag.title}"></div>
+                        <div class="description" th:text="${tag.description}"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ui container bottom-padding">
+            <div class="ui dividing header">
+                Chemicals
+            </div>
+            <div class="ui four column stackable grid container" id="chemicalCards">
+                <div th:if="${#lists.isEmpty(chemicals)}" class="ui center aligned grid container">
+
+                    <div class="column">
+                        <h2 class="ui header">
+                            No elements in this Cabinet
+                        </h2>
+                        <h2 class="storage-message">Click the
+                            <div class="ui icon button addModal center" title="${addTooltip}">
+                                <i class="add icon"></i>
+                            </div>
+                            above to add a new chemical
+                        </h2>
+                    </div>
+                </div>
+                <div th:each="chemical : ${chemicals}" class="column">
+                    <div class="ui link card" >
+                        <div class="blurring dimmable image" th:onclick="'window.location+=\'/'+${chemical.name}+'\''">
+                            <div class="ui dimmer">
+                                <div class="content">
+                                    <div class="center">
+                                        <div class="ui inverted button">View Details</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <img th:src="${chemical.imageURL}" />
+                        </div>
+                        <div class="content">
+                            <div class="header" th:text="${chemical.name}"></div>
+                            <!--<div class="description" th:text="${chemical.description}">description...</div>-->
+                        </div>
+                        <div class="extra content">
+                            <a class="right floated created remove" th:data="${chemical.name}">
+                                Remove
+                            </a>
+                            <a class="" onclick="alert('todo: add ability to edit')">
+                                <i class="edit icon"></i>
+                                Edit
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="ui container bottom-padding">
+            <div th:if="${not #lists.isEmpty(tags)}" class="ui dividing header">
+                Storage Checklist
+            </div>
+            <div class="ui large list">
+                <div th:each="checklistItem : ${checklist}" class="item">
+                    <i class="large checkmark green icon"></i>
+                    <div class="content">
+                        <div class="description" th:text="${checklistItem}"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div type="hidden" id="csrf" th:value="${_csrf.token}"></div>
+<div type="hidden" id="username" th:value="${username}"></div>
+<div type="hidden" id="addURL" th:value="${addURL}"></div>
+<div type="hidden" id="searchChemicalURL" th:value="${searchChemicalURL}"></div>
+<div type="hidden" id="removeURL" th:value="${removeURL}"></div>
+
+<div class="column" id="cardTemplate" style="display:none">
+    <div class="ui link card" >
+        <div class="blurring dimmable image">
+            <div class="ui dimmer">
+                <div class="content">
+                    <div class="center">
+                        <div class="ui inverted button">View Details</div>
+                    </div>
+                </div>
+            </div>
+            <img src="" class="imageURL" />
+        </div>
+        <div class="content">
+            <div class="header"> </div>
+            <div class="description"> </div>
+        </div>
+        <div class="extra content">
+            <a class="right floated created remove">
+                Remove
+            </a>
+            <a class="" onclick="alert('todo: add ability to edit')">
+                <i class="edit icon"></i>Edit
+            </a>
+        </div>
+    </div>
+</div>
+</body>
+
+<script th:replace="fragments/footer :: scripts"></script>
+</html>

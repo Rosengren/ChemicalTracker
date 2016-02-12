@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header"></head>
+
+<body id="chemicalTracker" class="index popup storage">
+<div th:replace="fragments/sidebar :: sidebar"></div>
+<div class="ui modal addStorageModal">
+    <div class="header">
+        Add new cabinet
+    </div>
+    <div class="content">
+
+        <form id="storageForm" class="ui form" method="POST" th:action="${formLink}" enctype="multipart/form-data">
+            <div class="field">
+                <label>Photo</label>
+                <input type="file" name="Image" />
+            </div>
+            <div class="field">
+                <label>Name</label>
+                <input type="text" name="Name" />
+            </div>
+            <div class="field">
+                <label>Description</label>
+                <input type="text" name="Description" />
+            </div>
+            <input type="hidden" name="Cabinet" />
+            <input type="hidden" name="ParentID" th:value="${parentID}" />
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        </form>
+
+
+        <div class="actions">
+            <div class="ui black deny button">
+                Cancel
+            </div>
+            <div class="ui positive button" id="submitCreateStorage">
+                Submit
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="pusher">
+    <div th:replace="fragments/menu :: menu"></div>
+    <div class="full height">
+
+        <div class="masthead segment bg1">
+            <div class="ui container">
+                <div class="introduction">
+                    <h1 class="ui inverted header">
+                        <span class="library" th:text="${title}"></span>
+                        <span class="tagline" th:text="${subtitle}"></span>
+                    </h1>
+                    <div class="ui hidden divider"></div>
+                </div>
+            </div>
+        </div>
+        <div class="ui container">
+            <div id="formSubmissionMsg" class="ui hidden positive message bottom-padding">
+                <i class="close icon"></i>
+                <div class="header"></div>
+            </div>
+        </div>
+
+        <div class="ui container bottom-padding">
+            <div class="ui breadcrumb">
+                <a class="section" th:href="'/Home'" th:text="'Home'"></a>
+                <i class="right angle icon divider"></i>
+                <a class="section" th:href="'/Home/'+${location}" th:text="${location}"></a>
+                <i class="right angle icon divider"></i>
+                <div class="active section" th:text="${title}"></div>
+            </div>
+
+            <div class="ui icon button addModal right floated" title="Add new cabinet">
+                <i class="add icon"></i>
+            </div>
+        </div>
+
+        <div class="ui container bottom-padding">
+            <div class="ui four column stackable centered grid">
+                <div class="ui center aligned grid container" id="noStorages">
+                    <div th:if="${#lists.isEmpty(cabinets)}" class="column">
+                        <h2 class="ui header">
+                            No elements in this room
+                        </h2>
+                        <h2 class="storage-message">Click the
+                            <div class="ui icon button addModal center" title="Add new cabinet">
+                                <i class="add icon"></i>
+                            </div>
+                            above to add a new cabinet
+                        </h2>
+                    </div>
+                </div>
+                <div th:each="cabinet : ${cabinets}" class="column">
+                    <div class="ui link centered card" >
+                        <div class="blurring dimmable image" th:onclick="'window.location+=\'/'+${cabinet.name}+'\''">
+                            <div class="ui dimmer">
+                                <div class="content">
+                                    <div class="center">
+                                        <div class="ui inverted button">View Details</div>
+                                    </div>
+                                </div>
+                            </div>
+                            <img th:src="${cabinet.imageURL}" />
+                        </div>
+                        <div class="content">
+                            <div class="header" th:text="${cabinet.name}"></div>
+                            <div class="description">
+                                <div th:if="${#lists.size(cabinet.tags) > 1}" class="item">
+                                    <b>Contains chemicals that are:</b>
+                                </div>
+                                <div class="ui list">
+                                    <div class="item" th:each="tag : ${cabinet.tags}" th:if="${tag.brief}">
+                                        <i th:class="'warning sign icon ' + ${tag.color}"></i>
+                                        <div th:class="'content ' + ${tag.color}" th:text="${tag.title}"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="extra content">
+                            <div class="ui dropdown">
+                                <div class="text">Options</div>
+                                <i class="dropdown icon"></i>
+                                <div class="menu">
+                                    <div class="item remove">Remove</div>
+                                    <div class="item" id="editStorage">Edit</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div type="hidden" id="csrf" th:value="${_csrf.token}"></div>
+<div type="hidden" id="username" th:value="${username}"></div>
+<div type="hidden" id="addURL" th:value="${addURL}"></div>
+</body>
+<script th:fragment="fragments/footer :: scripts"></script>
+</html>

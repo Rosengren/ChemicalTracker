@@ -1,24 +1,17 @@
 package com.chemicaltracker.model;
 
-import com.chemicaltracker.model.storage.*;
-
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.chemicaltracker.persistence.model.StorageComponent;
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
-import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
-
-import com.itextpdf.text.List;
-import com.itextpdf.text.ListItem;
 
 public class ReportDocument {
 
@@ -52,17 +45,16 @@ public class ReportDocument {
 
             document.close();
 
-        } catch (FileNotFoundException e) {
-
-            e.printStackTrace();
-        } catch (DocumentException e) {
+        } catch (FileNotFoundException | DocumentException e) {
             e.printStackTrace();
         }
+
         return document;
 
     }
 
     private static void addBody(final Document document, final StorageComponent component) throws DocumentException {
+
         document.add(component.getFormattedPDF(0));
     }
 
