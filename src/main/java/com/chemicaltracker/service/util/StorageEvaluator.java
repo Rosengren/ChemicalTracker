@@ -1,4 +1,4 @@
-package com.chemicaltracker.service;
+package com.chemicaltracker.service.util;
 
 import com.chemicaltracker.persistence.dao.OxidizingAgentDao;
 import com.chemicaltracker.persistence.dao.ReductionAgentDao;

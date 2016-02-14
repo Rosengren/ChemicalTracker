@@ -1,11 +1,13 @@
 package com.chemicaltracker.controller;
 
-import com.chemicaltracker.persistence.dao.UserDao;
 import com.chemicaltracker.persistence.model.User;
+import com.chemicaltracker.service.UserService;
 import java.security.Principal;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.chemicaltracker.service.UserServiceImpl;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.servlet.ModelAndView;
@@ -15,13 +17,13 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 // Annotations
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 @Controller
 public class UserController {
 
-    private UserDao userDB = UserDao.getInstance();
+    private final UserService userService = new UserServiceImpl();
 
     @RequestMapping("/login")
     public ModelAndView login(final Principal principal) {
@@ -39,7 +41,7 @@ public class UserController {
 
     @RequestMapping(value="/signup", method=POST)
     public ModelAndView signUpPost(@ModelAttribute("userForm") final User user) {
-        userDB.create(user);
+        userService.addUser(user);
         return new ModelAndView("signup");
     }
 

@@ -1,3 +1,78 @@
+$('.ui.search')
+    .search({
+        minCharacters : 3,
+        apiSettings: {
+            url: location.origin + '/api/search/chemicals?q={query}'
+        },
+        fields: {
+            results     : 'chemicals',
+            title       : 'name',
+            description : ''
+        },
+        onSelect: function(chemical) {
+
+            var request = {
+                requestType : 'ADD',
+                location    : $('#location-name').val(),
+                room        : $('#room-name').val(),
+                cabinet     : $('#cabinet-name').val(),
+                chemical    : chemical
+            };
+
+            $.ajax({
+                type        : 'post',
+                dataType    : 'json',
+                contentType : 'application/json',
+                mimeType    : 'application/json',
+                url         : location.origin + '/api/update',
+                data: JSON.stringify(request),
+                beforeSend: function() {
+                    $(".fixedLoader").addClass('active');
+                },
+                success: function(response) {
+
+                    if (response.success) {
+                        // TODO: simplify
+                        var card = $('#cardTemplate').clone();
+                        card.attr('id', '')
+                            .appendTo('#chemicalCards')
+                            .find(".header").html(chemical.name);
+
+                        card.find(".image").click(function() {
+                            window.location+='/' + chemical.name
+                        });
+
+                        card.find(".imageURL").attr("src", chemical.imageURL);
+                        card.find(".remove").attr("data", name);
+
+                        card.find(".remove").click(function() {
+                            selectedChemicalName = $(this).attr("data");
+                            selectedChemical = $(this).closest(".column");
+                            $('.ui.basic.modal.confirm').modal('show');
+                        });
+
+                        card.show();
+
+                        $("#noStorages").hide();
+                    } else {
+                        // Display message to the user
+                    }
+
+
+                },
+                error: function(e) {
+                    console.log("ERROR:");
+                    console.log(e);
+                },
+                complete: function(e) {
+                    $(".fixedLoader").removeClass('active');
+                }
+            });
+        }
+    });
+
+
+// TODO: Improve //
 $(document).ready(function() {
     $('#storageForm input[name="Location"]').val(window.location.pathname);
 });
@@ -25,12 +100,12 @@ $("#confirmRemove").click(function() {
 
 $(".button").popup({
     variation: 'inverted',
-    position: 'top center',
+    position: 'top center'
 });
 
 $(".tooltip").popup({
     variation: 'inverted',
-    position: 'top center',
+    position: 'top center'
 });
 
 $(".addModal").click(function() {
@@ -54,47 +129,6 @@ $(function () {
 
 $('.ui.dropdown')
     .dropdown();
-
-$("#submitChemicalSearch").click(function() {
-
-    var url = $("#searchChemicalURL").attr("value");
-    var request = {
-        "chemical" : $("#chemicalQuery").val()
-    };
-
-    $results = $("#chemicalSearchResults");
-    $results.empty();
-    $.ajax({
-        type: "POST",
-        dataType: "json",
-        contentType: "application/json",
-        mimeType: "application/json",
-        url: url,
-        data: JSON.stringify(request),
-        success: function(response) {
-            console.log(response);
-
-            if (response.match) {
-                response.chemicalNames.forEach(function(elem) {
-                    $('<a/>', {
-                        text  : elem,
-                        class : 'item',
-                        click : function() {
-                            addChemical($(this).html());
-                        }
-                    }).appendTo($results);
-                });
-            } else {
-                $results.append("No Matches Found!");
-            }
-        },
-        error: function(response) {
-            $results.append("Invalid Query");
-            console.log("ERROR:");
-            console.log(response);
-        }
-    });
-});
 
 $("#submitCreateStorage").click(function() {
 
@@ -133,52 +167,6 @@ $("#submitCreateStorage").click(function() {
         }
     });
 });
-
-function addChemical(name) {
-
-    var username = $("#username").attr("value");
-    var url = $("#addURL").attr("value");
-
-    var selectedChemicals = [];
-    selectedChemicals.push(name);
-
-    $(".fixedLoader").addClass('active');
-
-    $.ajax({
-        url: url,
-        type: "POST",
-        dataType: "json",
-        contentType: "application/json",
-        mimeType: "application/json",
-        data: JSON.stringify(selectedChemicals),
-        success: function(response) {
-            console.log(response);
-            var card = $("#cardTemplate").clone();
-            card.attr("id", "")
-                .appendTo("#chemicalCards")
-                .find(".header").html(name);
-
-            card.find(".description").html("Description Here");
-            card.find(".image").click(function() { window.location+='/' + name});
-            card.find(".imageURL").attr("src", response.imageURL);
-            card.find(".remove").attr("data", name);
-            card.find(".remove").click(function() {
-                selectedChemicalName = $(this).attr("data");
-                selectedChemical = $(this).closest(".column");
-                $('.ui.basic.modal.confirm').modal('show');
-            });
-            card.show();
-            $("#noStorages").hide();
-        },
-        error: function(e) {
-            console.log("ERROR:");
-            console.log(response);
-        },
-        complete: function(e) {
-            $(".fixedLoader").removeClass('active');
-        }
-    });
-}
 
 function progressHandlingFunction(e) {
     if (e.lengthComputable) {

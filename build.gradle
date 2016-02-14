@@ -25,6 +25,8 @@ repositories {
 }
 
 dependencies {
+	compile('org.webjars:jquery:2.1.4')
+	compile('org.webjars:Semantic-UI:2.1.8')
 	compile('com.amazonaws:aws-java-sdk-core:1.10.50')
 	compile('com.amazonaws:aws-java-sdk-iam:1.10.50')
 	compile('com.amazonaws:aws-java-sdk-s3:1.10.50')
@@ -35,6 +37,7 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-thymeleaf')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('com.itextpdf:itextpdf:5.0.6')
+	compile('org.apache.maven.plugins:maven-checkstyle-plugin:2.17')
 	testCompile('org.springframework.boot:spring-boot-starter-test') 
 }
 

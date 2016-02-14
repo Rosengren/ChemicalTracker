@@ -1,7 +1,9 @@
 package com.chemicaltracker.controller.api.request;
 
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ChemicalQueryRequest {
 
     private String chemical;

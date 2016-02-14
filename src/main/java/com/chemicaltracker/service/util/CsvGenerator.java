@@ -1,4 +1,4 @@
-package com.chemicaltracker.service;
+package com.chemicaltracker.service.util;
 
 /**
  * Created by Rosengren on 2016-02-11.

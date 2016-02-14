@@ -28,9 +28,7 @@ public class UpdateRequest {
         return this.room;
     }
 
-    public void setRoom(String room) {
-        this.room = room;
-    }
+    public void setRoom(String room) { this.room = room; }
 
     public String getCabinet() {
         return this.cabinet;

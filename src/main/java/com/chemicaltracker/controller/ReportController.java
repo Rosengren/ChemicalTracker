@@ -4,18 +4,10 @@ import java.util.List;
 import java.security.Principal;
 
 import com.chemicaltracker.model.ReportDocument;
-import com.chemicaltracker.persistence.dao.CabinetDao;
-import com.chemicaltracker.persistence.dao.ChemicalDao;
-import com.chemicaltracker.persistence.dao.LocationDao;
-import com.chemicaltracker.persistence.dao.RoomDao;
 import com.chemicaltracker.persistence.model.Cabinet;
-import com.chemicaltracker.persistence.model.Chemical;
 import com.chemicaltracker.persistence.model.Location;
 import com.chemicaltracker.persistence.model.Room;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.PathVariable;
+import com.chemicaltracker.service.InventoryService;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
@@ -30,14 +22,22 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+// Annotations
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
 @Controller
 @RequestMapping("/report")
 public class ReportController {
 
-    private final LocationDao locationsDB = LocationDao.getInstance();
-    private final CabinetDao cabinetsDB = CabinetDao.getInstance();
-    private final RoomDao roomsDB = RoomDao.getInstance();
-    private final ChemicalDao chemicalsDB = ChemicalDao.getInstance();
+    private final InventoryService inventoryService;
+
+    @Autowired
+    public ReportController(InventoryService inventoryService) {
+        this.inventoryService = inventoryService;
+    }
 
     @RequestMapping(value = "/generate/{locationName}", method=GET)
     public void downloadPDF(@PathVariable("locationName") String locationName,
@@ -52,19 +52,16 @@ public class ReportController {
         response.setContentType("application/pdf");
 
         final String username = principal.getName();
-        Location location = locationsDB.find(username, locationName);
-
-        final List<String> roomIDs = location.getStoredItemIDs();
-        final List<Room> rooms = roomsDB.findAllByIds(username, roomIDs);
+        final Location location = inventoryService.getLocation(username, locationName);
+        final List<Room> rooms = inventoryService.getRoomsByIds(username, location.getStoredItemIDs());
 
         // TODO: this logic will be moved to the Models
         for (Room room : rooms) {
 
-            for (Cabinet cabinet : cabinetsDB.findAllByIds(username, room.getStoredItemIDs())) {
+            for (Cabinet cabinet : inventoryService.getCabinetsByIds(username, room.getStoredItemIDs())) {
 
-                for (Chemical chemical : chemicalsDB.findByNames(cabinet.getStoredItemNames())) {
-                    cabinet.addElement(chemical);
-                }
+                inventoryService.getChemicalsByName(cabinet.getStoredItemNames())
+                        .forEach(cabinet::addElement);
 
                 room.addElement(cabinet);
             }
@@ -74,10 +71,10 @@ public class ReportController {
 
         try {
             ReportDocument.createPDF(temporaryFilePath+"\\"+fileName, ReportDocument.DEFAULT_TITLE, location);
-            ByteArrayOutputStream baos;
-            baos = convertPDFToByteArrayOutputStream(temporaryFilePath+"\\"+fileName);
+            ByteArrayOutputStream byteArrayOutputStream;
+            byteArrayOutputStream = convertPDFToByteArrayOutputStream(temporaryFilePath+"\\"+fileName);
             OutputStream os = response.getOutputStream();
-            baos.writeTo(os);
+            byteArrayOutputStream.writeTo(os);
             os.flush();
         } catch (Exception e1) {
             e1.printStackTrace();

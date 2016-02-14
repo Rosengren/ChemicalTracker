@@ -7,18 +7,12 @@ import java.util.List;
 import java.util.ArrayList;
 
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.amazonaws.services.dynamodbv2.model.GetItemRequest;
-import com.amazonaws.services.dynamodbv2.model.GetItemResult;
-
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.chemicaltracker.persistence.model.Chemical;
 
 public class ChemicalDao extends DynamoDBDao<Chemical> {
 
     private static volatile ChemicalDao instance;
-
-    private static final String CHEMICALS_TABLE_NAME = "Chemicals";
-    private static final String CHEMICALS_TABLE_INDEX = "Name";
 
     public static ChemicalDao getInstance() {
 
@@ -76,29 +70,6 @@ public class ChemicalDao extends DynamoDBDao<Chemical> {
                 .withExpressionAttributeValues(expressionAttributeValues);
 
         return mapper.scan(Chemical.class, scanRequest);
-    }
-
-    public List<String> getAllChemicalNames() {
-
-        final Map<String, AttributeValue> key = new HashMap<>();
-        key.put(CHEMICALS_TABLE_INDEX, new AttributeValue().withS("All"));
-
-        final GetItemRequest request = new GetItemRequest()
-                .withTableName(CHEMICALS_TABLE_NAME)
-                .withKey(key);
-
-        try {
-            final GetItemResult result = amazonDynamoDBClient.getItem(request);
-
-            if (result.getItem() != null) {
-                return result.getItem().get("Chemicals").getSS();
-            }
-
-        } catch (Exception e) {
-            logger.error("Error occurred while getting all chemical names from table: " + CHEMICALS_TABLE_NAME);
-        }
-
-        return new ArrayList<>();
     }
 
     public List<Chemical> findByNames(final List<String> names) {

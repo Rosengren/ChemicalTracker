@@ -1,13 +1,12 @@
 package com.chemicaltracker.controller;
 
-import com.chemicaltracker.persistence.dao.ChemicalDao;
-import com.chemicaltracker.persistence.dao.LocationDao;
-import com.chemicaltracker.persistence.dao.RoomDao;
 import com.chemicaltracker.persistence.model.Chemical;
+import com.chemicaltracker.service.InventoryService;
 import org.springframework.web.servlet.ModelAndView;
 
 // Annotations
 import org.springframework.stereotype.Controller;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -17,7 +16,12 @@ import java.security.Principal;
 @RequestMapping(value = {"/Home", "/home"})
 public class ChemicalController {
 
-    private static final ChemicalDao chemicalsDB = ChemicalDao.getInstance();
+    private final InventoryService inventoryService;
+
+    @Autowired
+    public ChemicalController(InventoryService inventoryService) {
+        this.inventoryService = inventoryService;
+    }
 
     @RequestMapping(value = "/{locationName}/{roomName}/{cabinetName}/{chemicalName}")
     public ModelAndView viewChemical(
@@ -27,10 +31,9 @@ public class ChemicalController {
             @PathVariable("chemicalName") final String chemicalName,
             final Principal principal) {
 
-        final ModelAndView chemicalView = new ModelAndView("chemical");
-
         final String username = principal.getName();
-        final Chemical chemical = chemicalsDB.find(chemicalName);
+        final Chemical chemical = inventoryService.getChemical(chemicalName);
+        final ModelAndView chemicalView = new ModelAndView("chemical");
 
         chemicalView.addObject("username", username);
         chemicalView.addObject("chemical", chemical);
@@ -39,7 +42,7 @@ public class ChemicalController {
         chemicalView.addObject("room", roomName);
         chemicalView.addObject("cabinet", cabinetName);
         chemicalView.addObject("title", chemicalName);
+
         return chemicalView;
     }
-
 }

@@ -1,14 +1,15 @@
 package com.chemicaltracker.controller;
 
-import com.chemicaltracker.persistence.dao.LocationDao;
-import com.chemicaltracker.persistence.dao.RoomDao;
 import com.chemicaltracker.persistence.model.Location;
-import org.springframework.ui.Model;
+import com.chemicaltracker.persistence.model.Room;
+import com.chemicaltracker.service.InventoryService;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.ui.Model;
 
 
 // Annotations
 import org.springframework.stereotype.Controller;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -19,20 +20,22 @@ import java.util.List;
 @RequestMapping(value = {"/Home", "/home"})
 public class LocationController {
 
-    private static final LocationDao locationsDB = LocationDao.getInstance();
-    private static final RoomDao roomsDB = RoomDao.getInstance();
+    private final InventoryService inventoryService;
+
+    @Autowired
+    public LocationController(InventoryService inventoryService) {
+        this.inventoryService = inventoryService;
+    }
 
     @RequestMapping("/{locationName}")
     public ModelAndView viewLocation(@PathVariable("locationName") final String locationName, final Model model, final Principal principal) {
 
-        final Location location = locationsDB.find(principal.getName(), locationName);
-        final List<String> roomIDs = location.getStoredItemIDs();
+        final List<Room> rooms = inventoryService.getRooms(principal.getName(), locationName);
 
         final ModelAndView locationView = new ModelAndView("location");
-        locationView.addObject("rooms", roomsDB.findAllByIds(principal.getName(), roomIDs));
+        locationView.addObject("rooms", rooms);
         locationView.addObject("title", locationName);
         locationView.addObject("username", principal.getName());
-        locationView.addObject("parentID", location.getID());
         locationView.addObject("location", locationName);
 
         return locationView;

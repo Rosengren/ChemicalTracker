@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header :: header"></head>
+
 <body id="chemicalTracker" class="index popup storage">
 <div th:replace="fragments/menu :: menu"></div>
 <div th:replace="fragments/sidebar :: sidebar"></div>
@@ -25,7 +26,6 @@
                 <input type="text" name="Description" />
             </div>
             <input type="hidden" name="Room" />
-            <input type="hidden" name="ParentID" th:value="${parentID}" />
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         </form>
 
@@ -123,6 +123,7 @@
         </div>
     </div>
 </div>
+
 <div type="hidden" id="csrf" th:value="${_csrf.token}"></div>
 <div type="hidden" id="username" th:value="${username}"></div>
 <div type="hidden" id="addURL" value="/add/room/"></div>
