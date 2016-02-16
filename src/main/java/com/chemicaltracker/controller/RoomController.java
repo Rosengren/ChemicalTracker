@@ -29,8 +29,8 @@ public class RoomController {
         final ModelAndView roomView = new ModelAndView("room");
 
         roomView.addObject("title", roomName);
-        roomView.addObject("username", principal.getName());
         roomView.addObject("cabinets", inventoryService.getCabinets(principal.getName(), locationName, roomName));
+        roomView.addObject("parentID", inventoryService.getRoom(principal.getName(), locationName, roomName).getID());
         roomView.addObject("addURL", "/add/cabinet/");
         roomView.addObject("location", locationName);
 

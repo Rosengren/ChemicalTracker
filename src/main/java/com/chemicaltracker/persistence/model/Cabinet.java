@@ -20,12 +20,13 @@ public class Cabinet extends AbstractStorageComponent implements StorageComponen
     private String description;
     private String imageURL;
     private Set<StorageTag> tags;
-    private Map<String, String> roomNames;
+    private Map<String, String> chemicalNames;
 
     public Cabinet() {
         super();
         imageURL = "https://s3-us-west-2.amazonaws.com/chemical-images/placeholder.png";
         tags = new HashSet<>();
+        chemicalNames = new HashMap<>();
         tags.add(StorageTag.IGNORE); // can't be blank
     }
 
@@ -55,8 +56,8 @@ public class Cabinet extends AbstractStorageComponent implements StorageComponen
     public Cabinet withDescription(final String desc) { setDescription(desc); return this; }
 
     @DynamoDBAttribute(attributeName="Chemical Names")
-    public Map<String, String> getRoomNames() { return this.roomNames; }
-    public void setRoomNames(final Map<String, String> roomNames) { this.roomNames = roomNames; }
+    public Map<String, String> getChemicalNames() { return this.chemicalNames; }
+    public void setChemicalNames(final Map<String, String> chemicalNames) { this.chemicalNames = chemicalNames; }
 
     @DynamoDBAttribute(attributeName="Tags") // TODO: replace setTags
     public Set<String> getTagNames() {
@@ -69,12 +70,12 @@ public class Cabinet extends AbstractStorageComponent implements StorageComponen
 
     @DynamoDBIgnore
     public void addChemical(final String chemicalID, final String chemicalName) {
-        this.roomNames.put(chemicalID, chemicalName);
+        this.chemicalNames.put(chemicalID, chemicalName);
     }
 
     @DynamoDBIgnore
     public void removeChemical(final String chemicalID) {
-        this.roomNames.remove(chemicalID);
+        this.chemicalNames.remove(chemicalID);
     }
 
     @DynamoDBIgnore
@@ -115,21 +116,21 @@ public class Cabinet extends AbstractStorageComponent implements StorageComponen
 
     @DynamoDBIgnore
     public Set<Entry<String, String>> getStoredItemsSet() {
-        return this.roomNames.entrySet();
+        return this.chemicalNames.entrySet();
     }
 
     @DynamoDBIgnore
     public String getStoredItemID(final String name) {
-        return roomNames.get(name);
+        return chemicalNames.get(name);
     }
 
     @DynamoDBIgnore
     public List<String> getStoredItemIDs() {
-        return new ArrayList<String>(roomNames.values());
+        return new ArrayList<String>(chemicalNames.values());
     }
 
     @DynamoDBIgnore
     public List<String> getStoredItemNames() {
-        return new ArrayList<String>(roomNames.keySet());
+        return new ArrayList<String>(chemicalNames.keySet());
     }
 }

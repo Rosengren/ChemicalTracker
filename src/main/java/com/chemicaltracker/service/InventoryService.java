@@ -13,6 +13,7 @@ public interface InventoryService {
     Location getLocation(String username, String locationName);
 
     Room getRoom(String username, String locationName, String roomName);
+    Room getRoom(String username, String roomID);
 
     Cabinet getCabinet(String username, String locationName,
                        String roomName, String cabinetName);
@@ -34,4 +35,15 @@ public interface InventoryService {
 
     List<Room> getRoomsByIds(String username, List<String> locationIDs);
 
+    void addLocation(Location location);
+    void addRoom(Room room, String parentID);
+    void addCabinet(Cabinet cabinet, String parentID);
+
+    void removeLocation(Location location);
+    void removeRoom(Room room, String parentID);
+    void removeCabinet(Cabinet cabinet, String parentID);
+
+    void updateLocation(Location location);
+    void updateRoom(Room room);
+    void updateCabinet(Cabinet cabinet);
 }

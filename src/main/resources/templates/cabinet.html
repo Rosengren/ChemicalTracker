@@ -12,26 +12,7 @@
 </div>
 <div th:replace="fragments/menu :: menu"></div>
 <div th:replace="fragments/sidebar :: sidebar"></div>
-
-<div class="ui basic modal confirm">
-    <i class="close icon"></i>
-    <div class="header">
-        Are you sure?
-    </div>
-    <div class="description">
-        <p>Are you sure you would like to remove this chemical?</p>
-    </div>pa
-    <div class="actions">
-        <div class="ui red basic inverted button">
-            <i class="remove icon"></i>
-            No
-        </div>
-        <div class="ui green ok inverted button" id="confirmRemove">
-            <i class="checkmark icon"></i>
-            Yes
-        </div>
-    </div>
-</div>
+<div th:replace="fragments/modal :: confirm"></div>
 
 <div class="pusher">
     <div class="full height">
@@ -131,16 +112,13 @@
                         <h2 class="ui header">
                             No elements in this Cabinet
                         </h2>
-                        <h2 class="storage-message">Click the
-                            <div class="ui icon button addModal center" title="${addTooltip}">
-                                <i class="add icon"></i>
-                            </div>
-                            above to add a new chemical
+                        <h2 class="storage-message">
+                            Search chemicals to add them to your cabinet
                         </h2>
                     </div>
                 </div>
                 <div th:each="chemical : ${chemicals}" class="column">
-                    <div class="ui link card" >
+                    <div class="ui link card chemical" >
                         <div class="blurring dimmable image" th:onclick="'window.location+=\'/'+${chemical.name}+'\''">
                             <div class="ui dimmer">
                                 <div class="content">
@@ -153,7 +131,6 @@
                         </div>
                         <div class="content">
                             <div class="header" th:text="${chemical.name}"></div>
-                            <!--<div class="description" th:text="${chemical.description}">description...</div>-->
                         </div>
                         <div class="extra content">
                             <a class="right floated created remove" th:data="${chemical.name}">
@@ -182,45 +159,15 @@
                 </div>
             </div>
         </div>
-
     </div>
 </div>
 
 <div type="hidden" id="csrf" th:value="${_csrf.token}"></div>
-<div type="hidden" id="addURL" th:value="${addURL}"></div>
 <div type="hidden" id="searchChemicalURL" th:value="${searchChemicalURL}"></div>
-<div type="hidden" id="removeURL" th:value="${removeURL}"></div>
-
 <div type="hidden" id="location-name" th:value="${location}"></div>
 <div type="hidden" id="room-name" th:value="${room}"></div>
 <div type="hidden" id="cabinet-name" th:value="${title}"></div>
-
-<div class="column" id="cardTemplate" style="display:none">
-    <div class="ui link card" >
-        <div class="blurring dimmable image">
-            <div class="ui dimmer">
-                <div class="content">
-                    <div class="center">
-                        <div class="ui inverted button">View Details</div>
-                    </div>
-                </div>
-            </div>
-            <img src="" class="imageURL" />
-        </div>
-        <div class="content">
-            <div class="header"> </div>
-            <div class="description"> </div>
-        </div>
-        <div class="extra content">
-            <a class="right floated created remove">
-                Remove
-            </a>
-            <a class="" onclick="alert('todo: add ability to edit')">
-                <i class="edit icon"></i>Edit
-            </a>
-        </div>
-    </div>
-</div>
+<div th:replace="fragments/card :: chemicalCard"></div>
 </body>
 
 <script th:replace="fragments/footer :: scripts"></script>

@@ -78,13 +78,6 @@ public class QueryController {
         return new ResponseEntity<>(chemicalNames, HttpStatus.OK);
     }
 
-    @RequestMapping(value="/search/chemicals", method=GET)
-    public ResponseEntity<ChemicalSearchResponse> searchForChemical(@RequestParam("q") final String query) {
-
-        final List<Chemical> chemicals = chemicalsDB.searchPartialChemicalName(query);
-        return new ResponseEntity<>(new ChemicalSearchResponse(chemicals), HttpStatus.OK);
-    }
-
     @RequestMapping(value="/userTree", method=POST)
     public @ResponseBody UserTreeResponse userTreeRequest(Principal principal) {
 
@@ -109,6 +102,13 @@ public class QueryController {
         }
 
         return new UserTreeResponse(locationMap);
+    }
+
+    @RequestMapping(value="/search/chemicals", method=GET)
+    public ResponseEntity<ChemicalSearchResponse> searchForChemical(@RequestParam("q") final String query) {
+
+        final List<Chemical> chemicals = chemicalsDB.searchPartialChemicalName(query);
+        return new ResponseEntity<>(new ChemicalSearchResponse(chemicals), HttpStatus.OK);
     }
 
 

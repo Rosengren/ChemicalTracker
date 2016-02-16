@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Card Template</title>
+</head>
+<body>
+
+<div th:fragment="chemicalCard" class="column" id="chemicalCardTemplate" style="display:none">
+    <div class="ui link card chemical" >
+        <div class="blurring dimmable image">
+            <div class="ui dimmer">
+                <div class="content">
+                    <div class="center">
+                        <div class="ui inverted button">View Details</div>
+                    </div>
+                </div>
+            </div>
+            <img src="" class="imageURL" />
+        </div>
+        <div class="content">
+            <div class="header"> </div>
+            <div class="description"> </div>
+        </div>
+        <div class="extra content">
+            <a class="right floated created remove">
+                Remove
+            </a>
+            <a class="" onclick="alert('todo: add ability to edit')">
+                <i class="edit icon"></i>Edit
+            </a>
+        </div>
+    </div>
+</div>
+
+<div th:fragment="storageCard" class="column" id="storageCardTemplate" style="display:none">
+    <div class="ui link card location">
+        <div class="blurring dimmable image">
+            <div class="ui dimmer">
+                <div class="content">
+                    <div class="center">
+                        <div class="ui inverted button">View Details</div>
+                    </div>
+                </div>
+            </div>
+            <img src="" class="imageURL" />
+        </div>
+        <div class="content">
+            <div class="header"> </div>
+            <div class="description"> </div>
+        </div>
+        <div class="extra content">
+            <a class="right floated created">
+                Generate Report
+            </a>
+
+            <div class="ui dropdown">
+                <div class="text">Options</div>
+                <i class="dropdown icon"></i>
+                <div class="menu">
+                    <div class="item remove">Remove</div>
+                    <div class="item" id="editStorage">Edit</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

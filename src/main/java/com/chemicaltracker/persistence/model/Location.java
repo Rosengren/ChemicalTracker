@@ -1,9 +1,6 @@
 package com.chemicaltracker.persistence.model;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Set;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
 // Annotations
@@ -25,6 +22,7 @@ public class Location extends AbstractStorageComponent implements StorageCompone
 
     public Location() {
         imageURL = "https://s3-us-west-2.amazonaws.com/chemical-images/placeholder.png";
+        roomNames = new HashMap<>();
     }
 
     @DynamoDBHashKey(attributeName="Username")

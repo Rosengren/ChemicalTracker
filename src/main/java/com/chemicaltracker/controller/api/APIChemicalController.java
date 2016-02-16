@@ -12,15 +12,9 @@ import com.chemicaltracker.persistence.model.Chemical;
 import com.chemicaltracker.persistence.model.Location;
 import com.chemicaltracker.persistence.model.Room;
 import java.security.Principal;
-import java.util.List;
-import java.util.stream.Collectors;
 
 // Annotations
-import org.springframework.http.HttpStatus;
-import org.springframework.http.RequestEntity;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -59,7 +53,7 @@ public class APIChemicalController {
         final Cabinet cabinet = getCabinet(principal.getName(), request);
 
         if (requestType.equals("ADD")) {
-            cabinet.addChemical(request.getChemical(), "#"); // TODO: add image URL
+            cabinet.addChemical(request.getChemical(), Chemical.PLACEHOLDER_IMAGE_URL); // TODO: add image URL
             cabinetsDB.update(cabinet);
             return new UpdateResponse(UpdateStatus.ADDED_CHEMICAL);
         } else if (requestType.equals("REMOVE")) {

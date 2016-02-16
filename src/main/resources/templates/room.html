@@ -3,41 +3,21 @@
 <head th:replace="fragments/header :: header"></head>
 
 <body id="chemicalTracker" class="index popup storage">
+<div class="ui container">
+    <div class="full height">
+        <div class="ui dimmer fixedLoader">
+            <div class="ui text loader">Uploading Image</div>
+        </div>
+    </div>
+</div>
 <div th:replace="fragments/menu :: menu"></div>
 <div th:replace="fragments/sidebar :: sidebar"></div>
-
-<div class="ui modal addStorageModal">
+<div th:replace="fragments/modal :: confirm"></div>
+<div class="ui small modal">
     <div class="header">
         Add new cabinet
     </div>
-    <div class="content">
-
-        <form id="storageForm" class="ui form" method="POST" th:action="${formLink}" enctype="multipart/form-data">
-            <div class="field">
-                <label>Photo</label>
-                <input type="file" name="Image" />
-            </div>
-            <div class="field">
-                <label>Name</label>
-                <input type="text" name="Name" />
-            </div>
-            <div class="field">
-                <label>Description</label>
-                <input type="text" name="Description" />
-            </div>
-            <input type="hidden" name="Cabinet" />
-            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-        </form>
-
-        <div class="actions">
-            <div class="ui black deny button">
-                Cancel
-            </div>
-            <div class="ui positive button" id="submitCreateStorage">
-                Submit
-            </div>
-        </div>
-    </div>
+    <div th:replace="fragments/form :: storage"></div>
 </div>
 
 <div class="pusher">
@@ -69,21 +49,21 @@
                 <div class="active section" th:text="${title}"></div>
             </div>
 
-            <div class="ui icon button addModal right floated" title="Add new cabinet">
-                <i class="add icon"></i>
+            <div class="ui icon green button addModal right floated" title="Add new cabinet">
+                <i class="white add icon"></i>
             </div>
         </div>
 
         <div class="ui container bottom-padding">
-            <div class="ui four column stackable centered grid">
+            <div class="ui four column stackable centered grid" id="storageCards">
                 <div class="ui center aligned grid container" id="noStorages">
                     <div th:if="${#lists.isEmpty(cabinets)}" class="column">
                         <h2 class="ui header">
                             No elements in this room
                         </h2>
                         <h2 class="storage-message">Click the
-                            <div class="ui icon button addModal center" title="Add new cabinet">
-                                <i class="add icon"></i>
+                            <div class="ui icon green button addModal center" title="Add new cabinet">
+                                <i class="white add icon"></i>
                             </div>
                             above to add a new cabinet
                         </h2>
@@ -120,7 +100,7 @@
                                 <div class="text">Options</div>
                                 <i class="dropdown icon"></i>
                                 <div class="menu">
-                                    <div class="item remove">Remove</div>
+                                    <div class="item remove" th:data="${cabinet.ID}">Remove</div>
                                     <div class="item" id="editStorage">Edit</div>
                                 </div>
                             </div>
@@ -132,9 +112,10 @@
     </div>
 </div>
 
-<div type="hidden" id="csrf" th:value="${_csrf.token}"></div>
-<div type="hidden" id="username" th:value="${username}"></div>
-<div type="hidden" id="addURL" value="/add/cabinet/"></div>
+<div type="hidden" id="add-url" value="/api/add/cabinet/"></div>
+<div type="hidden" id="remove-url" value="/api/remove/cabinet/"></div>
+<div type="hidden" id="parentID" th:value="${parentID}"></div>
+<div th:replace="fragments/card :: storageCard"></div>
 </body>
-<script th:fragment="fragments/footer :: scripts"></script>
+<script th:replace="fragments/footer :: scripts"></script>
 </html>

@@ -8,6 +8,8 @@ import com.chemicaltracker.persistence.model.Cabinet;
 import com.chemicaltracker.persistence.model.Chemical;
 import com.chemicaltracker.persistence.model.Location;
 import com.chemicaltracker.persistence.model.Room;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,6 +21,8 @@ import java.util.List;
  */
 @Service
 public class InventoryServiceImpl implements InventoryService {
+
+    private static final Logger logger = LoggerFactory.getLogger(InventoryServiceImpl.class);
 
     private static final LocationDao locationsDB    = LocationDao.getInstance();
     private static final CabinetDao cabinetsDB      = CabinetDao.getInstance();
@@ -56,6 +60,64 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
     @Override
+    public void addLocation(final Location location) {
+        locationsDB.create(location);
+    }
+
+    @Override
+    public void addRoom(final Room room, final String parentID) {
+        final Location location = locationsDB.find(room.getUsername(), parentID);
+        location.removeStoredItem(room.getID());
+        locationsDB.update(location);
+        roomsDB.create(room);
+    }
+
+    @Override
+    public void addCabinet(final Cabinet cabinet, final String parentID) {
+        final Room room = roomsDB.find(cabinet.getUsername(), parentID);
+        room.removeStoredItem(cabinet.getID());
+        roomsDB.update(room);
+        cabinetsDB.create(cabinet);
+    }
+
+    @Override
+    public void removeLocation(final Location location) {
+        locationsDB.delete(location);
+    }
+
+    @Override
+    public void removeRoom(final Room room, final String parentID) {
+        final Location location = locationsDB.find(room.getUsername(), parentID);
+        location.removeStoredItem(room.getID());
+        locationsDB.update(location);
+        roomsDB.delete(room);
+    }
+
+    @Override
+    public void removeCabinet(final Cabinet cabinet, final String parentID) {
+        final Room room = roomsDB.find(cabinet.getUsername(), parentID);
+        logger.info("Removing cabinet id: " + cabinet.getName() + " from room: " + room.getName());
+        room.removeStoredItem(cabinet.getName());
+        roomsDB.update(room);
+        cabinetsDB.delete(cabinet);
+    }
+
+    @Override
+    public void updateLocation(final Location location) {
+        locationsDB.update(location);
+    }
+
+    @Override
+    public void updateRoom(final Room room) {
+        roomsDB.update(room);
+    }
+
+    @Override
+    public void updateCabinet(final Cabinet cabinet) {
+        cabinetsDB.update(cabinet);
+    }
+
+    @Override
     public Location getLocation(final String username, final String locationName) {
         return locationsDB.find(username, locationName);
     }
@@ -63,6 +125,11 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     public Room getRoom(final String username, final String locationName, final String roomName) {
         final String roomID = getLocation(username, locationName).getStoredItemID(roomName);
+        return roomsDB.find(username, roomID);
+    }
+
+    @Override
+    public Room getRoom(String username, String roomID) {
         return roomsDB.find(username, roomID);
     }
 

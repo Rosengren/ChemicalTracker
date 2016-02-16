@@ -34,8 +34,8 @@ public class LocationController {
 
         final ModelAndView locationView = new ModelAndView("location");
         locationView.addObject("rooms", rooms);
+        locationView.addObject("parentID", inventoryService.getLocation(principal.getName(), locationName).getID());
         locationView.addObject("title", locationName);
-        locationView.addObject("username", principal.getName());
         locationView.addObject("location", locationName);
 
         return locationView;

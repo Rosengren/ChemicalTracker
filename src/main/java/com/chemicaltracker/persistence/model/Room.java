@@ -20,13 +20,14 @@ public class Room extends AbstractStorageComponent implements StorageComponent {
     private String description;
     private String imageURL;
     private Set<StorageTag> tags;
-    private Map<String, String> roomNames; // REMOVE UNUSED VARIABLES
+    private Map<String, String> cabinetNames; // REMOVE UNUSED VARIABLES
 
     public Room() {
         super();
         imageURL = "https://s3-us-west-2.amazonaws.com/chemical-images/placeholder.png";
-        tags = new HashSet<StorageTag>();
-        tags.add(StorageTag.IGNORE); // can't be blank
+        tags = new HashSet<>();
+        cabinetNames = new HashMap<>();
+        tags.add(StorageTag.IGNORE); // can't be empty
     }
 
     @DynamoDBHashKey(attributeName="Username")
@@ -54,14 +55,18 @@ public class Room extends AbstractStorageComponent implements StorageComponent {
     public void setDescription(final String description) { this.description = description; }
     public Room withDescription(final String desc) { setDescription(desc); return this; }
 
+    @DynamoDBAttribute(attributeName="Cabinet Names")
+    public Map<String, String> getCabinetNames() { return this.cabinetNames; }
+    public void setCabinetNames(final Map<String, String> cabinetNames) { this.cabinetNames = cabinetNames; }
+
     @DynamoDBIgnore
     public void addStoredItem(final String storedItemID, final String storedItemName) {
-        this.roomNames.put(storedItemID, storedItemName);
+        this.cabinetNames.put(storedItemID, storedItemName);
     }
 
     @DynamoDBIgnore
     public void removeStoredItem(final String storedItemID) {
-        this.roomNames.remove(storedItemID);
+        this.cabinetNames.remove(storedItemID);
     }
 
     @DynamoDBIgnore
@@ -126,25 +131,21 @@ public class Room extends AbstractStorageComponent implements StorageComponent {
 
     @DynamoDBIgnore
     public Set<Entry<String, String>> getStoredItemsSet() {
-        return this.roomNames.entrySet();
+        return this.cabinetNames.entrySet();
     }
 
     @DynamoDBIgnore
     public String getStoredItemID(final String name) {
-        return roomNames.get(name);
+        return cabinetNames.get(name);
     }
 
     @DynamoDBIgnore
     public List<String> getStoredItemIDs() {
-        return new ArrayList<String>(roomNames.values());
+        return new ArrayList<String>(cabinetNames.values());
     }
 
     @DynamoDBIgnore
     public List<String> getStoredItemNames() {
-        return new ArrayList<String>(roomNames.keySet());
+        return new ArrayList<String>(cabinetNames.keySet());
     }
-
-    @DynamoDBAttribute(attributeName="Cabinet Names")
-    public Map<String, String> getRoomNames() { return this.roomNames; }
-    public void setRoomNames(final Map<String, String> roomNames) { this.roomNames = roomNames; }
 }
