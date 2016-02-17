@@ -25,6 +25,7 @@ repositories {
 }
 
 dependencies {
+	testCompile ([fileTree(dir: "${System.properties['java.home']}/../lib", include: '*tools.jar'),fileTree(dir: "lib/test", include: '*.jar') ])
 	compile('org.webjars:jquery:2.1.4')
 	compile('org.webjars:Semantic-UI:2.1.8')
 	compile('com.amazonaws:aws-java-sdk-core:1.10.50')
