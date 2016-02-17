@@ -1,1 +1,1 @@
-build: gradle build
+build: sudo ./gradlew build
