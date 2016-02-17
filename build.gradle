@@ -11,11 +11,17 @@ buildscript {
 }
 
 apply plugin: 'java'
-apply plugin: 'spring-boot' 
+apply plugin: 'war'
+apply plugin: 'spring-boot'
 
 jar {
 	baseName = 'ChemicalTracker'
-	version = '1.0.0-SNAPSHOT'
+	version = '1.0.1-SNAPSHOT'
+}
+
+war {
+	baseName = 'ChemicalTracker'
+	version = '1.5.3-SNAPSHOT'
 }
 
 repositories {
@@ -24,8 +30,13 @@ repositories {
 	maven { url "https://repo.spring.io/milestone" }
 }
 
+configurations {
+	providedRuntime
+}
+
 dependencies {
-	testCompile ([fileTree(dir: "${System.properties['java.home']}/../lib", include: '*tools.jar'),fileTree(dir: "lib/test", include: '*.jar') ])
+	compile('org.apache.tomcat.embed:tomcat-embed-jasper:8.0.30')
+	compile('javax.servlet:jstl:1.2')
 	compile('org.webjars:jquery:2.1.4')
 	compile('org.webjars:Semantic-UI:2.1.8')
 	compile('com.amazonaws:aws-java-sdk-core:1.10.50')
@@ -37,8 +48,10 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-security')
 	compile('org.springframework.boot:spring-boot-starter-thymeleaf')
 	compile('org.springframework.boot:spring-boot-starter-web')
+//	compile('org.springframework.boot:spring-boot-starter-tomcat')
 	compile('com.itextpdf:itextpdf:5.0.6')
-	testCompile('org.springframework.boot:spring-boot-starter-test') 
+	testCompile('org.springframework.boot:spring-boot-starter-test')
+	providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
 }
 
 
