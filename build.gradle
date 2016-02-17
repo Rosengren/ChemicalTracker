@@ -37,11 +37,18 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-thymeleaf')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('com.itextpdf:itextpdf:5.0.6')
-	compile('org.apache.maven.plugins:maven-checkstyle-plugin:2.17')
 	testCompile('org.springframework.boot:spring-boot-starter-test') 
 }
 
 
 task wrapper(type: Wrapper) {
 	gradleVersion = '2.9'
+}
+
+configurations.all {
+	resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+		if (details.requested.name == 'log4j') {
+			details.useTarget 'log4j:log4j:1.2.+'
+		}
+	}
 }
