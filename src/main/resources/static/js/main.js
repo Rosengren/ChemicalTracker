@@ -79,9 +79,9 @@ $('.ui.search')
                 dataType    : 'json',
                 contentType : 'application/json',
                 mimeType    : 'application/json',
-                url         : location.origin + '/api/update',
+                url         : location.origin + '/api/update/chemical',
                 data        : JSON.stringify({
-                    requestType : 'ADD',
+                    request     : 'ADD',
                     location    : $('#location-name').attr('value'),
                     room        : $('#room-name').attr('value'),
                     cabinet     : $('#cabinet-name').attr('value'),
@@ -115,13 +115,13 @@ $('.ui.search')
                                     onApprove: function() {
                                         parentCard.remove();
                                         $.ajax({
-                                            url: '/api/update',
+                                            url: '/api/update/chemical',
                                             type: 'post',
                                             dataType: "json",
                                             contentType: "application/json",
                                             mimeType: "application/json",
                                             data: JSON.stringify({
-                                                requestType : 'REMOVE',
+                                                request     : 'REMOVE',
                                                 location    : $('#location-name').attr('value'),
                                                 room        : $('#room-name').attr('value'),
                                                 cabinet     : $('#cabinet-name').attr('value'),
@@ -266,13 +266,13 @@ $('.chemical .remove')
                 onApprove: function() {
                     parentCard.remove();
                     $.ajax({
-                        url: '/api/update',
+                        url: '/api/update/chemical',
                         type: 'post',
                         dataType: "json",
                         contentType: "application/json",
                         mimeType: "application/json",
                         data: JSON.stringify({
-                            requestType : 'REMOVE',
+                            request     : 'REMOVE',
                             location    : $('#location-name').attr('value'),
                             room        : $('#room-name').attr('value'),
                             cabinet     : $('#cabinet-name').attr('value'),

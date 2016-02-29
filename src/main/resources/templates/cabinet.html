@@ -60,27 +60,39 @@
             <div class="ui dividing header">
                 Metrics
             </div>
-            <div class="ui five statistics">
+            <div class="ui eight statistics">
                 <div class="statistic">
-                    <div class="value" th:text="${#lists.size(chemicals)}">
+                    <div class="value" th:text="${metrics.chemicalCount}">
                     </div>
-                    <div class="label">Chemicals</div>
+                    <div class="label">Total</div>
                 </div>
                 <div class="statistic">
-                    <div class="value">2</div>
-                    <div class="label">Acids</div>
-                </div>
-                <div class="statistic">
-                    <div class="value">2</div>
-                    <div class="label">Bases</div>
-                </div>
-                <div class="statistic">
-                    <div class="value">3</div>
+                    <div class="value" th:text="${metrics.oxidizerCount}">0</div>
                     <div class="label">Oxidizers</div>
                 </div>
                 <div class="statistic">
-                    <div class="value">3</div>
+                    <div class="value" th:text="${metrics.reductorCount}">0</div>
                     <div class="label">Reductors</div>
+                </div>
+                <div class="statistic">
+                    <div class="value" th:text="${metrics.acidCount}">0</div>
+                    <div class="label">Acids</div>
+                </div>
+                <div class="statistic">
+                    <div class="value" th:text="${metrics.baseCount}">0</div>
+                    <div class="label">Bases</div>
+                </div>
+                <div class="statistic">
+                    <div class="value" th:text="${metrics.flammableCount}">0</div>
+                    <div class="label">Flammable</div>
+                </div>
+                <div class="statistic">
+                    <div class="value" th:text="${metrics.healthHazardCount}">0</div>
+                    <div class="label">Health Hazards</div>
+                </div>
+                <div class="statistic">
+                    <div class="value" th:text="${metrics.unstableCount}">0</div>
+                    <div class="label">Unstable</div>
                 </div>
             </div>
         </div>

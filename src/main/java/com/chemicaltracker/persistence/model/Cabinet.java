@@ -2,14 +2,13 @@ package com.chemicaltracker.persistence.model;
 
 import java.util.*;
 import java.util.Map.*;
+
+import com.amazonaws.metrics.MetricInputStreamEntity;
+import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.chemicaltracker.model.StorageTag;
 
 // Annotations
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBRangeKey;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIgnore;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+
 
 @DynamoDBTable(tableName="Cabinets")
 public class Cabinet extends AbstractStorageComponent implements StorageComponent {
@@ -21,6 +20,7 @@ public class Cabinet extends AbstractStorageComponent implements StorageComponen
     private String imageURL;
     private Set<StorageTag> tags;
     private Map<String, String> chemicalNames;
+    private Metrics metrics;
 
     public Cabinet() {
         super();
@@ -28,44 +28,130 @@ public class Cabinet extends AbstractStorageComponent implements StorageComponen
         tags = new HashSet<>();
         chemicalNames = new HashMap<>();
         tags.add(StorageTag.IGNORE); // can't be blank
+        metrics = new Metrics();
     }
 
-    @DynamoDBHashKey(attributeName="Username")
+    @DynamoDBHashKey(attributeName = "Username")
     public String getUsername() { return this.username; }
     public void setUsername(final String username) { this.username = username; }
     public Cabinet withUsername(final String username) { setUsername(username); return this; }
 
-    @DynamoDBRangeKey(attributeName="Cabinet ID")
+    @DynamoDBRangeKey(attributeName = "Cabinet ID")
     public String getID() { return this.id; }
     public void setID(final String id) { this.id = id; }
     public Cabinet withID(final String id) { setID(id); return this; }
 
-    @DynamoDBAttribute(attributeName="Image URL")
+    @DynamoDBAttribute(attributeName = "Image URL")
     public String getImageURL() { return this.imageURL; }
     public void setImageURL(final String imageURL) { this.imageURL = imageURL; }
     public Cabinet withImageURL(final String imageURL) { setImageURL(imageURL); return this; }
 
-    @DynamoDBAttribute(attributeName="Name")
+    @DynamoDBAttribute(attributeName = "Name")
     public String getName() { return this.name; }
     public void setName(final String name) { this.name = name; }
     public Cabinet withName(final String name) { setName(name); return this; }
 
-    @DynamoDBAttribute(attributeName="Description")
+    @DynamoDBAttribute(attributeName = "Description")
     public String getDescription() { return this.description; }
     public void setDescription(final String description) { this.description = description; }
     public Cabinet withDescription(final String desc) { setDescription(desc); return this; }
 
-    @DynamoDBAttribute(attributeName="Chemical Names")
+    @DynamoDBAttribute(attributeName = "Chemical Names")
     public Map<String, String> getChemicalNames() { return this.chemicalNames; }
     public void setChemicalNames(final Map<String, String> chemicalNames) { this.chemicalNames = chemicalNames; }
 
-    @DynamoDBAttribute(attributeName="Tags") // TODO: replace setTags
+    @DynamoDBAttribute(attributeName = "Tags") // TODO: replace setTags
     public Set<String> getTagNames() {
         Set<String> tagNames = new HashSet<>();
         for (StorageTag tag : tags) {
             tagNames.add(tag.name());
         }
         return tagNames;
+    }
+
+    public void setTagNames(final Set<String> tags) {
+        setTags(tags);
+    }
+
+    @DynamoDBAttribute(attributeName = "Metrics")
+    public Metrics getMetrics() { return this.metrics; }
+    public void setMetrics(final Metrics metrics) { this.metrics = metrics; }
+
+    @DynamoDBDocument
+    public static class Metrics {
+
+        private int acidCount = 0;
+        private int baseCount = 0;
+        private int oxidizerCount = 0;
+        private int reductorCount = 0;
+        private int chemicalCount = 0;
+        private int flammableCount = 0;
+        private int unstableCount = 0;
+        private int healthHazardCount = 0;
+
+        @DynamoDBAttribute(attributeName = "Acid Count")
+        public int getAcidCount() {
+            return acidCount;
+        }
+        public void setAcidCount(int acidCount) {
+            this.acidCount = acidCount;
+        }
+
+        @DynamoDBAttribute(attributeName = "Base Count")
+        public int getBaseCount() {
+            return baseCount;
+        }
+        public void setBaseCount(int baseCount) {
+            this.baseCount = baseCount;
+        }
+
+        @DynamoDBAttribute(attributeName = "Oxidizer Count")
+        public int getOxidizerCount() {
+            return oxidizerCount;
+        }
+        public void setOxidizerCount(int oxidizerCount) {
+            this.oxidizerCount = oxidizerCount;
+        }
+
+        @DynamoDBAttribute(attributeName = "Reductor Count")
+        public int getReductorCount() {
+            return reductorCount;
+        }
+        public void setReductorCount(int reductorCount) {
+            this.reductorCount = reductorCount;
+        }
+
+        @DynamoDBAttribute(attributeName = "Chemical Count")
+        public int getChemicalCount() {
+            return chemicalCount;
+        }
+        public void setChemicalCount(int chemicalCount) {
+            this.chemicalCount = chemicalCount;
+        }
+
+        @DynamoDBAttribute(attributeName = "Flammable Count")
+        public int getFlammableCount() {
+            return flammableCount;
+        }
+        public void setFlammableCount(int flammableCount) {
+            this.flammableCount = flammableCount;
+        }
+
+        @DynamoDBAttribute(attributeName = "Unstable Count")
+        public int getUnstableCount() {
+            return unstableCount;
+        }
+        public void setUnstableCount(int unstableCount) {
+            this.unstableCount = unstableCount;
+        }
+
+        @DynamoDBAttribute(attributeName = "Health Hazard Count")
+        public int getHealthHazardCount() {
+            return healthHazardCount;
+        }
+        public void setHealthHazardCount(int healthHazardCount) {
+            this.healthHazardCount = healthHazardCount;
+        }
     }
 
     @DynamoDBIgnore
@@ -90,13 +176,6 @@ public class Cabinet extends AbstractStorageComponent implements StorageComponen
         }
     }
 
-    @DynamoDBIgnore
-    public void addTags(final List<String> tags) {
-        for (String tag : tags) {
-            addTag(tag);
-        }
-    }
-
     public void setTags(final Set<String> tags) { // TODO: simplify
         for (String tagName : tags) {
             addTag(tagName);
@@ -110,27 +189,13 @@ public class Cabinet extends AbstractStorageComponent implements StorageComponen
         return tagList;
     }
 
-    public void setTagNames(final Set<String> tags) {
-        setTags(tags);
-    }
-
-    @DynamoDBIgnore
-    public Set<Entry<String, String>> getStoredItemsSet() {
-        return this.chemicalNames.entrySet();
-    }
-
     @DynamoDBIgnore
     public String getStoredItemID(final String name) {
         return chemicalNames.get(name);
     }
 
     @DynamoDBIgnore
-    public List<String> getStoredItemIDs() {
-        return new ArrayList<String>(chemicalNames.values());
-    }
-
-    @DynamoDBIgnore
     public List<String> getStoredItemNames() {
-        return new ArrayList<String>(chemicalNames.keySet());
+        return new ArrayList<>(chemicalNames.keySet());
     }
 }

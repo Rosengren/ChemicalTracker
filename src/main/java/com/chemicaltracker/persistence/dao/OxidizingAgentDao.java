@@ -1,21 +1,14 @@
 package com.chemicaltracker.persistence.dao;
 
-import java.util.Map;
-import java.util.HashMap;
-
 import java.util.List;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
-import com.amazonaws.services.dynamodbv2.model.PutItemRequest;
-import com.amazonaws.services.dynamodbv2.model.DeleteItemRequest;
-import com.amazonaws.services.dynamodbv2.model.GetItemRequest;
-import com.amazonaws.services.dynamodbv2.model.GetItemResult;
 import com.amazonaws.services.dynamodbv2.model.ScanRequest;
 import com.amazonaws.services.dynamodbv2.model.ScanResult;
 
@@ -86,9 +79,8 @@ public class OxidizingAgentDao {
         try {
             final ScanResult result = amazonDynamoDBClient.scan(scanRequest);
 
-            for (Map<String, AttributeValue> item : result.getItems()) {
-                chemicalNames.add(item.get("Name").getS());
-            }
+            chemicalNames.addAll(result.getItems().stream().map(item ->
+                    item.get(CHEMICALS_TABLE_INDEX).getS()).collect(Collectors.toList()));
 
         } catch (Exception e) {
             logger.error("Error occurred while scanning for all chemical agents in table: " + CHEMICALS_TABLE_NAME, e);
@@ -97,69 +89,26 @@ public class OxidizingAgentDao {
         return chemicalNames;
     }
 
-    public boolean isAgent(final String name) {
-
-        final Map<String, AttributeValue> key = new HashMap<String, AttributeValue>();
-        key.put(CHEMICALS_TABLE_INDEX, new AttributeValue().withS(name));
-
-        final GetItemRequest request = new GetItemRequest()
-                .withTableName(CHEMICALS_TABLE_NAME)
-                .withKey(key);
-
-        try {
-            final GetItemResult result = amazonDynamoDBClient.getItem(request);
-
-            if (result.getItem() == null) {
-                return false;
-            }
-
-        } catch (Exception e) {
-            logger.error("Error occurred while getting chemical agent: " + name + " from table: " + CHEMICALS_TABLE_NAME);
-        }
-
-        return true;
-    }
-
-    public void deleteAgent(final String name) {
-
-        final Map<String, AttributeValue> key = new HashMap<String, AttributeValue>();
-        key.put(CHEMICALS_TABLE_INDEX, new AttributeValue().withS(name));
-
-        final DeleteItemRequest deleteItemRequest = new DeleteItemRequest()
-                .withTableName(CHEMICALS_TABLE_NAME)
-                .withKey(key);
-
-        try {
-            amazonDynamoDBClient.deleteItem(deleteItemRequest);
-        } catch (AmazonServiceException e) {
-            logger.error("Error occurred while trying to delete chemical agent: " +
-                    name + " from table: " + CHEMICALS_TABLE_NAME);
-        }
-    }
-
-    public void addAgent(final String name) {
-
-        final Map<String, AttributeValue> item = new HashMap<>();
-        item.put("Name", new AttributeValue(name));
-
-        final PutItemRequest putItemRequest = new PutItemRequest()
-                .withTableName(CHEMICALS_TABLE_NAME)
-                .withItem(item);
-
-        try {
-            amazonDynamoDBClient.putItem(putItemRequest);
-        } catch (AmazonServiceException e) {
-            logger.error("Error occurred while trying to add chemical agent: " +
-                    name + " to table: " + CHEMICALS_TABLE_NAME, e);
-        }
-    }
-
     public boolean containsAgent(final List<String> names) {
+
+        final List<String> agents = getAllAgents();
         for (String name : names) {
-            if (isAgent(name)) {
+            if (agents.contains(name)) {
                 return true;
             }
         }
         return false;
+    }
+
+    public int numberOfAgents(final List<String> names) {
+
+        int count = 0;
+        final List<String> agents = getAllAgents();
+        for (String name : names) {
+            if (agents.contains(name)) {
+                count++;
+            }
+        }
+        return count;
     }
 }

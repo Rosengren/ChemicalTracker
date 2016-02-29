@@ -8,6 +8,7 @@ import com.chemicaltracker.persistence.model.Cabinet;
 import com.chemicaltracker.persistence.model.Chemical;
 import com.chemicaltracker.persistence.model.Location;
 import com.chemicaltracker.persistence.model.Room;
+import com.chemicaltracker.service.util.CabinetEvaluator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -28,6 +29,8 @@ public class InventoryServiceImpl implements InventoryService {
     private static final CabinetDao cabinetsDB      = CabinetDao.getInstance();
     private static final ChemicalDao chemicalsDB    = ChemicalDao.getInstance();
     private static final RoomDao roomsDB            = RoomDao.getInstance();
+
+    private static final CabinetEvaluator evaluator = new CabinetEvaluator();
 
     @Override
     public List<Chemical> getChemicals(final String username, final String locationName,
@@ -134,7 +137,7 @@ public class InventoryServiceImpl implements InventoryService {
 
     @Override
     public void updateCabinet(final Cabinet cabinet) {
-        cabinetsDB.update(cabinet);
+        cabinetsDB.update(evaluator.evaluate(cabinet));
     }
 
     @Override

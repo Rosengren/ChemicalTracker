@@ -96,69 +96,26 @@ public class ReductionAgentDao {
         return chemicalNames;
     }
 
-    public boolean isAgent(final String name) {
-
-        final Map<String, AttributeValue> key = new HashMap<>();
-        key.put(CHEMICALS_TABLE_INDEX, new AttributeValue().withS(name));
-
-        final GetItemRequest request = new GetItemRequest()
-                .withTableName(CHEMICALS_TABLE_NAME)
-                .withKey(key);
-
-        try {
-            final GetItemResult result = amazonDynamoDBClient.getItem(request);
-
-            if (result.getItem() == null) {
-                return false;
-            }
-
-        } catch (Exception e) {
-            logger.error("Error occurred while getting chemical agent: " + name + " from table: " + CHEMICALS_TABLE_NAME);
-        }
-
-        return true;
-    }
-
-    public void deleteAgent(final String name) {
-
-        final Map<String, AttributeValue> key = new HashMap<>();
-        key.put(CHEMICALS_TABLE_INDEX, new AttributeValue().withS(name));
-
-        final DeleteItemRequest deleteItemRequest = new DeleteItemRequest()
-                .withTableName(CHEMICALS_TABLE_NAME)
-                .withKey(key);
-
-        try {
-            amazonDynamoDBClient.deleteItem(deleteItemRequest);
-        } catch (AmazonServiceException e) {
-            logger.error("Error occured while trying to delete chemical agent: " +
-                    name + " from table: " + CHEMICALS_TABLE_NAME);
-        }
-    }
-
-    public void addAgent(final String name) {
-
-        final Map<String, AttributeValue> item = new HashMap<>();
-        item.put("Name", new AttributeValue(name));
-
-        final PutItemRequest putItemRequest = new PutItemRequest()
-                .withTableName(CHEMICALS_TABLE_NAME)
-                .withItem(item);
-
-        try {
-            amazonDynamoDBClient.putItem(putItemRequest);
-        } catch (AmazonServiceException e) {
-            logger.error("Error occurred while trying to add chemical agent: " +
-                    name + " to table: " + CHEMICALS_TABLE_NAME, e);
-        }
-    }
-
     public boolean containsAgent(final List<String> names) {
+
+        final List<String> agents = getAllAgents();
         for (String name : names) {
-            if (isAgent(name)) {
+            if (agents.contains(name)) {
                 return true;
             }
         }
         return false;
+    }
+
+    public int numberOfAgents(final List<String> names) {
+
+        int count = 0;
+        final List<String> agents = getAllAgents();
+        for (String name : names) {
+            if (agents.contains(name)) {
+                count++;
+            }
+        }
+        return count;
     }
 }
