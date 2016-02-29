@@ -53,8 +53,11 @@ public class APIUpdateController {
             return new UpdateResponse(UpdateStatus.ADDED_LOCATION);
         } else if (requestType.equals("REMOVE")) {
 
-            inventoryService.removeLocation(
-                    inventoryService.getLocation(principal.getName(), request.getLocation()));
+            final Location location = inventoryService.getLocation(principal.getName(), request.getLocation());
+            if (location == null) {
+                return new UpdateResponse(UpdateStatus.INVALID_STORAGE);
+            }
+            inventoryService.removeLocation(location);
             return new UpdateResponse(UpdateStatus.REMOVED_LOCATION);
         }
         return new UpdateResponse(UpdateStatus.UNKNOWN_ERROR);
@@ -75,6 +78,9 @@ public class APIUpdateController {
 
         if (requestType.equals("ADD")) {
             final Location location = inventoryService.getLocation(principal.getName(), request.getLocation());
+            if (location == null) {
+                return new UpdateResponse(UpdateStatus.INVALID_STORAGE);
+            }
             inventoryService.addRoom(new Room()
                     .withName(request.getRoom())
                     .withDescription(" ")
@@ -83,6 +89,9 @@ public class APIUpdateController {
             return new UpdateResponse(UpdateStatus.ADDED_ROOM);
         } else if (requestType.equals("REMOVE")) {
             final Room room = inventoryService.getRoom(principal.getName(), request.getLocation(), request.getRoom());
+            if (room == null) {
+                return new UpdateResponse(UpdateStatus.INVALID_STORAGE);
+            }
             inventoryService.removeRoom(room, request.getLocation());
             return new UpdateResponse(UpdateStatus.REMOVED_ROOM);
         }
@@ -103,6 +112,10 @@ public class APIUpdateController {
         }
 
         final Room room = inventoryService.getRoom(principal.getName(), request.getLocation(), request.getRoom());
+        if (room == null) {
+            return new UpdateResponse(UpdateStatus.INVALID_STORAGE);
+        }
+
         if (requestType.equals("ADD")) {
             inventoryService.addCabinet(new Cabinet()
                     .withName(request.getCabinet())
@@ -113,6 +126,9 @@ public class APIUpdateController {
         } else if (requestType.equals("REMOVE")) {
             final Cabinet cabinet = inventoryService.getCabinet(
                     principal.getName(), request.getLocation(), request.getRoom(), request.getCabinet());
+            if (cabinet == null) {
+                return new UpdateResponse(UpdateStatus.INVALID_STORAGE);
+            }
             inventoryService.removeCabinet(cabinet, room.getID());
             return new UpdateResponse(UpdateStatus.REMOVED_CABINET);
         }

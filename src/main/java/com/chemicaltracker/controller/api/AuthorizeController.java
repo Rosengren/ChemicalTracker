@@ -2,7 +2,6 @@ package com.chemicaltracker.controller.api;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 // Annotations
 import org.springframework.stereotype.Controller;
@@ -15,7 +14,7 @@ import java.security.Principal;
 @RequestMapping("/api")
 public class AuthorizeController {
 
-    @RequestMapping(value="/authorize", method=POST)
+    @RequestMapping(value="/authorize")
     public @ResponseBody ResponseEntity verifyAuthenticationCredentials(final Principal principal) {
         return new ResponseEntity(HttpStatus.OK);
     }
