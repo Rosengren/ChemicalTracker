@@ -106,7 +106,7 @@
                 Chemicals
             </div>
             <div class="ui four column stackable grid container" id="chemicalCards">
-                <div th:if="${#lists.isEmpty(chemicals)}" class="ui center aligned grid container">
+                <div th:if="${#lists.isEmpty(chemicals)}" class="ui center aligned grid container" id="no-chemicals-msg">
 
                     <div class="column">
                         <h2 class="ui header">

@@ -149,6 +149,7 @@ $('.ui.search')
                 },
                 complete: function(e) {
                     $('.fixedLoader').removeClass('active');
+                    $('#no-chemicals-msg').remove();
                 }
             });
         }

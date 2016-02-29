@@ -26,7 +26,9 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 /**
- * Handles Adding and removing locations/rooms/cabinets/chemials from parent object
+ * Handles adding and removing locations/rooms/cabinets/chemicals from parent object
+ * Note: these are not used by other devices like android/google glass.
+ *       See APIUpdateController for these methods
  */
 @Controller
 @RequestMapping(value = "/api")
@@ -104,16 +106,16 @@ public class APIStorageController {
 
                 imageService.add(image, filename, name.replace(' ', '-') + IMAGE_EXTENSION);
 
-                final String uuid = UUID.randomUUID().toString();
+//                final String uuid = UUID.randomUUID().toString();
 
-                final Location parentLocation = inventoryService.getLocation(principal.getName(), parentID);
-                parentLocation.addStoredItem(name, uuid);
-                inventoryService.updateLocation(parentLocation);
+//                final Location parentLocation = inventoryService.getLocation(principal.getName(), parentID);
+//                parentLocation.addStoredItem(name, uuid);
+//                inventoryService.updateLocation(parentLocation);
 
                 final Room room = new Room()
                         .withUsername(principal.getName())
                         .withName(name)
-                        .withID(uuid)
+                        .withID(UUID.randomUUID().toString())
                         .withDescription(description)
                         .withImageURL(S3_BASE_URL + filename);
 

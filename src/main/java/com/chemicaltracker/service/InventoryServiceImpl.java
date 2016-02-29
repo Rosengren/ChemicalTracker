@@ -60,6 +60,26 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
     @Override
+    public List<Location> getAllLocationsForUser(String username) {
+        return locationsDB.findAll(username);
+    }
+
+    @Override
+    public List<Room> getAllRoomsForUser(String username) {
+        return roomsDB.findAll(username);
+    }
+
+    @Override
+    public List<Chemical> searchPartialChemicalName(String name) {
+        return chemicalsDB.searchPartialChemicalName(name);
+    }
+
+    @Override
+    public List<Chemical> searchPartialChemicalName(List<String> names) {
+        return chemicalsDB.searchPartialChemicalName(names);
+    }
+
+    @Override
     public void addLocation(final Location location) {
         locationsDB.create(location);
     }
@@ -67,7 +87,7 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     public void addRoom(final Room room, final String parentID) {
         final Location location = locationsDB.find(room.getUsername(), parentID);
-        location.removeStoredItem(room.getID());
+        location.addStoredItem(room.getName(), room.getID());
         locationsDB.update(location);
         roomsDB.create(room);
     }
@@ -75,7 +95,7 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     public void addCabinet(final Cabinet cabinet, final String parentID) {
         final Room room = roomsDB.find(cabinet.getUsername(), parentID);
-        room.removeStoredItem(cabinet.getID());
+        room.addStoredItem(cabinet.getName(), cabinet.getID());
         roomsDB.update(room);
         cabinetsDB.create(cabinet);
     }
@@ -88,7 +108,7 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     public void removeRoom(final Room room, final String parentID) {
         final Location location = locationsDB.find(room.getUsername(), parentID);
-        location.removeStoredItem(room.getID());
+        location.removeStoredItem(room.getName());
         locationsDB.update(location);
         roomsDB.delete(room);
     }

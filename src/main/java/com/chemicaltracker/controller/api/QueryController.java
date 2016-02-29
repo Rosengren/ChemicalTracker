@@ -14,6 +14,8 @@ import com.chemicaltracker.persistence.dao.RoomDao;
 import com.chemicaltracker.persistence.model.Chemical;
 import com.chemicaltracker.persistence.model.Location;
 import com.chemicaltracker.persistence.model.Room;
+import com.chemicaltracker.service.InventoryService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -29,14 +31,17 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RequestMapping("/api")
 public class QueryController {
 
-    private static final ChemicalDao chemicalsDB = ChemicalDao.getInstance();
-    private static final LocationDao locationsDB = LocationDao.getInstance();
-    private static final RoomDao roomsDB = RoomDao.getInstance();
+    private final InventoryService inventoryService;
+
+    @Autowired
+    public QueryController(InventoryService inventoryService) {
+        this.inventoryService = inventoryService;
+    }
 
     @RequestMapping(value="/query", method=POST)
     public @ResponseBody ChemicalResponse queryRequest(@RequestBody final ChemicalQueryRequest request) {
 
-        final Chemical chemical = chemicalsDB.find(request.getChemical());
+        final Chemical chemical = inventoryService.getChemical(request.getChemical());
 
         if (chemical == null) {
             return new ChemicalResponse().withMatch(false);
@@ -56,7 +61,7 @@ public class QueryController {
     public @ResponseBody ResponseEntity<List<String>> partialQueryRequest(
             @RequestBody final ChemicalQueryRequest request) {
 
-        final List<Chemical> chemicals = chemicalsDB.searchPartialChemicalName(request.getChemical());
+        final List<Chemical> chemicals = inventoryService.searchPartialChemicalName(request.getChemical());
 
         final List<String> chemicalNames = chemicals.stream()
                 .map(Chemical::getName)
@@ -68,8 +73,7 @@ public class QueryController {
     @RequestMapping(value="/partialQueries", method=POST)
     public @ResponseBody ResponseEntity<List<String>> partialQueriesRequest(@RequestBody final ChemicalQueryRequest request) {
 
-        final List<Chemical> chemicals = chemicalsDB.searchPartialChemicalName(request.getChemicals());
-
+        final List<Chemical> chemicals = inventoryService.searchPartialChemicalName(request.getChemicals());
 
         final List<String> chemicalNames = chemicals.stream()
                 .map(Chemical::getName)
@@ -79,12 +83,12 @@ public class QueryController {
     }
 
     @RequestMapping(value="/userTree", method=POST)
-    public @ResponseBody UserTreeResponse userTreeRequest(Principal principal) {
+    public @ResponseBody UserTreeResponse userTreeRequest(final Principal principal) {
 
         // Instead of making multiple calls, get all of the
         // rooms and map them to the appropriate locations
-        final List<Room> rooms = roomsDB.findAll(principal.getName());
-        final List<Location> locations = locationsDB.findAll(principal.getName());
+        final List<Room> rooms = inventoryService.getAllRoomsForUser(principal.getName());
+        final List<Location> locations = inventoryService.getAllLocationsForUser(principal.getName());
 
         final Map<String, List<String>> roomMap = new HashMap<>();
         for (Room room : rooms) {
@@ -106,8 +110,7 @@ public class QueryController {
 
     @RequestMapping(value="/search/chemicals", method=GET)
     public ResponseEntity<ChemicalSearchResponse> searchForChemical(@RequestParam("q") final String query) {
-
-        final List<Chemical> chemicals = chemicalsDB.searchPartialChemicalName(query);
+        final List<Chemical> chemicals = inventoryService.searchPartialChemicalName(query);
         return new ResponseEntity<>(new ChemicalSearchResponse(chemicals), HttpStatus.OK);
     }
 

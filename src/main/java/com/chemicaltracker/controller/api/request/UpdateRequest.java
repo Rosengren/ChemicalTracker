@@ -1,19 +1,22 @@
 package com.chemicaltracker.controller.api.request;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class UpdateRequest {
 
-    private String requestType; // ADD or REMOVE
+    private String request; // ADD or REMOVE
     private String location;
     private String room;
     private String cabinet;
     private String chemical;
 
-    public String getRequestType() {
-        return requestType;
+    public String getRequest() {
+        return request;
     }
 
-    public void setRequestType(String requestType) {
-        this.requestType = requestType;
+    public void setRequest(String request) {
+        this.request = request;
     }
 
     public String getLocation() {

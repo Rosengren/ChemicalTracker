@@ -35,6 +35,12 @@ public interface InventoryService {
 
     List<Room> getRoomsByIds(String username, List<String> locationIDs);
 
+    List<Location> getAllLocationsForUser(String username);
+    List<Room> getAllRoomsForUser(String username);
+
+    List<Chemical> searchPartialChemicalName(String name);
+    List<Chemical> searchPartialChemicalName(List<String> names);
+
     void addLocation(Location location);
     void addRoom(Room room, String parentID);
     void addCabinet(Cabinet cabinet, String parentID);
