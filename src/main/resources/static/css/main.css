@@ -175,7 +175,6 @@
 #chemicalTracker.index .masthead .container {
     margin-left: auto !important;
     margin-right: auto !important;
-    /*min-height: 600px;*/
 
     -webkit-box-align: center;
     -webkit-align-items: center;
@@ -315,6 +314,7 @@
 /*
  * Misc
  */
+
 .topPadding {
     padding-top: 20px;
 }
@@ -413,9 +413,9 @@ a.diamond .text {
     background: #FFF;
 }
 
-/**
-  Scrollable List
-**/
+/*
+ * Scrollable List
+ */
 .ui.list.scrollable {
     overflow-y:auto;
     white-space:nowrap;
@@ -425,4 +425,11 @@ a.diamond .text {
 .fixedLoader {
     position: fixed!important;
     z-index: 9999!important;
+}
+
+/*
+ * chemical search bar
+ */
+.ui.search {
+    float: right;
 }
