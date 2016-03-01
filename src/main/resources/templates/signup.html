@@ -28,11 +28,15 @@
                             </div>
                         </div>
                         <input type="submit" class="ui fluid large green button" value="Sign Up"/>
-                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                     </div>
                     <div class="ui error message"></div>
                 </form>
                 <div class="ui hidden divider"></div>
+                <div class="ui">
+                    Already have an account?
+                    <a href="/login">Login Here</a>
+                </div>
             </div>
         </div>
     </div>

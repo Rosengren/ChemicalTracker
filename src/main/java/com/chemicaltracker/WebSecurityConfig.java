@@ -59,7 +59,7 @@ public class WebSecurityConfig {
         @Override
         protected void configure(HttpSecurity http) throws Exception {
             http.authorizeRequests()
-                    .antMatchers("/", "/register", "/homepage").permitAll()
+                    .antMatchers("/", "/register", "/homepage", "/signup", "/logout", "/welcome").permitAll()
                     .antMatchers("/admin/**").hasRole("ADMIN")
                     .anyRequest().authenticated()
                     .and()

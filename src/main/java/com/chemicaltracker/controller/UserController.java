@@ -35,8 +35,8 @@ public class UserController {
     }
 
     @RequestMapping("/signup")
-    public String signUp() {
-        return "signup";
+    public ModelAndView signUp() {
+        return new ModelAndView("signup");
     }
 
     @RequestMapping(value="/signup", method=POST)

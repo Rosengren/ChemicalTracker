@@ -324,6 +324,15 @@
     padding-left: 0;
 }
 
+.chemical-bg {
+    background-image: url(https://s3-us-west-2.amazonaws.com/chemical-tracker/bg.jpg);
+}
+
+.semi-transparent {
+    background-color: rgba(0, 0, 0, 0.34);
+    padding: 15px;
+}
+
 /*
  *Fire Diamond
  *

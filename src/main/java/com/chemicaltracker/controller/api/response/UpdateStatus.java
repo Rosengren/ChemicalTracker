@@ -4,6 +4,7 @@ public enum UpdateStatus {
     INVALID_REQUEST_TYPE(false, "The request type is invalid"),
     INVALID_CHEMICAL(false, "The chemical does not exist in the database"),
     INVALID_STORAGE(false, "One or more storage fields do not exist"),
+    STORAGE_ALREADY_EXISTS(false, "The storage location already exists"),
     MISSING_STORAGE_FIELD(false, "One or more storage fields are missing!"),
     ADDED_LOCATION(true, "Successfully added location!"),
     REMOVED_LOCATION(true, "Successfully removed location!"),

@@ -45,6 +45,13 @@ public class APIUpdateController {
         }
 
         if (requestType.equals("ADD")) {
+
+            // Check if location already exists
+            Location l = inventoryService.getLocation(principal.getName(), request.getLocation());
+            if (l != null) {
+                return new UpdateResponse(UpdateStatus.STORAGE_ALREADY_EXISTS);
+            }
+
             inventoryService.addLocation(new Location()
                 .withUsername(principal.getName())
                 .withName(request.getLocation())
@@ -81,11 +88,18 @@ public class APIUpdateController {
             if (location == null) {
                 return new UpdateResponse(UpdateStatus.INVALID_STORAGE);
             }
+
+            // Check if room already exists
+            Room room = inventoryService.getRoom(principal.getName(), request.getLocation(), request.getRoom());
+            if (room != null) {
+                return new UpdateResponse(UpdateStatus.STORAGE_ALREADY_EXISTS);
+            }
+
             inventoryService.addRoom(new Room()
-                    .withName(request.getRoom())
-                    .withDescription(" ")
-                    .withUsername(principal.getName())
-                    .withID(UUID.randomUUID().toString()), location.getID());
+                .withName(request.getRoom())
+                .withDescription(" ")
+                .withUsername(principal.getName())
+                .withID(UUID.randomUUID().toString()), location.getID());
             return new UpdateResponse(UpdateStatus.ADDED_ROOM);
         } else if (requestType.equals("REMOVE")) {
             final Room room = inventoryService.getRoom(principal.getName(), request.getLocation(), request.getRoom());
@@ -117,6 +131,15 @@ public class APIUpdateController {
         }
 
         if (requestType.equals("ADD")) {
+
+            // Check if cabinet already exists
+            Cabinet cabinet = inventoryService.getCabinet(principal.getName(),
+                    request.getLocation(), request.getRoom(), request.getCabinet());
+
+            if (cabinet != null) {
+                return new UpdateResponse(UpdateStatus.STORAGE_ALREADY_EXISTS);
+            }
+
             inventoryService.addCabinet(new Cabinet()
                     .withName(request.getCabinet())
                     .withUsername(principal.getName())
