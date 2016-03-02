@@ -31,5 +31,37 @@
         </div>
     </form>
 </div>
+
+<div th:fragment="cabinet" class="content">
+    <form id="addStorageForm" class="ui form" method="POST" enctype="multipart/form-data">
+        <div class="field">
+            <label>Photo</label>
+            <input type="file" name="image" />
+        </div>
+        <div class="field">
+            <label>Name</label>
+            <input type="text" name="name" />
+        </div>
+        <div class="field">
+            <label>Description</label>
+            <input type="text" name="description" />
+        </div>
+        <div class="field">
+            <label>Version</label>
+            <input type="text" name="auditVersion" />
+        </div>
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <input type="hidden" th:name="location" th:value="${location}" />
+        <input type="hidden" th:name="parentID" th:value="${parentID}" />
+        <div class="actions">
+            <div class="ui black deny button">
+                Cancel
+            </div>
+            <div class="ui positive submit button">
+                Submit
+            </div>
+        </div>
+    </form>
+</div>
 </body>
 </html>

@@ -14,6 +14,7 @@ public enum UpdateStatus {
     REMOVED_CABINET(true, "Successfully removed cabinet!"),
     ADDED_CHEMICAL(true, "Successfully added chemical!"),
     REMOVED_CHEMICAL(true, "Successfully removed chemical!"),
+    MISSING_AUDIT_VERSION(true, "The audit version is missing!"),
     UNKNOWN_ERROR(false, "Unknown error occurred!");
 
     private final Boolean success;

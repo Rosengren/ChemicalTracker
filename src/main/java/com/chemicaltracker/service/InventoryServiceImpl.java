@@ -120,6 +120,7 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     public void removeCabinet(final Cabinet cabinet, final String parentID) {
         final Room room = roomsDB.find(cabinet.getUsername(), parentID);
+        logger.info("CABINET ID: " + cabinet.getID());
         logger.info("Removing cabinet id: " + cabinet.getName() + " from room: " + room.getName());
         room.removeStoredItem(cabinet.getName());
         roomsDB.update(room);

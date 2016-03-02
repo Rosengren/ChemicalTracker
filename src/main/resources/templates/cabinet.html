@@ -30,32 +30,60 @@
         </div>
 
         <div class="ui container bottom-padding">
-            <div class="ui grid">
-                <div class="four column row">
-                    <div class="twelve wide column middle aligned">
-                        <div class="ui breadcrumb">
-                            <a class="section" th:href="'/Home'" th:text="'Home'"></a>
-                            <i class="right angle icon divider"></i>
-                            <a class="section" th:href="'/Home/'+${location}" th:text="${location}"></a>
-                            <i class="right angle icon divider"></i>
-                            <a class="section" th:href="'/Home/'+${location}+'/'+${room}" th:text="${room}"></a>
-                            <i class="right angle icon divider"></i>
-                            <div class="active section" th:text="${title}"></div>
-                        </div>
+            <div class="ui two column stackable grid">
+                <div class="seven wide column middle aligned">
+                    <div class="ui breadcrumb">
+                        <a class="section" th:href="'/Home'" th:text="'Home'"></a>
+                        <i class="right angle icon divider"></i>
+                        <a class="section" th:href="'/Home/'+${location}" th:text="${location}"></a>
+                        <i class="right angle icon divider"></i>
+                        <a class="section" th:href="'/Home/'+${location}+'/'+${room}" th:text="${room}"></a>
+                        <i class="right angle icon divider"></i>
+                        <div class="active section" th:text="${title}"></div>
                     </div>
-                    <div class="right floated column">
-                        <div class="ui search">
-                            <div class="ui icon input">
-                                <input class="prompt" type="text" placeholder="Add Chemical" />
-                                <i class="search icon"></i>
+                </div>
+                <div class="nine wide column">
+                    <div class="ui two column stackable centered grid">
+                        <div class="ten wide column middle aligned">
+                            <div class="ui four column left aligned grid">
+                                <div class="three wide column middle aligned">
+                                    <div class="ui green button">
+                                        New
+                                    </div>
+                                </div>
+                                <div class="three wide column middle aligned">
+                                    <div class="ui secondary button">
+                                        Diff
+                                    </div>
+                                </div>
+                                <div class="nine wide column middle aligned">
+                                    <div class="ui selection dropdown">
+                                        <input type="hidden" name="version"/>
+                                        <i class="dropdown icon"></i>
+                                        <div class="default text" th:text="${currentAuditVersion}"></div>
+                                        <div class="menu">
+                                            <div th:each="version : ${auditVersionNames}" class="item" th:text="${version}" th:data="${version}">
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="results"></div>
+                        </div>
+
+                        <div class="six wide column middle aligned">
+                            <div class="ui search">
+                                <div class="ui icon input">
+                                    <input class="prompt" type="text" placeholder="Add Chemical" />
+                                    <i class="search icon"></i>
+                                </div>
+                                <div class="results"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
         <div th:if="${not #lists.isEmpty(chemicals)}" class="ui container bottom-padding">
             <div class="ui dividing header">
                 Metrics
@@ -179,6 +207,7 @@
 <div type="hidden" id="location-name" th:value="${location}"></div>
 <div type="hidden" id="room-name" th:value="${room}"></div>
 <div type="hidden" id="cabinet-name" th:value="${title}"></div>
+<div type="hidden" id="audit-version" th:value="${currentAuditVersion}"></div>
 <div th:replace="fragments/card :: chemicalCard"></div>
 </body>
 

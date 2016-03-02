@@ -48,6 +48,8 @@ public class CabinetController {
         cabinetView.addObject("addURL", "/api/add/chemicals/to/cabinet/" + cabinet.getID());
         cabinetView.addObject("removeURL", "/api/remove/chemical/from/cabinet/" + cabinet.getID());
         cabinetView.addObject("metrics", cabinet.getMetrics());
+        cabinetView.addObject("auditVersionNames", cabinet.getAuditVersionNames());
+        cabinetView.addObject("currentAuditVersion", cabinet.getCurrentAuditVersionName());
 
         return cabinetView;
     }

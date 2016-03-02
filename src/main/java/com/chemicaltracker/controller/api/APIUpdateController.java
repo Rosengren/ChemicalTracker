@@ -125,6 +125,10 @@ public class APIUpdateController {
             return new UpdateResponse(UpdateStatus.MISSING_STORAGE_FIELD);
         }
 
+        if (missingAuditVersion(request)) {
+            return new UpdateResponse(UpdateStatus.MISSING_AUDIT_VERSION);
+        }
+
         final Room room = inventoryService.getRoom(principal.getName(), request.getLocation(), request.getRoom());
         if (room == null) {
             return new UpdateResponse(UpdateStatus.INVALID_STORAGE);
@@ -144,7 +148,8 @@ public class APIUpdateController {
                     .withName(request.getCabinet())
                     .withUsername(principal.getName())
                     .withDescription(" ")
-                    .withID(UUID.randomUUID().toString()), room.getID());
+                    .withID(UUID.randomUUID().toString())
+                    .withAuditVersion(request.getAuditVersion()), room.getID());
             return new UpdateResponse(UpdateStatus.ADDED_CABINET);
         } else if (requestType.equals("REMOVE")) {
             final Cabinet cabinet = inventoryService.getCabinet(
@@ -152,6 +157,7 @@ public class APIUpdateController {
             if (cabinet == null) {
                 return new UpdateResponse(UpdateStatus.INVALID_STORAGE);
             }
+            System.out.println("GOT CABINET: " + cabinet.getID() + " name: " + cabinet.getName());
             inventoryService.removeCabinet(cabinet, room.getID());
             return new UpdateResponse(UpdateStatus.REMOVED_CABINET);
         }
@@ -172,6 +178,10 @@ public class APIUpdateController {
             return new UpdateResponse(UpdateStatus.MISSING_STORAGE_FIELD);
         }
 
+        if (missingAuditVersion(request)) {
+            return new UpdateResponse(UpdateStatus.MISSING_AUDIT_VERSION);
+        }
+
         final Chemical chemical = inventoryService.getChemical(request.getChemical());
 
         if (chemical == null) {
@@ -182,11 +192,11 @@ public class APIUpdateController {
                 request.getLocation(), request.getRoom(), request.getCabinet());
 
         if (requestType.equals("ADD")) {
-            cabinet.addChemical(request.getChemical(), Chemical.PLACEHOLDER_IMAGE_URL); // TODO: add image URL
+            cabinet.addChemical(request.getAuditVersion(), request.getChemical(), Chemical.PLACEHOLDER_IMAGE_URL); // TODO: add image URL
             inventoryService.updateCabinet(cabinet);
             return new UpdateResponse(UpdateStatus.ADDED_CHEMICAL);
         } else if (requestType.equals("REMOVE")) {
-            cabinet.removeChemical(request.getChemical());
+            cabinet.removeChemical(request.getAuditVersion(), request.getChemical());
             inventoryService.updateCabinet(cabinet);
             return new UpdateResponse(UpdateStatus.REMOVED_CHEMICAL);
         }
@@ -211,5 +221,9 @@ public class APIUpdateController {
     private boolean missingLocationOrRoom(final UpdateRequest request) {
         return request != null && (request.getLocation().isEmpty() ||
                request.getRoom().isEmpty());
+    }
+
+    private boolean missingAuditVersion(final UpdateRequest request) {
+        return request != null && (request.getAuditVersion().isEmpty());
     }
 }

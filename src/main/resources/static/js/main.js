@@ -81,11 +81,12 @@ $('.ui.search')
                 mimeType    : 'application/json',
                 url         : location.origin + '/api/update/chemical',
                 data        : JSON.stringify({
-                    request     : 'ADD',
-                    location    : $('#location-name').attr('value'),
-                    room        : $('#room-name').attr('value'),
-                    cabinet     : $('#cabinet-name').attr('value'),
-                    chemical    : chemical.name
+                    request         : 'ADD',
+                    location        : $('#location-name').attr('value'),
+                    room            : $('#room-name').attr('value'),
+                    cabinet         : $('#cabinet-name').attr('value'),
+                    auditVersion    : $('#audit-version').attr('value'),
+                    chemical        : chemical.name
                 }),
                 beforeSend: function() {
                     $(".fixedLoader").addClass('active');

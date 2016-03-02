@@ -10,7 +10,11 @@ public class UpdateRequest {
     private String room;
     private String cabinet;
     private String chemical;
+    private String auditVersion;
 
+    public UpdateRequest() {
+//        auditVersion = "VERSION 1"; // TODO: REMOVE THIS -- ONLY USED FOR TESTING
+    }
     public String getRequest() {
         return request;
     }
@@ -47,6 +51,14 @@ public class UpdateRequest {
 
     public void setChemical(String chemical) {
         this.chemical = chemical;
+    }
+
+    public String getAuditVersion() {
+        return auditVersion;
+    }
+
+    public void setAuditVersion(String auditVersion) {
+        this.auditVersion = auditVersion;
     }
 }
 
