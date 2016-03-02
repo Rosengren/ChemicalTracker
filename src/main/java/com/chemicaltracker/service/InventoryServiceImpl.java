@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -148,6 +149,9 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     public Room getRoom(final String username, final String locationName, final String roomName) {
         final String roomID = getLocation(username, locationName).getStoredItemID(roomName);
+        if (roomID == null || roomID.isEmpty()) {
+            return null;
+        }
         return roomsDB.find(username, roomID);
     }
 
@@ -159,7 +163,9 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     public Cabinet getCabinet(final String username, final String locationName, final String roomName, final String cabinetName) {
         final String roomID = locationsDB.find(username, locationName).getStoredItemID(roomName);
+        if (roomID == null || roomID.isEmpty()) return null;
         final String cabinetID = roomsDB.find(username, roomID).getStoredItemID(cabinetName);
+        if (cabinetID == null || cabinetID.isEmpty()) return null;
         return cabinetsDB.find(username, cabinetID);
     }
 
@@ -182,6 +188,7 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     public List<Cabinet> getCabinets(final String username, final String locationName, final String roomName) {
         final Room room = getRoom(username, locationName, roomName);
+        if (room == null) return new ArrayList<>();
         final List<String> cabinetIDs = room.getStoredItemIDs();
         return cabinetsDB.findAllByIds(username, cabinetIDs);
     }
