@@ -32,6 +32,18 @@ public class Cabinet extends AbstractStorageComponent implements StorageComponen
         return latest.getName();
     }
 
+    @DynamoDBIgnore
+    public AuditVersion getAuditVersion(final String version) {
+        return auditVersions.get(version);
+    }
+
+    @DynamoDBIgnore
+    public void forkVersion(final String version) {
+        final AuditVersion fork = getLatestAuditVersion().clone();
+        fork.setName(version);
+        auditVersions.put(version, fork);
+    }
+
     @DynamoDBHashKey(attributeName = "Username")
     public String getUsername() { return this.username; }
     public void setUsername(final String username) { this.username = username; }
@@ -158,7 +170,7 @@ public class Cabinet extends AbstractStorageComponent implements StorageComponen
     }
 
     @DynamoDBDocument
-    public static class AuditVersion {
+    public static class AuditVersion implements Cloneable {
 
         private long timestamp;
         private String name;
@@ -172,6 +184,17 @@ public class Cabinet extends AbstractStorageComponent implements StorageComponen
             metrics = new Metrics();
             tags = new HashSet<>();
             tags.add(StorageTag.IGNORE);
+        }
+
+        @DynamoDBIgnore
+        @Override
+        public AuditVersion clone() {
+            final AuditVersion clone = new AuditVersion();
+            clone.setName(getName());
+            clone.setChemicals(getChemicals());
+            clone.setMetrics(getMetrics());
+            clone.setStorageTags(tags);
+            return clone;
         }
 
         @DynamoDBAttribute(attributeName = "Name")
@@ -215,7 +238,11 @@ public class Cabinet extends AbstractStorageComponent implements StorageComponen
             }
         }
 
-        public void setTags(final Set<String> tags) { // TODO: simplify
+        public void setStorageTags(final Set<StorageTag> tags) { // TODO: simplify
+            this.tags = tags;
+        }
+
+        public void setTags(final Set<String> tags) {
             for (String tagName : tags) {
                 addTag(tagName);
             }
@@ -314,7 +341,7 @@ public class Cabinet extends AbstractStorageComponent implements StorageComponen
     }
 
     @DynamoDBIgnore
-    private AuditVersion getLatestAuditVersion() {
+    public AuditVersion getLatestAuditVersion() {
         AuditVersion latest = null;
         long t = 0;
         for (AuditVersion v : auditVersions.values()) {

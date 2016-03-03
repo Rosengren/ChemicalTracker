@@ -52,4 +52,6 @@ public interface InventoryService {
     void updateLocation(Location location);
     void updateRoom(Room room);
     void updateCabinet(Cabinet cabinet);
+
+    void forkCabinet(Cabinet cabinet, String version);
 }

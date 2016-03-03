@@ -143,6 +143,13 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
     @Override
+    public void forkCabinet(final Cabinet cabinet, final String version) {
+        // 1 get latest Cabinet version
+        cabinet.forkVersion(version);
+        cabinetsDB.update(cabinet);
+    }
+
+    @Override
     public Location getLocation(final String username, final String locationName) {
         return locationsDB.find(username, locationName);
     }

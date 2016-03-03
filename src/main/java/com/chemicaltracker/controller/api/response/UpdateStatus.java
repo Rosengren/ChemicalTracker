@@ -14,7 +14,10 @@ public enum UpdateStatus {
     REMOVED_CABINET(true, "Successfully removed cabinet!"),
     ADDED_CHEMICAL(true, "Successfully added chemical!"),
     REMOVED_CHEMICAL(true, "Successfully removed chemical!"),
-    MISSING_AUDIT_VERSION(true, "The audit version is missing!"),
+    MISSING_AUDIT_VERSION(false, "The audit version is missing!"),
+    MISSING_FORK_VERSION(false, "The fork version is missing!"),
+    FORK_VERSION_ALREADY_EXISTS(false, "The fork version name already exists!"),
+    FORKED_CABINET(true, "Successfully forked cabinet!"),
     UNKNOWN_ERROR(false, "Unknown error occurred!");
 
     private final Boolean success;

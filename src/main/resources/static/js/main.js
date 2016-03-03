@@ -7,9 +7,18 @@ $.fn.api.settings.api = {
     'search'          : '/api/search/chemicals?q={query}'
 };
 
-$('.dropdown')
-    .dropdown()
+$('.version.dropdown')
+    .dropdown({
+        on: 'click',
+        action: function(version) {
+            location.href = window.location.href.split('?')[0] + '?v=' + version ;
+        }
+    })
 ;
+
+$('.viewChemical').click(function() {
+    location.href = window.location.href.split('?')[0] + '/' + $(this).attr('data') ;
+});
 
 /* Following Menu Bar */
 $('body')
@@ -62,6 +71,11 @@ $('.addModal').click(function() {
         .modal('show');
 });
 
+$('#newVersion').click(function() {
+    $('.ui.small.modal')
+        .modal('show');
+});
+
 
 $('.ui.search')
     .search({
@@ -92,7 +106,6 @@ $('.ui.search')
                     $(".fixedLoader").addClass('active');
                 },
                 success: function(response) {
-                    console.log(response);
                     if (response.success) {
                         // TODO: simplify
                         var card = $('#chemicalCardTemplate').clone();
@@ -101,7 +114,8 @@ $('.ui.search')
                             .find(".header").html(chemical.name);
 
                         card.find(".image").click(function() {
-                            window.location+='/' + chemical.name
+                            location.href = window.location.href.split('?')[0] + '/' + chemical.name;
+                            //window.location+='/' + chemical.name
                         });
 
                         card.find(".imageURL").attr("src", chemical.imageURL);
@@ -122,11 +136,12 @@ $('.ui.search')
                                             contentType: "application/json",
                                             mimeType: "application/json",
                                             data: JSON.stringify({
-                                                request     : 'REMOVE',
-                                                location    : $('#location-name').attr('value'),
-                                                room        : $('#room-name').attr('value'),
-                                                cabinet     : $('#cabinet-name').attr('value'),
-                                                chemical    : chemical.name
+                                                request         : 'REMOVE',
+                                                location        : $('#location-name').attr('value'),
+                                                room            : $('#room-name').attr('value'),
+                                                cabinet         : $('#cabinet-name').attr('value'),
+                                                auditVersion    : $('#audit-version').attr('value'),
+                                                chemical        : chemical.name
                                             }),
                                             success: function(response) { },
                                             error: function(e) { }
@@ -157,6 +172,38 @@ $('.ui.search')
     })
 ;
 
+$('#forkVersionForm').find('.submit').click(function() {
+
+    var forkVersion = $('#forkVersion').val();
+    console.log("FORK VERSION: " + forkVersion);
+    $.ajax({
+        type        : 'post',
+        dataType    : 'json',
+        contentType : 'application/json',
+        mimeType    : 'application/json',
+        url         : location.origin + '/api/update/cabinet',
+        data        : JSON.stringify({
+            request         : 'FORK',
+            location        : $('#location-name').attr('value'),
+            room            : $('#room-name').attr('value'),
+            cabinet         : $('#cabinet-name').attr('value'),
+            auditVersion    : $('#audit-version').attr('value'),
+            forkVersion     : forkVersion,
+        }),
+        beforeSend: function() {
+            $(".fixedLoader").addClass('active');
+        },
+        success: function(response) {
+            console.log('SUCCESSFULLY ADDED');
+            // Set the name of the new version
+            $('#audit-version').attr('value')
+        },
+        complete: function(e) {
+            $('.fixedLoader').removeClass('active');
+        }
+    });
+});
+
 $('#addStorageForm').find('.submit').click(function() {
     var url = $('#add-url').attr('value');
     var formData = new FormData($('#addStorageForm')[0]);
@@ -183,7 +230,8 @@ $('#addStorageForm').find('.submit').click(function() {
                 .find(".header").html(storage.name);
 
             card.find(".image").click(function() {
-                window.location+='/' + storage.name
+                location.href = window.location.href.split('?')[0] + '/' + storage.name;
+                //window.location+='/' + storage.name
             });
 
             card.find('.description')
@@ -273,11 +321,12 @@ $('.chemical .remove')
                         contentType: "application/json",
                         mimeType: "application/json",
                         data: JSON.stringify({
-                            request     : 'REMOVE',
-                            location    : $('#location-name').attr('value'),
-                            room        : $('#room-name').attr('value'),
-                            cabinet     : $('#cabinet-name').attr('value'),
-                            chemical    : chemicalName
+                            request         : 'REMOVE',
+                            location        : $('#location-name').attr('value'),
+                            room            : $('#room-name').attr('value'),
+                            cabinet         : $('#cabinet-name').attr('value'),
+                            auditVersion    : $('#audit-version').attr('value'),
+                            chemical        : chemicalName
                         }),
                         success: function() {
                             $('#noStorages').hide();

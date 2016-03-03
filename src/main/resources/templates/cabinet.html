@@ -13,6 +13,14 @@
 <div th:replace="fragments/sidebar :: sidebar"></div>
 <div th:replace="fragments/modal :: confirm"></div>
 
+
+<div class="ui small modal">
+    <div class="header">
+        Are you sure you would like to fork a new version of this cabinet?
+    </div>
+    <div th:replace="fragments/form :: confirm-new-version"></div>
+</div>
+
 <div class="pusher">
     <div th:replace="fragments/menu :: menu"></div>
     <div class="full height">
@@ -47,17 +55,17 @@
                         <div class="ten wide column middle aligned">
                             <div class="ui four column left aligned grid">
                                 <div class="three wide column middle aligned">
-                                    <div class="ui green button">
+                                    <div class="ui green button" id="newVersion" data-content="Fork a new version">
                                         New
                                     </div>
                                 </div>
                                 <div class="three wide column middle aligned">
-                                    <div class="ui secondary button">
+                                    <div class="ui secondary button" data-content="Compare different versions">
                                         Diff
                                     </div>
                                 </div>
                                 <div class="nine wide column middle aligned">
-                                    <div class="ui selection dropdown">
+                                    <div class="ui selection version dropdown">
                                         <input type="hidden" name="version"/>
                                         <i class="dropdown icon"></i>
                                         <div class="default text" th:text="${currentAuditVersion}"></div>
@@ -159,7 +167,7 @@
                 </div>
                 <div th:each="chemical : ${chemicals}" class="column">
                     <div class="ui link card chemical" >
-                        <div class="blurring dimmable image" th:onclick="'window.location+=\'/'+${chemical.name}+'\''">
+                        <div class="blurring dimmable image viewChemical" th:data="${chemical.name}">
                             <div class="ui dimmer">
                                 <div class="content">
                                     <div class="center">

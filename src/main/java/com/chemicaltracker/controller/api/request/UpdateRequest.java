@@ -5,16 +5,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UpdateRequest {
 
-    private String request; // ADD or REMOVE
+    private String request; // ADD or REMOVE or FORK
     private String location;
     private String room;
     private String cabinet;
     private String chemical;
     private String auditVersion;
+    private String forkVersion;
 
-    public UpdateRequest() {
-//        auditVersion = "VERSION 1"; // TODO: REMOVE THIS -- ONLY USED FOR TESTING
-    }
     public String getRequest() {
         return request;
     }
@@ -59,6 +57,14 @@ public class UpdateRequest {
 
     public void setAuditVersion(String auditVersion) {
         this.auditVersion = auditVersion;
+    }
+
+    public String getForkVersion() {
+        return forkVersion;
+    }
+
+    public void setForkVersion(String forkVersion) {
+        this.forkVersion = forkVersion;
     }
 }
 
