@@ -34,7 +34,7 @@ public class Cabinet extends AbstractStorageComponent implements StorageComponen
 
     @DynamoDBIgnore
     public AuditVersion getAuditVersion(final String version) {
-        return auditVersions.get(version);
+        return auditVersions.get(version.toLowerCase());
     }
 
     @DynamoDBIgnore
@@ -78,7 +78,7 @@ public class Cabinet extends AbstractStorageComponent implements StorageComponen
     public Map<String, AuditVersion> getAuditVersions() { return this.auditVersions; }
     public void setAuditVersions(Map<String, AuditVersion> auditVersions) { this.auditVersions = auditVersions; }
     public Cabinet withAuditVersion(final String name) {
-        auditVersions.put(name, new AuditVersion().withName(name));
+        auditVersions.put(name.toLowerCase(), new AuditVersion().withName(name));
         return this;
     }
 
@@ -354,8 +354,8 @@ public class Cabinet extends AbstractStorageComponent implements StorageComponen
         if (latest == null) {
             // Create empty one
             latest = new AuditVersion();
-            latest.setName("VERSION 1 - getLatest");
-            auditVersions.put("VERSION 1 - getLatest", latest); // TODO: add requirement that user must pass version name
+            latest.setName("VERSION 1 - getLatest".toLowerCase());
+            auditVersions.put("VERSION 1 - getLatest".toLowerCase(), latest); // TODO: add requirement that user must pass version name
             return latest;
         }
 

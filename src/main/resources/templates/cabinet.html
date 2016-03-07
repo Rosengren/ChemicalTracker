@@ -12,14 +12,9 @@
 </div>
 <div th:replace="fragments/sidebar :: sidebar"></div>
 <div th:replace="fragments/modal :: confirm"></div>
-
-
-<div class="ui small modal">
-    <div class="header">
-        Are you sure you would like to fork a new version of this cabinet?
-    </div>
-    <div th:replace="fragments/form :: confirm-new-version"></div>
-</div>
+<div th:replace="fragments/modal :: fork"></div>
+<div th:replace="fragments/modal :: compare"></div>
+<div th:replace="fragments/modal :: compareResult"></div>
 
 <div class="pusher">
     <div th:replace="fragments/menu :: menu"></div>
@@ -60,7 +55,7 @@
                                     </div>
                                 </div>
                                 <div class="three wide column middle aligned">
-                                    <div class="ui secondary button" data-content="Compare different versions">
+                                    <div class="ui secondary button" id="compareVersions" data-content="Compare different versions">
                                         Diff
                                     </div>
                                 </div>
@@ -70,8 +65,8 @@
                                         <i class="dropdown icon"></i>
                                         <div class="default text" th:text="${currentAuditVersion}"></div>
                                         <div class="menu">
-                                            <div th:each="version : ${auditVersionNames}" class="item" th:text="${version}" th:data="${version}">
-
+                                            <div th:each="version : ${auditVersionNames}" th:if="${version != currentAuditVersion}"
+                                                 class="item" th:text="${version}" th:data="${version}">
                                             </div>
                                         </div>
                                     </div>

@@ -1,5 +1,6 @@
 package com.chemicaltracker.controller.api;
 
+import com.chemicaltracker.controller.api.response.CompareCabinetsResponse;
 import com.chemicaltracker.persistence.model.Cabinet;
 import com.chemicaltracker.persistence.model.Location;
 import com.chemicaltracker.persistence.model.Room;

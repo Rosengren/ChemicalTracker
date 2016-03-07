@@ -117,7 +117,7 @@ public class CabinetEvaluator {
     }
 
     public boolean isAcidic(final Chemical chemical) {
-        return getPHProperty(chemical).contains("acid");
+        return getPHProperty(chemical).contains("acid") || chemical.getName().toLowerCase().contains("acid");
     }
 
     public boolean isBasic(final Chemical chemical) {

@@ -330,7 +330,7 @@
 
 .semi-transparent {
     background-color: rgba(0, 0, 0, 0.34);
-    padding: 15px;
+
 }
 
 /*
@@ -434,4 +434,20 @@ a.diamond .text {
 .fixedLoader {
     position: fixed!important;
     z-index: 9999!important;
+}
+
+/*
+ * Diff Modal
+ */
+.ui.small.modal.compareResult .content {
+    max-height: 450px;
+    overflow: scroll;
+}
+
+#compare-added {
+    color: #005700;
+}
+
+#compare-removed {
+    color: #9e0000;
 }

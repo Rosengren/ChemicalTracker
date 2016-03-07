@@ -70,9 +70,6 @@
             <label>Fork Version Name</label>
             <input type="text" id="forkVersion" name="forkVersion" />
         </div>
-        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-        <input type="hidden" th:name="location" th:value="${location}" />
-        <input type="hidden" th:name="parentID" th:value="${parentID}" />
         <div class="actions">
             <div class="ui black deny button">
                 Cancel
@@ -81,6 +78,47 @@
                 Submit
             </div>
         </div>
+    </form>
+</div>
+
+<div th:fragment="compare-versions" class="content">
+    <form id="compareVersionForm" class="ui form">
+        <div class="field">
+            <label>Compare</label>
+            <div class="ui selection firstVersion dropdown">
+                <input type="hidden" name="firstVersion" id="firstVersion"/>
+                <i class="dropdown icon"></i>
+                <div class="default text">Select an old version...</div>
+                <div class="menu">
+                    <div th:each="version : ${auditVersionNames}"
+                         class="item" th:text="${version}" th:data="${version}">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="field">
+            <label>With</label>
+            <div class="ui selection secondVersion dropdown">
+                <input type="hidden" name="secondVersion" id="secondVersion"/>
+                <i class="dropdown icon"></i>
+                <div class="default text">Select a new version...</div>
+                <div class="menu">
+                    <div th:each="version : ${auditVersionNames}"
+                         class="item" th:text="${version}" th:data="${version}">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <div class="actions">
+            <div class="ui black deny button">
+                Cancel
+            </div>
+            <div class="ui positive submit button">
+                Submit
+            </div>
+        </div>
+        <div class="ui error message"></div>
     </form>
 </div>
 </body>

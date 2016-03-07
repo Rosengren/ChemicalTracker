@@ -1,6 +1,7 @@
 package com.chemicaltracker.service;
 
 
+import com.chemicaltracker.model.Comparison;
 import com.chemicaltracker.persistence.model.Cabinet;
 import com.chemicaltracker.persistence.model.Chemical;
 import com.chemicaltracker.persistence.model.Location;
@@ -54,4 +55,6 @@ public interface InventoryService {
     void updateCabinet(Cabinet cabinet);
 
     void forkCabinet(Cabinet cabinet, String version);
+
+    Comparison compareCabinetVersions(Cabinet cabinet, String oldVersion, String newVersion);
 }
