@@ -361,4 +361,9 @@ public class Cabinet extends AbstractStorageComponent implements StorageComponen
 
         return latest;
     }
+
+    @DynamoDBIgnore
+    public void addAuditVersion(final String name, final AuditVersion auditVersion) {
+        this.auditVersions.put(name, auditVersion);
+    }
 }

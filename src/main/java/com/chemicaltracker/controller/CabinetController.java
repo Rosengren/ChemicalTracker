@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -57,6 +58,7 @@ public class CabinetController {
         cabinetView.addObject("metrics", auditVersion.getMetrics());
         cabinetView.addObject("currentAuditVersion", auditVersion.getName());
         chemicals = inventoryService.getChemicalsByName(auditVersion.getChemicalNames());
+        final Map<String, String> chemicalMap = auditVersion.getChemicals();
 
         cabinetView.addObject("title", cabinetName);
         cabinetView.addObject("username", username);
@@ -64,9 +66,11 @@ public class CabinetController {
         cabinetView.addObject("room", roomName);
         cabinetView.addObject("checklist", getChecklist(chemicals));
         cabinetView.addObject("searchChemicalURL", "/api/test/partialQuery/");
-        cabinetView.addObject("chemicals", chemicals);
+        cabinetView.addObject("chemicals", chemicalMap);
+        cabinetView.addObject("cabinetID", cabinet.getID());
         cabinetView.addObject("addURL", "/api/add/chemicals/to/cabinet/" + cabinet.getID());
         cabinetView.addObject("removeURL", "/api/remove/chemical/from/cabinet/" + cabinet.getID());
+        cabinetView.addObject("updateImageURL", "/api/update/chemicalImage");
 
         cabinetView.addObject("auditVersionNames", cabinet.getAuditVersionNames());
 

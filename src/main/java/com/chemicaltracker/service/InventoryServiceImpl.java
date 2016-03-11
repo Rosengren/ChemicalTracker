@@ -203,6 +203,11 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
     @Override
+    public Cabinet getCabinet(String username, String cabinetID) {
+        return cabinetsDB.find(username, cabinetID);
+    }
+
+    @Override
     public Chemical getChemical(final String name) {
         return chemicalsDB.find(name);
     }

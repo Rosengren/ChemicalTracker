@@ -9,6 +9,7 @@ import com.chemicaltracker.service.InventoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -103,7 +104,7 @@ public class APIStorageController {
         if (!image.isEmpty()) {
             try {
 
-                final String filename = principal.getName() + location + File.separator + name.replace(' ', '-') + IMAGE_EXTENSION;
+                final String filename = principal.getName() + File.separator + location + File.separator + name.replace(' ', '-') + IMAGE_EXTENSION;
 
                 imageService.add(image, filename, name.replace(' ', '-') + IMAGE_EXTENSION);
 
@@ -149,7 +150,7 @@ public class APIStorageController {
         if (!image.isEmpty()) {
             try {
 
-                final String filename = principal.getName() + location + File.separator + name.replace(' ', '-') + IMAGE_EXTENSION;
+                final String filename = principal.getName() + File.separator + location + File.separator + name.replace(' ', '-') + IMAGE_EXTENSION;
 
                 imageService.add(image, filename, name.replace(' ', '-') + IMAGE_EXTENSION);
 
@@ -190,4 +191,33 @@ public class APIStorageController {
         // TODO: remove image
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @RequestMapping(value = "/update/chemicalImage", method = POST)
+    public ResponseEntity updateChemicalImageHandler(final Principal principal,
+                                                    @RequestParam("name") final String name, // chemical name
+                                                    @RequestParam("location") final String location,
+                                                    @RequestParam("cabinetID") final String cabinetID,
+                                                    @RequestParam("auditVersion") final String auditVersion,
+                                                    @RequestParam("image") final MultipartFile image) {
+        if (!image.isEmpty()) {
+            try {
+                final Cabinet cabinet = inventoryService.getCabinet(principal.getName(), cabinetID);
+
+                final String filename = principal.getName() + File.separator + location + File.separator + cabinet.getName()
+                        + File.separator + name.replace(' ', '-') + IMAGE_EXTENSION;
+
+                imageService.add(image, filename, name.replace(' ', '-') + IMAGE_EXTENSION);
+
+                cabinet.getAuditVersion(auditVersion).addChemical(name, S3_BASE_URL + filename);
+                inventoryService.updateCabinet(cabinet);
+                return new ResponseEntity<>(cabinet, HttpStatus.OK);
+            } catch (Exception e) {
+                logger.error("An error occurred while adding the cabinet name " + name, e);
+                return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+            }
+        } else {
+            return new ResponseEntity<>("The image file was missing", HttpStatus.BAD_REQUEST);
+        }
+    }
+
 }

@@ -19,6 +19,8 @@ public interface InventoryService {
     Cabinet getCabinet(String username, String locationName,
                        String roomName, String cabinetName);
 
+    Cabinet getCabinet(String username, String cabinetID);
+
     Chemical getChemical(String name);
 
     List<Location> getLocations(String username);

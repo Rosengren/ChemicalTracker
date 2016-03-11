@@ -1,10 +1,7 @@
 /* Define API endpoints once globally */
 $(document).ready(function() {
     $.fn.api.settings.api = {
-        'add location'  : '/api/add/location',
-        'add room'      : '/api/add/room',
-        'add cabinet'   : '/api/add/cabinet',
-        'add chemical'  : '/api/add/chemical',
+        'add storage'   : $('#add-url').attr('value'),
         'search'        : '/api/search/chemicals?q={query}',
         'compare'       : location.href.split('?')[0] + '/compare/{oldVersion}/with/{newVersion}'
     };
@@ -28,6 +25,20 @@ $(document).ready(function() {
 
     $('.viewChemical').click(function() {
         location.href = window.location.href.split('?')[0] + '/' + $(this).attr('data') ;
+    });
+
+    $('.editChemical').click(function() {
+        var that = $(this);
+        $('.ui.small.modal.updateChemicalImage')
+            .modal({
+                onShow : function() {
+                    var chemicalName = that.attr('data')
+                    $(this).find('.header').text('Update Image for ' + chemicalName);
+                    $('#updateChemicalImageName').attr('value', chemicalName);
+                }
+            })
+            .modal('show')
+        ;
     });
 
     /* Following Menu Bar */
@@ -156,6 +167,172 @@ $(document).ready(function() {
         })
     ;
 
+    $('#addStorageForm')
+        .form({
+            on : 'change',
+            fields : {
+                image : {
+                    identifier : 'image',
+                    rules : [
+                        {
+                            type    : 'empty',
+                            prompt  : 'Missing storage image.'
+                        }
+                    ]
+                },
+                name : {
+                    identifier : 'name',
+                    rules : [
+                        {
+                            type    : 'empty',
+                            prompt  : 'Missing storage name.'
+                        }
+                    ]
+                },
+                auditVersion : {
+                    identifier : 'auditVersion',
+                    rules : [
+                        {
+                            type    : 'empty',
+                            prompt  : 'Missing initial version name'
+                        }
+                    ]
+                }
+            }
+        }).submit(function() {
+            var url = $('#add-url').attr('value');
+            var formData = new FormData($('#addStorageForm')[0]);
+
+            $.ajax({
+                type: 'post',
+                url: url,
+                contentType: false,
+                processData: false,
+                cache: false,
+                data: formData,
+                beforeSend: function() {
+                    $('.fixedLoader').addClass('active');
+                },
+                success: function(response) {
+                    var $formSubmission = $('#formSubmissionMsg');
+                    $formSubmission.find('.header').text("Submission Successful");
+                    $formSubmission.find('p').text("The object was successfully created!");
+                    $formSubmission.removeClass('error');
+                    $formSubmission.addClass("success");
+
+                    var card = $('#storageCardTemplate').clone();
+                    card.attr('id', '')
+                        .appendTo('#storageCards')
+                        .find(".header").html(response.name);
+
+                    card.find(".image").click(function() {
+                        location.href = window.location.href.split('?')[0] + '/' + response.name;
+                    });
+
+                    card.find('.description')
+                        .html(response.description);
+
+                    card.find(".imageURL").attr("src", response.imageURL + '?' + new Date().getTime());
+                    card.find(".remove").attr("data", response.id);
+
+                    card.find(".remove").click(function() {
+                        var parentCard = $(this).parents().eq(4);
+                        var storageName = $(this).attr('data');
+                        var parentID = $('#parentID').attr('value');
+                        var url = $('#remove-url').attr('value');
+                        $('.ui.basic.modal.confirm')
+                            .modal({
+                                onApprove: function() {
+                                    $.ajax({
+                                        url: url + storageName + '/from/' + parentID,
+                                        type: 'get',
+                                        success: function() {
+                                            parentCard.remove();
+                                        },
+                                        error: function(e) { }
+                                    });
+                                }
+                            })
+                            .modal('show');
+                    });
+
+                    $('.dropdown')
+                        .dropdown()
+                    ;
+
+                    card.show();
+
+                    $('#noStorages').hide();
+                },
+                error: function() {
+                    $('#formSubmissionMsg').find('.header').text("Submission Failed");
+                    $('#formSubmissionMsg p').text("An error occurred while creating object!");
+                    $('#formSubmissionMsg').addClass("error");
+                    $('#formSubmissionMsg').removeClass("success");
+                },
+                complete: function() {
+                    $("#noStorages").hide();
+                    $('#formSubmissionMsg').show();
+                    $('.fixedLoader').removeClass('active');
+                }
+            });
+        })
+    ;
+
+    $('#updateChemicalForm')
+        .form({
+            on: 'change',
+            fields : {
+                image : {
+                    identifier : 'image',
+                    rules: [
+                        {
+                            type    : 'empty',
+                            prompt  : 'Please select an image to upload.'
+                        }
+                    ]
+                }
+            }
+        }).submit(function() {
+            var url = $('#update-image-url').attr('value');
+            var formData = new FormData($('#updateChemicalForm')[0]);
+
+            $.ajax({
+                type: 'post',
+                url: url,
+                contentType: false,
+                processData: false,
+                cache: false,
+                data: formData,
+                beforeSend: function() {
+                    $('.fixedLoader').addClass('active');
+                },
+                success: function(response) {
+                    var $formSubmission = $('#formSubmissionMsg');
+                    $formSubmission.find('.header').text("Submission Successful");
+                    $formSubmission.find('p').text("The object was successfully created!");
+                    $formSubmission.removeClass('error');
+                    $formSubmission.addClass("success");
+
+                    $('img#' + response.name).attr("src", response.imageURL);
+                },
+                error: function() {
+                    var $formSubmission = $('#formSubmissionMsg');
+                    $formSubmission.find('.header').text("Submission Failed");
+                    $formSubmission.find('p').text("An error occurred while creating object!");
+                    $formSubmission.addClass("error");
+                    $formSubmission.removeClass("success");
+                },
+                complete: function() {
+                    $("#noStorages").hide();
+                    $('#formSubmissionMsg').show();
+                    $('.fixedLoader').removeClass('active');
+                }
+            });
+
+        })
+    ;
+
     $('.ui.search')
         .search({
             minCharacters : 3,
@@ -194,10 +371,10 @@ $(document).ready(function() {
 
                             card.find(".image").click(function() {
                                 location.href = window.location.href.split('?')[0] + '/' + chemical.name;
-                                //window.location+='/' + chemical.name
                             });
 
                             card.find(".imageURL").attr("src", chemical.imageURL);
+                            card.find(".editChemical").attr("data", chemical.name);
                             card.find(".remove").attr("data", name);
 
                             card.find(".remove").click(function() {
@@ -232,6 +409,21 @@ $(document).ready(function() {
 
                             });
 
+
+                            $('.editChemical').click(function() {
+                                var that = $(this);
+                                $('.ui.small.modal.updateChemicalImage')
+                                    .modal({
+                                        onShow : function() {
+                                            var chemicalName = that.attr('data')
+                                            $(this).find('.header').text('Update Image for ' + chemicalName);
+                                            $('#updateChemicalImageName').attr('value', chemicalName);
+                                        }
+                                    })
+                                    .modal('show')
+                                ;
+                            });
+
                             card.show();
                             $('#noStorages').hide();
                         } else {
@@ -251,116 +443,54 @@ $(document).ready(function() {
         })
     ;
 
-    $('#forkVersionForm').find('.submit').click(function() {
-
-        var forkVersion = $('#forkVersion').val();
-
-        $.ajax({
-            type        : 'post',
-            dataType    : 'json',
-            contentType : 'application/json',
-            mimeType    : 'application/json',
-            url         : location.origin + '/api/update/cabinet',
-            data        : JSON.stringify({
-                request         : 'FORK',
-                location        : $('#location-name').attr('value'),
-                room            : $('#room-name').attr('value'),
-                cabinet         : $('#cabinet-name').attr('value'),
-                auditVersion    : $('#audit-version').attr('value'),
-                forkVersion     : forkVersion,
-            }),
-            beforeSend: function() {
-                $(".fixedLoader").addClass('active');
-            },
-            success: function(response) {
-                console.log('SUCCESSFULLY ADDED');
-                // Set the name of the new version
-                $('#audit-version').attr('value')
-            },
-            complete: function(e) {
-                $('.fixedLoader').removeClass('active');
+    $('#forkVersionForm')
+        .form({
+            on : 'change',
+            fields : {
+                forkVersion : {
+                    identifier : 'forkVersion',
+                    rules : [
+                        {
+                            type    : 'empty',
+                            prompt  : 'Missing fork version name.'
+                        }
+                    ]
+                }
             }
-        });
-    });
-
-    $('#addStorageForm').find('.submit').click(function() {
-        var url = $('#add-url').attr('value');
-        var formData = new FormData($('#addStorageForm')[0]);
-
-        $.ajax({
-            type: 'post',
-            url: url,
-            contentType: false,
-            processData: false,
-            cache: false,
-            data: formData,
-            beforeSend: function() {
-                $('.fixedLoader').addClass('active');
-            },
-            success: function(storage) {
-                $('#formSubmissionMsg').find('.header').text("Submission Successful");
-                $('#formSubmissionMsg').find('p').text("The object was successfully created!");
-                $('#formSubmissionMsg').removeClass('error');
-                $('#formSubmissionMsg').addClass("success");
-
-                var card = $('#storageCardTemplate').clone();
-                card.attr('id', '')
-                    .appendTo('#storageCards')
-                    .find(".header").html(storage.name);
-
-                card.find(".image").click(function() {
-                    location.href = window.location.href.split('?')[0] + '/' + storage.name;
-                    //window.location+='/' + storage.name
-                });
-
-                card.find('.description')
-                    .html(storage.description);
-
-                card.find(".imageURL").attr("src", storage.imageURL);
-                card.find(".remove").attr("data", storage.id);
-
-                card.find(".remove").click(function() {
-                    var parentCard = $(this).parents().eq(4);
-                    var storageName = $(this).attr('data');
-                    var parentID = $('#parentID').attr('value');
-                    var url = $('#remove-url').attr('value');
-                    $('.ui.basic.modal.confirm')
-                        .modal({
-                            onApprove: function() {
-                                $.ajax({
-                                    url: url + storageName + '/from/' + parentID,
-                                    type: 'get',
-                                    success: function() {
-                                        parentCard.remove();
-                                    },
-                                    error: function(e) { }
-                                });
-                            }
-                        })
-                        .modal('show');
-                });
-
-                $('.dropdown')
-                    .dropdown()
-                ;
-
-                card.show();
-
-                $('#noStorages').hide();
-            },
-            error: function() {
-                $('#formSubmissionMsg .header').text("Submission Failed");
-                $('#formSubmissionMsg p').text("An error occurred while creating object!");
-                $('#formSubmissionMsg').addClass("error");
-                $('#formSubmissionMsg').removeClass("success");
-            },
-            complete: function() {
-                $("#noStorages").hide();
-                $('#formSubmissionMsg').show();
-                $('.fixedLoader').removeClass('active');
+        }).submit(function() {
+            var forkVersion = $('#forkVersion').val();
+            if (forkVersion == '') {
+                return;
             }
-        });
-    });
+
+            $.ajax({
+                type        : 'post',
+                dataType    : 'json',
+                contentType : 'application/json',
+                mimeType    : 'application/json',
+                url         : location.origin + '/api/update/cabinet',
+                data        : JSON.stringify({
+                    request         : 'FORK',
+                    location        : $('#location-name').attr('value'),
+                    room            : $('#room-name').attr('value'),
+                    cabinet         : $('#cabinet-name').attr('value'),
+                    auditVersion    : $('#audit-version').attr('value'),
+                    forkVersion     : forkVersion
+                }),
+                beforeSend: function() {
+                    $(".fixedLoader").addClass('active');
+                },
+                success: function() {
+                    // Set the name of the new version
+                    $('#audit-version').attr('value')
+                    location.reload();
+                },
+                complete: function() {
+                    $('.fixedLoader').removeClass('active');
+                }
+            });
+        })
+    ;
 
     $('.storage .remove')
         .click(function() {

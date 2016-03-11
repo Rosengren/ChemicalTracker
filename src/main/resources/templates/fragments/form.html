@@ -29,6 +29,7 @@
                 Submit
             </div>
         </div>
+        <div class="ui error message"></div>
     </form>
 </div>
 
@@ -61,6 +62,30 @@
                 Submit
             </div>
         </div>
+        <div class="ui error message"></div>
+    </form>
+</div>
+
+<div th:fragment="update-chemical-image" class="content">
+    <form id="updateChemicalForm" class="ui form" enctype="multipart/form-data">
+        <div class="field">
+            <label>Photo</label>
+            <input type="file" name="image" />
+        </div>
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <input type="hidden" name="location" th:value="${location}" />
+        <input type="hidden" id="updateChemicalImageName" name="name" />
+        <input type="hidden" name="auditVersion" th:value="${currentAuditVersion}" />
+        <input type="hidden" name="cabinetID" th:value="${cabinetID}" />
+        <div class="ui error message"></div>
+        <div class="actions">
+            <div class="ui black deny button">
+                Cancel
+            </div>
+            <div class="ui positive submit button">
+                Submit
+            </div>
+        </div>
     </form>
 </div>
 
@@ -70,6 +95,9 @@
             <label>Fork Version Name</label>
             <input type="text" id="forkVersion" name="forkVersion" />
         </div>
+
+        <div class="ui error message"></div>
+
         <div class="actions">
             <div class="ui black deny button">
                 Cancel
@@ -110,6 +138,9 @@
             </div>
         </div>
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+
+        <div class="ui error message"></div>
+
         <div class="actions">
             <div class="ui black deny button">
                 Cancel
@@ -118,7 +149,6 @@
                 Submit
             </div>
         </div>
-        <div class="ui error message"></div>
     </form>
 </div>
 </body>

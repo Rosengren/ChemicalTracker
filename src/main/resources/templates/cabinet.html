@@ -15,6 +15,7 @@
 <div th:replace="fragments/modal :: fork"></div>
 <div th:replace="fragments/modal :: compare"></div>
 <div th:replace="fragments/modal :: compareResult"></div>
+<div th:replace="fragments/modal :: updateChemicalImage"></div>
 
 <div class="pusher">
     <div th:replace="fragments/menu :: menu"></div>
@@ -54,9 +55,9 @@
                                         New
                                     </div>
                                 </div>
-                                <div class="three wide column middle aligned">
+                                <div class="four wide column middle aligned">
                                     <div class="ui secondary button" id="compareVersions" data-content="Compare different versions">
-                                        Diff
+                                        Compare
                                     </div>
                                 </div>
                                 <div class="nine wide column middle aligned">
@@ -74,7 +75,7 @@
                             </div>
                         </div>
 
-                        <div class="six wide column middle aligned">
+                        <div class="five wide column middle aligned">
                             <div class="ui search">
                                 <div class="ui icon input">
                                     <input class="prompt" type="text" placeholder="Add Chemical" />
@@ -162,7 +163,7 @@
                 </div>
                 <div th:each="chemical : ${chemicals}" class="column">
                     <div class="ui link card chemical" >
-                        <div class="blurring dimmable image viewChemical" th:data="${chemical.name}">
+                        <div class="blurring dimmable image viewChemical" th:data="${chemical.key}">
                             <div class="ui dimmer">
                                 <div class="content">
                                     <div class="center">
@@ -170,16 +171,16 @@
                                     </div>
                                 </div>
                             </div>
-                            <img th:src="${chemical.imageURL}" />
+                            <img th:src="${chemical.value}" />
                         </div>
                         <div class="content">
-                            <div class="header" th:text="${chemical.name}"></div>
+                            <div class="header" th:text="${chemical.key}"></div>
                         </div>
                         <div class="extra content">
-                            <a class="right floated created remove" th:data="${chemical.name}">
+                            <a class="right floated created remove" th:data="${chemical.key}">
                                 Remove
                             </a>
-                            <a class="" onclick="alert('todo: add ability to edit')">
+                            <a class="editChemical" data-content="update chemical" th:data="${chemical.key}">
                                 <i class="edit icon"></i>
                                 Edit
                             </a>
@@ -210,6 +211,7 @@
 <div type="hidden" id="location-name" th:value="${location}"></div>
 <div type="hidden" id="room-name" th:value="${room}"></div>
 <div type="hidden" id="cabinet-name" th:value="${title}"></div>
+<div type="hidden" id="update-image-url" th:value="${updateImageURL}"></div>
 <div type="hidden" id="audit-version" th:value="${currentAuditVersion}"></div>
 <div th:replace="fragments/card :: chemicalCard"></div>
 </body>
