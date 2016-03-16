@@ -80,9 +80,9 @@ public class CabinetController {
 
 
     @RequestMapping(value = "/{locationName}/{roomName}/{cabinetName}/compare/{old}/with/{new}", method = GET)
-    public ResponseEntity<CompareCabinetsResponse> compareVersions(@PathVariable("locationName") String locationName,
-                                                                   @PathVariable("roomName") String roomName,
-                                                                   @PathVariable("cabinetName") String cabinetName,
+    public ResponseEntity<CompareCabinetsResponse> compareVersions(@PathVariable("locationName") final String locationName,
+                                                                   @PathVariable("roomName") final String roomName,
+                                                                   @PathVariable("cabinetName") final String cabinetName,
                                                                    @PathVariable("old") final String oldVersion,
                                                                    @PathVariable("new") final String newVersion,
                                                                    final Principal principal) {

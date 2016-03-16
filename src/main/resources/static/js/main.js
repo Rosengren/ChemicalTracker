@@ -6,6 +6,10 @@ $(document).ready(function() {
         'compare'       : location.href.split('?')[0] + '/compare/{oldVersion}/with/{newVersion}'
     };
 
+    $('.dropdown')
+        .dropdown()
+    ;
+
     $('.version.dropdown')
         .dropdown({
             on: 'click',

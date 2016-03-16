@@ -2,6 +2,8 @@ package com.chemicaltracker.controller.api.response;
 
 public class UpdateResponse {
 
+    private static final String PLACEHOLDER_IMAGE_URL = "https://s3-us-west-2.amazonaws.com/chemical-images/placeholder.png";
+
     private Boolean success;
     private UpdateStatus status;
     private String message;
@@ -11,7 +13,7 @@ public class UpdateResponse {
         this.status = status;
         this.success = status.getSuccess();
         this.message = status.getMessage();
-        this.imageURL = "https://s3-us-west-2.amazonaws.com/chemical-images/placeholder.png"; // TODO: make this constant
+        this.imageURL = PLACEHOLDER_IMAGE_URL;
     }
 
     public UpdateResponse() {
