@@ -2,7 +2,7 @@
 $(document).ready(function() {
     $.fn.api.settings.api = {
         'add storage'   : $('#add-url').attr('value'),
-        'search'        : '/api/search/chemicals?q={query}',
+        'search'        : $('#es-endpoint').attr('value') + 'chemicals/chemical/_search?q=Name:*{query}*',
         'compare'       : location.href.split('?')[0] + '/compare/{oldVersion}/with/{newVersion}'
     };
 
@@ -345,6 +345,21 @@ $(document).ready(function() {
                 results     : 'chemicals',
                 title       : 'name',
                 description : ''
+            },
+            apiSettings: {
+                onResponse: function(response) {
+                    // Convert Elasticsearch to
+                    var chemicals = [];
+                    var source = response.hits.hits;
+                    for (var i = 0; i < source.length; i++) {
+                        chemicals.push({
+                            name: source[0]._source.name,
+                            imageURL: 'https://s3-us-west-2.amazonaws.com/chemical-images/placeholder.png'
+                        });
+                    }
+
+                    return {chemicals: chemicals};
+                }
             },
             onSelect: function(chemical) {
 

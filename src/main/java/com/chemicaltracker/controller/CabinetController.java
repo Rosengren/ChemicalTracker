@@ -71,6 +71,7 @@ public class CabinetController {
         cabinetView.addObject("addURL", "/api/add/chemicals/to/cabinet/" + cabinet.getID());
         cabinetView.addObject("removeURL", "/api/remove/chemical/from/cabinet/" + cabinet.getID());
         cabinetView.addObject("updateImageURL", "/api/update/chemicalImage");
+        cabinetView.addObject("esEndpoint", "https://search-chemicals-dc6hr76bx464tyxrtuwajnoki4.us-west-2.es.amazonaws.com/");
 
         cabinetView.addObject("auditVersionNames", cabinet.getAuditVersionNames());
 
