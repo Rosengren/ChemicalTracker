@@ -479,7 +479,8 @@ $(document).ready(function() {
                     room            : $('#room-name').attr('value'),
                     cabinet         : $('#cabinet-name').attr('value'),
                     auditVersion    : $('#audit-version').attr('value'),
-                    forkVersion     : forkVersion
+                    forkVersion     : forkVersion,
+                    forkWithChemicals : document.getElementById('forkWithChemicals').checked
                 }),
                 beforeSend: function() {
                     $(".fixedLoader").addClass('active');

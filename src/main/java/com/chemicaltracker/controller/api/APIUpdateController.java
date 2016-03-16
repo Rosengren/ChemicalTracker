@@ -164,7 +164,7 @@ public class APIUpdateController {
             }
             case "FORK": {
                 if (missingForkVersion(request)) {
-                    return new UpdateResponse((UpdateStatus.MISSING_FORK_VERSION));
+                    return new UpdateResponse(UpdateStatus.MISSING_FORK_VERSION);
                 }
 
                 final Cabinet cabinet = inventoryService.getCabinet(
@@ -179,7 +179,9 @@ public class APIUpdateController {
                     return new UpdateResponse(UpdateStatus.FORK_VERSION_ALREADY_EXISTS);
                 }
 
-                inventoryService.forkCabinet(cabinet, request.getForkVersion());
+                System.out.println("FORK WITH = " + request.isForkWithChemicals());
+
+                inventoryService.forkCabinet(cabinet, request.getForkVersion(), request.isForkWithChemicals());
                 return new UpdateResponse(UpdateStatus.FORKED_CABINET);
             }
         }

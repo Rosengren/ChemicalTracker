@@ -146,8 +146,8 @@ public class InventoryServiceImpl implements InventoryService {
     }
 
     @Override
-    public void forkCabinet(final Cabinet cabinet, final String version) {
-        cabinet.forkVersion(version);
+    public void forkCabinet(final Cabinet cabinet, final String version, final boolean withChemicals) {
+        cabinet.forkVersion(version, withChemicals);
         cabinetsDB.update(cabinet);
     }
 

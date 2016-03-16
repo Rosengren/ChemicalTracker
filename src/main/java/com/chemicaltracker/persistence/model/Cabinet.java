@@ -38,9 +38,17 @@ public class Cabinet extends AbstractStorageComponent implements StorageComponen
     }
 
     @DynamoDBIgnore
-    public void forkVersion(final String version) {
-        final AuditVersion fork = getLatestAuditVersion().clone();
-        fork.setName(version);
+    public void forkVersion(final String version, final boolean withChemicals) {
+
+        final AuditVersion fork;
+
+        if (withChemicals) {
+            fork = getLatestAuditVersion().clone();
+            fork.setName(version);
+        } else {
+            fork = new AuditVersion().withName(version);
+        }
+
         auditVersions.put(version, fork);
     }
 

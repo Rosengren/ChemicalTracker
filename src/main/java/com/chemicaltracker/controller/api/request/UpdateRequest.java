@@ -12,6 +12,16 @@ public class UpdateRequest {
     private String chemical;
     private String auditVersion;
     private String forkVersion;
+    private boolean forkWithChemicals;
+
+    public boolean isForkWithChemicals() {
+        return forkWithChemicals;
+    }
+
+    public void setForkWithChemicals(boolean forkWithChemicals) {
+        this.forkWithChemicals = forkWithChemicals;
+    }
+
 
     public String getRequest() {
         return request;

@@ -56,7 +56,7 @@ public interface InventoryService {
     void updateRoom(Room room);
     void updateCabinet(Cabinet cabinet);
 
-    void forkCabinet(Cabinet cabinet, String version);
+    void forkCabinet(Cabinet cabinet, String version, boolean withChemicals);
 
     Comparison compareCabinetVersions(Cabinet cabinet, String oldVersion, String newVersion);
 }
