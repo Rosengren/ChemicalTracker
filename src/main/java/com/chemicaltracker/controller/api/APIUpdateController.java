@@ -125,10 +125,6 @@ public class APIUpdateController {
             return new UpdateResponse(UpdateStatus.MISSING_STORAGE_FIELD);
         }
 
-        if (missingAuditVersion(request)) {
-            return new UpdateResponse(UpdateStatus.MISSING_AUDIT_VERSION);
-        }
-
         final Room room = inventoryService.getRoom(principal.getName(), request.getLocation(), request.getRoom());
         if (room == null) {
             return new UpdateResponse(UpdateStatus.INVALID_STORAGE);
@@ -143,6 +139,10 @@ public class APIUpdateController {
 
                 if (cabinet != null) {
                     return new UpdateResponse(UpdateStatus.STORAGE_ALREADY_EXISTS);
+                }
+
+                if (missingAuditVersion(request)) {
+                    request.setAuditVersion("version 1");
                 }
 
                 inventoryService.addCabinet(new Cabinet()
