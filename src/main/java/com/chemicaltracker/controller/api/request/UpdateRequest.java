@@ -5,11 +5,23 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class UpdateRequest {
 
-    private String request; // ADD or REMOVE
+    private String request; // ADD or REMOVE or FORK
     private String location;
     private String room;
     private String cabinet;
     private String chemical;
+    private String auditVersion;
+    private String forkVersion;
+    private boolean forkWithChemicals;
+
+    public boolean isForkWithChemicals() {
+        return forkWithChemicals;
+    }
+
+    public void setForkWithChemicals(boolean forkWithChemicals) {
+        this.forkWithChemicals = forkWithChemicals;
+    }
+
 
     public String getRequest() {
         return request;
@@ -47,6 +59,22 @@ public class UpdateRequest {
 
     public void setChemical(String chemical) {
         this.chemical = chemical;
+    }
+
+    public String getAuditVersion() {
+        return auditVersion;
+    }
+
+    public void setAuditVersion(String auditVersion) {
+        this.auditVersion = auditVersion;
+    }
+
+    public String getForkVersion() {
+        return forkVersion;
+    }
+
+    public void setForkVersion(String forkVersion) {
+        this.forkVersion = forkVersion;
     }
 }
 

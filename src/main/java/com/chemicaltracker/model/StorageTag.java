@@ -10,8 +10,8 @@ public enum StorageTag {
             "Reduction Agents are present in this cabinet!", true),
     OXIDIZING_AGENTS("Oxidizing Agent(s)", "black", "Contains Oxidizing Agents", false),
     REDUCTION_AGENTS("Reduction Agent(s)", "black", "Contains Reduction Agents", false),
-    ACIDIC("Acid(s)", "black", "Contains one or more chemicals with a pH level above 7", true),
-    BASIC("Base(s)", "black", "Contains one or more chemicals with a pH level below 7", true),
+    ACIDIC("Acid(s)", "black", "Contains one or more chemicals with a pH level below 7", true),
+    BASIC("Base(s)", "black", "Contains one or more chemicals with a pH level above 7", true),
     ACIDS_AND_BASES("Acids and Bases", "red", "Warning! Acids and Bases are present " +
             " in this cabinet!", true);
 

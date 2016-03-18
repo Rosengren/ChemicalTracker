@@ -12,7 +12,7 @@
     </div>
     <div class="description">
         <p>Are you sure you would like to remove this?</p>
-    </div>pa
+    </div>
     <div class="actions">
         <div class="ui red basic inverted button">
             <i class="remove icon"></i>
@@ -24,5 +24,43 @@
         </div>
     </div>
 </div>
+
+
+
+<div th:fragment="fork" class="ui small modal fork">
+    <div class="header">
+        Are you sure you would like to fork a new version of this cabinet?
+    </div>
+    <div th:replace="fragments/form :: confirm-new-version"></div>
+</div>
+
+<div th:fragment="compare" class="ui small modal compare">
+    <div class="header">
+        Compare chemicals from different versions of this cabinet
+    </div>
+    <div th:replace="fragments/form :: compare-versions"></div>
+</div>
+
+<div th:fragment="compareResult" class="ui small modal compareResult">
+    <div class="header" id="compare-header">
+        Cabinet Comparison
+    </div>
+    <div class="content">
+        <h3>Added</h3>
+        <ul id="compare-added"></ul>
+        <h3>Removed</h3>
+        <ul id="compare-removed"></ul>
+        <h3>Contained in Both</h3>
+        <ul id="compare-matching"></ul>
+    </div>
+</div>
+
+<div th:fragment="updateChemicalImage" class="ui small modal updateChemicalImage">
+    <div class="header">
+        Update Chemical Image
+    </div>
+    <div th:replace="fragments/form :: update-chemical-image"></div>
+</div>
+
 </body>
 </html>

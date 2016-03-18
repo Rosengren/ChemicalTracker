@@ -12,6 +12,10 @@
 </div>
 <div th:replace="fragments/sidebar :: sidebar"></div>
 <div th:replace="fragments/modal :: confirm"></div>
+<div th:replace="fragments/modal :: fork"></div>
+<div th:replace="fragments/modal :: compare"></div>
+<div th:replace="fragments/modal :: compareResult"></div>
+<div th:replace="fragments/modal :: updateChemicalImage"></div>
 
 <div class="pusher">
     <div th:replace="fragments/menu :: menu"></div>
@@ -30,32 +34,60 @@
         </div>
 
         <div class="ui container bottom-padding">
-            <div class="ui grid">
-                <div class="four column row">
-                    <div class="twelve wide column middle aligned">
-                        <div class="ui breadcrumb">
-                            <a class="section" th:href="'/Home'" th:text="'Home'"></a>
-                            <i class="right angle icon divider"></i>
-                            <a class="section" th:href="'/Home/'+${location}" th:text="${location}"></a>
-                            <i class="right angle icon divider"></i>
-                            <a class="section" th:href="'/Home/'+${location}+'/'+${room}" th:text="${room}"></a>
-                            <i class="right angle icon divider"></i>
-                            <div class="active section" th:text="${title}"></div>
-                        </div>
+            <div class="ui two column stackable grid">
+                <div class="seven wide column middle aligned">
+                    <div class="ui breadcrumb">
+                        <a class="section" th:href="'/Home'" th:text="'Home'"></a>
+                        <i class="right angle icon divider"></i>
+                        <a class="section" th:href="'/Home/'+${location}" th:text="${location}"></a>
+                        <i class="right angle icon divider"></i>
+                        <a class="section" th:href="'/Home/'+${location}+'/'+${room}" th:text="${room}"></a>
+                        <i class="right angle icon divider"></i>
+                        <div class="active section" th:text="${title}"></div>
                     </div>
-                    <div class="right floated column">
-                        <div class="ui search">
-                            <div class="ui icon input">
-                                <input class="prompt" type="text" placeholder="Add Chemical" />
-                                <i class="search icon"></i>
+                </div>
+                <div class="nine wide column">
+                    <div class="ui two column stackable centered grid">
+                        <div class="ten wide column middle aligned">
+                            <div class="ui four column left aligned grid">
+                                <div class="three wide column middle aligned">
+                                    <div class="ui green button" id="newVersion" data-content="Fork a new version">
+                                        New
+                                    </div>
+                                </div>
+                                <div class="four wide column middle aligned">
+                                    <div class="ui secondary button" id="compareVersions" data-content="Compare different versions">
+                                        Compare
+                                    </div>
+                                </div>
+                                <div class="nine wide column middle aligned">
+                                    <div class="ui selection version dropdown">
+                                        <input type="hidden" name="version"/>
+                                        <i class="dropdown icon"></i>
+                                        <div class="default text" th:text="${currentAuditVersion}"></div>
+                                        <div class="menu">
+                                            <div th:each="version : ${auditVersionNames}" th:if="${version != currentAuditVersion}"
+                                                 class="item" th:text="${version}" th:data="${version}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="results"></div>
+                        </div>
+
+                        <div class="five wide column middle aligned">
+                            <div class="ui search">
+                                <div class="ui icon input">
+                                    <input class="prompt" type="text" placeholder="Add Chemical" />
+                                    <i class="search icon"></i>
+                                </div>
+                                <div class="results"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-
         <div th:if="${not #lists.isEmpty(chemicals)}" class="ui container bottom-padding">
             <div class="ui dividing header">
                 Metrics
@@ -131,7 +163,7 @@
                 </div>
                 <div th:each="chemical : ${chemicals}" class="column">
                     <div class="ui link card chemical" >
-                        <div class="blurring dimmable image" th:onclick="'window.location+=\'/'+${chemical.name}+'\''">
+                        <div class="blurring dimmable image viewChemical" th:data="${chemical.key}">
                             <div class="ui dimmer">
                                 <div class="content">
                                     <div class="center">
@@ -139,16 +171,16 @@
                                     </div>
                                 </div>
                             </div>
-                            <img th:src="${chemical.imageURL}" />
+                            <img th:src="${chemical.value}" />
                         </div>
                         <div class="content">
-                            <div class="header" th:text="${chemical.name}"></div>
+                            <div class="header" th:text="${chemical.key}"></div>
                         </div>
                         <div class="extra content">
-                            <a class="right floated created remove" th:data="${chemical.name}">
+                            <a class="right floated created remove" th:data="${chemical.key}">
                                 Remove
                             </a>
-                            <a class="" onclick="alert('todo: add ability to edit')">
+                            <a class="editChemical" data-content="update chemical" th:data="${chemical.key}">
                                 <i class="edit icon"></i>
                                 Edit
                             </a>
@@ -179,6 +211,9 @@
 <div type="hidden" id="location-name" th:value="${location}"></div>
 <div type="hidden" id="room-name" th:value="${room}"></div>
 <div type="hidden" id="cabinet-name" th:value="${title}"></div>
+<div type="hidden" id="update-image-url" th:value="${updateImageURL}"></div>
+<div type="hidden" id="audit-version" th:value="${currentAuditVersion}"></div>
+<div type="hidden" id="es-endpoint" th:value="${esEndpoint}"></div>
 <div th:replace="fragments/card :: chemicalCard"></div>
 </body>
 

@@ -117,7 +117,7 @@ public class APIUpdateController {
 
         final String requestType = request.getRequest();
 
-        if (invalidRequest(requestType)) {
+        if (invalidRequest(requestType) && !requestType.equals("FORK")) {
             return new UpdateResponse((UpdateStatus.INVALID_REQUEST_TYPE));
         }
 
@@ -125,35 +125,65 @@ public class APIUpdateController {
             return new UpdateResponse(UpdateStatus.MISSING_STORAGE_FIELD);
         }
 
+        if (missingAuditVersion(request)) {
+            return new UpdateResponse(UpdateStatus.MISSING_AUDIT_VERSION);
+        }
+
         final Room room = inventoryService.getRoom(principal.getName(), request.getLocation(), request.getRoom());
         if (room == null) {
             return new UpdateResponse(UpdateStatus.INVALID_STORAGE);
         }
 
-        if (requestType.equals("ADD")) {
+        switch (requestType) {
+            case "ADD": {
 
-            // Check if cabinet already exists
-            Cabinet cabinet = inventoryService.getCabinet(principal.getName(),
-                    request.getLocation(), request.getRoom(), request.getCabinet());
+                // Check if cabinet already exists
+                Cabinet cabinet = inventoryService.getCabinet(principal.getName(),
+                        request.getLocation(), request.getRoom(), request.getCabinet());
 
-            if (cabinet != null) {
-                return new UpdateResponse(UpdateStatus.STORAGE_ALREADY_EXISTS);
+                if (cabinet != null) {
+                    return new UpdateResponse(UpdateStatus.STORAGE_ALREADY_EXISTS);
+                }
+
+                inventoryService.addCabinet(new Cabinet()
+                        .withName(request.getCabinet())
+                        .withUsername(principal.getName())
+                        .withDescription(" ")
+                        .withID(UUID.randomUUID().toString())
+                        .withAuditVersion(request.getAuditVersion()), room.getID());
+                return new UpdateResponse(UpdateStatus.ADDED_CABINET);
             }
-
-            inventoryService.addCabinet(new Cabinet()
-                    .withName(request.getCabinet())
-                    .withUsername(principal.getName())
-                    .withDescription(" ")
-                    .withID(UUID.randomUUID().toString()), room.getID());
-            return new UpdateResponse(UpdateStatus.ADDED_CABINET);
-        } else if (requestType.equals("REMOVE")) {
-            final Cabinet cabinet = inventoryService.getCabinet(
-                    principal.getName(), request.getLocation(), request.getRoom(), request.getCabinet());
-            if (cabinet == null) {
-                return new UpdateResponse(UpdateStatus.INVALID_STORAGE);
+            case "REMOVE": {
+                final Cabinet cabinet = inventoryService.getCabinet(
+                        principal.getName(), request.getLocation(), request.getRoom(), request.getCabinet());
+                if (cabinet == null) {
+                    return new UpdateResponse(UpdateStatus.INVALID_STORAGE);
+                }
+                inventoryService.removeCabinet(cabinet, room.getID());
+                return new UpdateResponse(UpdateStatus.REMOVED_CABINET);
             }
-            inventoryService.removeCabinet(cabinet, room.getID());
-            return new UpdateResponse(UpdateStatus.REMOVED_CABINET);
+            case "FORK": {
+                if (missingForkVersion(request)) {
+                    return new UpdateResponse(UpdateStatus.MISSING_FORK_VERSION);
+                }
+
+                final Cabinet cabinet = inventoryService.getCabinet(
+                        principal.getName(), request.getLocation(), request.getRoom(), request.getCabinet());
+
+                if (cabinet == null) {
+                    return new UpdateResponse(UpdateStatus.INVALID_STORAGE);
+                }
+
+                // Check if version exists
+                if (cabinet.getAuditVersion(request.getForkVersion()) != null) {
+                    return new UpdateResponse(UpdateStatus.FORK_VERSION_ALREADY_EXISTS);
+                }
+
+                System.out.println("FORK WITH = " + request.isForkWithChemicals());
+
+                inventoryService.forkCabinet(cabinet, request.getForkVersion(), request.isForkWithChemicals());
+                return new UpdateResponse(UpdateStatus.FORKED_CABINET);
+            }
         }
 
         return new UpdateResponse(UpdateStatus.UNKNOWN_ERROR);
@@ -172,6 +202,10 @@ public class APIUpdateController {
             return new UpdateResponse(UpdateStatus.MISSING_STORAGE_FIELD);
         }
 
+        if (missingAuditVersion(request)) {
+            return new UpdateResponse(UpdateStatus.MISSING_AUDIT_VERSION);
+        }
+
         final Chemical chemical = inventoryService.getChemical(request.getChemical());
 
         if (chemical == null) {
@@ -182,11 +216,11 @@ public class APIUpdateController {
                 request.getLocation(), request.getRoom(), request.getCabinet());
 
         if (requestType.equals("ADD")) {
-            cabinet.addChemical(request.getChemical(), Chemical.PLACEHOLDER_IMAGE_URL); // TODO: add image URL
+            cabinet.addChemical(request.getAuditVersion(), request.getChemical(), Chemical.PLACEHOLDER_IMAGE_URL); // TODO: add image URL
             inventoryService.updateCabinet(cabinet);
             return new UpdateResponse(UpdateStatus.ADDED_CHEMICAL);
         } else if (requestType.equals("REMOVE")) {
-            cabinet.removeChemical(request.getChemical());
+            cabinet.removeChemical(request.getAuditVersion(), request.getChemical());
             inventoryService.updateCabinet(cabinet);
             return new UpdateResponse(UpdateStatus.REMOVED_CHEMICAL);
         }
@@ -195,21 +229,39 @@ public class APIUpdateController {
     }
 
     private boolean invalidRequest(final String request) {
-        return request != null && !request.equals("ADD") && !request.equals("REMOVE");
+        return request == null || !request.equals("ADD") && !request.equals("REMOVE");
     }
 
     private boolean missingStorageField(final UpdateRequest request) {
-        return request != null && (request.getLocation().isEmpty() ||
-               request.getRoom().isEmpty()     ||
-               request.getCabinet().isEmpty());
+
+        return request == null ||
+                request.getLocation() == null ||
+                request.getRoom() == null ||
+                request.getCabinet() == null ||
+                request.getLocation().isEmpty() ||
+                request.getRoom().isEmpty()     ||
+                request.getCabinet().isEmpty();
     }
 
     private boolean missingLocation(final UpdateRequest request) {
-        return request != null && request.getLocation().isEmpty();
+        return request == null ||
+                request.getLocation() == null ||
+                request.getLocation().isEmpty();
     }
 
     private boolean missingLocationOrRoom(final UpdateRequest request) {
-        return request != null && (request.getLocation().isEmpty() ||
-               request.getRoom().isEmpty());
+        return request == null ||
+                request.getLocation() == null ||
+                request.getRoom() == null ||
+                request.getLocation().isEmpty() ||
+                request.getRoom().isEmpty();
+    }
+
+    private boolean missingAuditVersion(final UpdateRequest request) {
+        return request == null || request.getAuditVersion() == null || request.getAuditVersion().isEmpty();
+    }
+
+    private boolean missingForkVersion(final UpdateRequest request) {
+        return request == null || request.getForkVersion() == null || request.getForkVersion().isEmpty();
     }
 }

@@ -22,7 +22,7 @@ public abstract class AbstractStorageComponent {
     protected static final Font BODY = new Font(Font.FontFamily.HELVETICA, 12, Font.NORMAL);
     protected static final Font LIST_ITEM = new Font(Font.FontFamily.HELVETICA, 12, Font.NORMAL);
 
-    protected String name;
+    protected transient String name;
     protected java.util.List<StorageComponent> elements;
 
     public AbstractStorageComponent() {

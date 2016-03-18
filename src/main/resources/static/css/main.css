@@ -164,7 +164,7 @@
     height: 30vh;
     margin-bottom: 30px;
     padding-top: 100px;
-    padding-bottom: 100px;
+    padding-bottom: 80px;
 }
 
 #chemicalTracker.storage .bottom-padding,
@@ -330,7 +330,7 @@
 
 .semi-transparent {
     background-color: rgba(0, 0, 0, 0.34);
-    padding: 15px;
+
 }
 
 /*
@@ -437,8 +437,17 @@ a.diamond .text {
 }
 
 /*
- * chemical search bar
+ * Diff Modal
  */
-.ui.search {
-    float: right;
+.ui.small.modal.compareResult .content {
+    max-height: 450px;
+    overflow: scroll;
+}
+
+#compare-added {
+    color: #005700;
+}
+
+#compare-removed {
+    color: #9e0000;
 }

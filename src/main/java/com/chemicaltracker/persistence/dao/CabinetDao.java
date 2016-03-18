@@ -26,18 +26,6 @@ public class CabinetDao extends DynamoDBDao<Cabinet>  {
         return instance;
     }
 
-    public List<Cabinet> findAll(final String hash) {
-
-        Map<String, AttributeValue> eav = new HashMap<>();
-        eav.put(":val1", new AttributeValue().withS(hash));
-
-        DynamoDBScanExpression scanExpression = new DynamoDBScanExpression()
-                .withFilterExpression("Username = :val1")
-                .withExpressionAttributeValues(eav);
-
-        return mapper.scan(Cabinet.class, scanExpression);
-    }
-
     public List<Cabinet> findAllByIds(final String hash, final List<String> cabinetIDs) {
 
         final List<Cabinet> cabinets = new ArrayList<>();

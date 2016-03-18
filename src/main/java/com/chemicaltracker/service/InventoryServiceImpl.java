@@ -1,5 +1,6 @@
 package com.chemicaltracker.service;
 
+import com.chemicaltracker.model.Comparison;
 import com.chemicaltracker.persistence.dao.CabinetDao;
 import com.chemicaltracker.persistence.dao.ChemicalDao;
 import com.chemicaltracker.persistence.dao.LocationDao;
@@ -14,7 +15,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Service Layer Pattern
@@ -120,6 +123,7 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     public void removeCabinet(final Cabinet cabinet, final String parentID) {
         final Room room = roomsDB.find(cabinet.getUsername(), parentID);
+        logger.info("CABINET ID: " + cabinet.getID());
         logger.info("Removing cabinet id: " + cabinet.getName() + " from room: " + room.getName());
         room.removeStoredItem(cabinet.getName());
         roomsDB.update(room);
@@ -139,6 +143,35 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     public void updateCabinet(final Cabinet cabinet) {
         cabinetsDB.update(evaluator.evaluate(cabinet));
+    }
+
+    @Override
+    public void forkCabinet(final Cabinet cabinet, final String version, final boolean withChemicals) {
+        cabinet.forkVersion(version, withChemicals);
+        cabinetsDB.update(cabinet);
+    }
+
+    @Override
+    public Comparison compareCabinetVersions(final Cabinet cabinet, final String oldVersion, final String newVersion) {
+
+        if (cabinet.getAuditVersion(oldVersion.toLowerCase()) == null ||
+                cabinet.getAuditVersion(newVersion.toLowerCase()) == null) {
+            return new Comparison(); // in the future, might want to throw an error if versions are invalid
+        }
+
+        final Set<String> oldSet = new HashSet<>(cabinet.getAuditVersion(oldVersion).getChemicalNames());
+        final Set<String> newSet = new HashSet<>(cabinet.getAuditVersion(newVersion).getChemicalNames());
+
+        Set<String> inBoth = new HashSet<>(oldSet);
+        inBoth.retainAll(newSet);
+
+        Set<String> removed = new HashSet<>(oldSet);
+        removed.removeAll(newSet);
+
+        Set<String> added = new HashSet<>(newSet);
+        added.removeAll(oldSet);
+
+        return new Comparison(added, removed, inBoth);
     }
 
     @Override
@@ -166,6 +199,11 @@ public class InventoryServiceImpl implements InventoryService {
         if (roomID == null || roomID.isEmpty()) return null;
         final String cabinetID = roomsDB.find(username, roomID).getStoredItemID(cabinetName);
         if (cabinetID == null || cabinetID.isEmpty()) return null;
+        return cabinetsDB.find(username, cabinetID);
+    }
+
+    @Override
+    public Cabinet getCabinet(String username, String cabinetID) {
         return cabinetsDB.find(username, cabinetID);
     }
 
