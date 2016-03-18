@@ -10,9 +10,6 @@ public class Chemical extends AbstractStorageComponent implements StorageCompone
     // DB field names
     public static final String PLACEHOLDER_IMAGE_URL = "https://s3-us-west-2.amazonaws.com/chemical-images/placeholder.png";
 
-    @SerializedName(value = "Name")
-    private String name;
-
     private transient String imageURL;
     private transient FireDiamond fireDiamond;
     private transient Boolean match;

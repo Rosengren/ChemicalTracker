@@ -1,5 +1,6 @@
 package com.chemicaltracker.persistence.model;
 
+import com.google.gson.annotations.SerializedName;
 import com.itextpdf.text.*;
 import com.itextpdf.text.List;
 
@@ -22,7 +23,9 @@ public abstract class AbstractStorageComponent {
     protected static final Font BODY = new Font(Font.FontFamily.HELVETICA, 12, Font.NORMAL);
     protected static final Font LIST_ITEM = new Font(Font.FontFamily.HELVETICA, 12, Font.NORMAL);
 
-    protected transient String name;
+    @SerializedName(value = "Name")
+    protected String name;
+
     protected java.util.List<StorageComponent> elements;
 
     public AbstractStorageComponent() {
