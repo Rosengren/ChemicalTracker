@@ -3,37 +3,67 @@ package com.chemicaltracker.persistence.model;
 import java.util.Map;
 import java.util.HashMap;
 
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBAttribute;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBHashKey;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBIgnore;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
+import com.google.gson.annotations.SerializedName;
 
-// Composite Design Pattern: Leaf
-@DynamoDBTable(tableName="Chemicals")
 public class Chemical extends AbstractStorageComponent implements StorageComponent {
 
     // DB field names
     public static final String PLACEHOLDER_IMAGE_URL = "https://s3-us-west-2.amazonaws.com/chemical-images/placeholder.png";
 
+    @SerializedName(value = "Name")
     private String name;
-    private String imageURL;
-    private FireDiamond fireDiamond;
-    private Boolean match;
 
-    private String cas;
+    private transient String imageURL;
+    private transient FireDiamond fireDiamond;
+    private transient Boolean match;
 
+    @SerializedName(value = "Accidental Release Measures")
     private Map<String, String> accidentalReleaseMeasures;
+
+    @SerializedName(value = "Disposal Considerations")
     private Map<String, String> disposalConsiderations;
+
+    @SerializedName(value = "Ecological Information")
     private Map<String, String> ecologicalInformation;
+
+    @SerializedName(value = "Exposure Controls and Personal Protection")
     private Map<String, String> exposureControlsAndPersonalProtection;
+
+    @SerializedName(value = "Fire and Explosion Data")
     private Map<String, String> fireAndExplosionData;
+
+    @SerializedName(value = "First Aid Measures")
     private Map<String, String> firstAidMeasures;
+
+    @SerializedName(value = "Handling and Storage")
     private Map<String, String> handlingAndStorage;
+
+    @SerializedName(value = "Hazards Identification")
     private Map<String, String> hazardsIdentification;
+
+    @SerializedName(value = "Physical and Chemical Properties")
     private Map<String, String> physicalAndChemicalProperties;
+
+    @SerializedName(value = "Stability and Reactivity Data")
     private Map<String, String> stabilityAndReactivityData;
+
+    @SerializedName(value = "Toxicological Information")
     private Map<String, String> toxicologicalInformation;
+
+    @SerializedName(value = "Transport Information")
     private Map<String, String> transportInformation;
+
+    @SerializedName(value = "Flammability")
+    private int flammability;
+
+    @SerializedName(value = "Health")
+    private int health;
+
+    @SerializedName(value = "Instability")
+    private int instability;
+
+    @SerializedName(value = "Notice")
+    private String notice;
 
 
     public Chemical() {
@@ -41,10 +71,14 @@ public class Chemical extends AbstractStorageComponent implements StorageCompone
         this.name = "";
         this.match = true;
         this.imageURL = PLACEHOLDER_IMAGE_URL;
+
+        flammability = 0;
+        health = 0;
+        instability = 0;
+        notice = "";
     }
 
     @Override
-    @DynamoDBIgnore
     public String getDescription() {
         String desc = "Flammability: " + fireDiamond.getFlammability()
                 + ", Health: " + fireDiamond.getHealth()
@@ -55,15 +89,9 @@ public class Chemical extends AbstractStorageComponent implements StorageCompone
         return desc;
     }
 
-    @DynamoDBHashKey(attributeName="Name")
     public String getName() { return name; }
     public void setName(String value) { name = value; }
 
-    @DynamoDBAttribute(attributeName="CAS")
-    public String getCas() { return cas; }
-    public void setCas(String value) { cas = value; }
-
-    @DynamoDBAttribute(attributeName="Accidental Release Measures")
     public Map<String, String> getAccidentalReleaseMeasures() {
         return accidentalReleaseMeasures;
     }
@@ -71,7 +99,6 @@ public class Chemical extends AbstractStorageComponent implements StorageCompone
         accidentalReleaseMeasures = value;
     }
 
-    @DynamoDBAttribute(attributeName="Disposal Considerations")
     public Map<String, String> getDisposalConsiderations() {
         return disposalConsiderations;
     }
@@ -79,7 +106,6 @@ public class Chemical extends AbstractStorageComponent implements StorageCompone
         disposalConsiderations = value;
     }
 
-    @DynamoDBAttribute(attributeName="Ecological Information")
     public Map<String, String> getEcologicalInformation() {
         return ecologicalInformation;
     }
@@ -87,7 +113,6 @@ public class Chemical extends AbstractStorageComponent implements StorageCompone
         ecologicalInformation = value;
     }
 
-    @DynamoDBAttribute(attributeName="Exposure Controls and Personal Protection")
     public Map<String, String> getExposureControlsAndPersonalProtection() {
         return exposureControlsAndPersonalProtection;
     }
@@ -95,14 +120,13 @@ public class Chemical extends AbstractStorageComponent implements StorageCompone
         exposureControlsAndPersonalProtection = value;
     }
 
-    @DynamoDBAttribute(attributeName="Fire and Explosion Data")
     public Map<String, String> getFireAndExplosionData() {
         return fireAndExplosionData;
     }
     public void setFireAndExplosionData(Map<String, String> value) {
         fireAndExplosionData = value;
     }
-    @DynamoDBAttribute(attributeName="First Aid Measures")
+
     public Map<String, String> getFirstAidMeasures() {
         return firstAidMeasures;
     }
@@ -110,7 +134,6 @@ public class Chemical extends AbstractStorageComponent implements StorageCompone
         firstAidMeasures = value;
     }
 
-    @DynamoDBAttribute(attributeName="Handling and Storage")
     public Map<String, String> getHandlingAndStorage() {
         return handlingAndStorage;
     }
@@ -118,7 +141,6 @@ public class Chemical extends AbstractStorageComponent implements StorageCompone
         handlingAndStorage = value;
     }
 
-    @DynamoDBAttribute(attributeName="Hazards Identification")
     public Map<String, String> getHazardsIdentification() {
         return hazardsIdentification;
     }
@@ -126,7 +148,6 @@ public class Chemical extends AbstractStorageComponent implements StorageCompone
         hazardsIdentification = value;
     }
 
-    @DynamoDBAttribute(attributeName="Physical and Chemical Properties")
     public Map<String, String> getPhysicalAndChemicalProperties() {
         return physicalAndChemicalProperties;
     }
@@ -134,7 +155,6 @@ public class Chemical extends AbstractStorageComponent implements StorageCompone
         physicalAndChemicalProperties = value;
     }
 
-    @DynamoDBAttribute(attributeName="Stability and Reactivity Data")
     public Map<String, String> getStabilityAndReactivityData() {
         return stabilityAndReactivityData;
     }
@@ -142,7 +162,6 @@ public class Chemical extends AbstractStorageComponent implements StorageCompone
         stabilityAndReactivityData = value;
     }
 
-    @DynamoDBAttribute(attributeName="Toxicological Information")
     public Map<String, String> getToxicologicalInformation() {
         return toxicologicalInformation;
     }
@@ -150,7 +169,6 @@ public class Chemical extends AbstractStorageComponent implements StorageCompone
         toxicologicalInformation = value;
     }
 
-    @DynamoDBAttribute(attributeName="Transport Information")
     public Map<String, String> getTransportInformation() {
         return transportInformation;
     }
@@ -158,27 +176,21 @@ public class Chemical extends AbstractStorageComponent implements StorageCompone
         transportInformation = value;
     }
 
-    @DynamoDBAttribute(attributeName="Flammability")
     public int getFlammability() { return fireDiamond.getFlammability(); }
     public void setFlammability(int value) { fireDiamond.setFlammability(value); }
 
-    @DynamoDBAttribute(attributeName="Health")
     public int getHealth() { return fireDiamond.getHealth(); }
     public void setHealth(int value) { fireDiamond.setHealth(value); }
 
-    @DynamoDBAttribute(attributeName="Instability")
     public int getInstability() { return fireDiamond.getInstability(); }
     public void setInstability(int value) { fireDiamond.setInstability(value); }
 
-    @DynamoDBAttribute(attributeName="Notice")
     public String getNotice() { return fireDiamond.getNotice(); }
     public void setNotice(String value) { fireDiamond.setNotice(value); }
 
-    @DynamoDBIgnore
     public String getImageURL() { return this.imageURL; }
     public void setImageURL(final String imageURL) { this.imageURL = imageURL; }
 
-    @DynamoDBIgnore
     public Map<String, Map<String, String>> getProperties() {
         Map<String, Map<String, String>> properties = new HashMap<>();
 
@@ -197,11 +209,10 @@ public class Chemical extends AbstractStorageComponent implements StorageCompone
         return properties;
     }
 
-    @DynamoDBIgnore
-    public FireDiamond getFireDiamond() { return fireDiamond; }
-    public void setFireDiamond(FireDiamond fireDiamond) { this.fireDiamond = fireDiamond; }
+    public FireDiamond getFireDiamond() {
+        return new FireDiamond(flammability, instability, health, notice);
+    }
 
-    @DynamoDBIgnore
     public Boolean getMatch() { return match; }
     public void setMatch(final Boolean match) { this.match = match; }
     public Chemical withMatch(boolean match) { this.match = match; return this; }

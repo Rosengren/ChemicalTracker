@@ -1,16 +1,22 @@
 package com.chemicaltracker.persistence.dao;
 
-import java.util.Map;
-import java.util.HashMap;
+import java.io.IOException;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBScanExpression;
 import com.chemicaltracker.persistence.model.Chemical;
+import io.searchbox.core.Search;
+import io.searchbox.core.SearchResult;
+import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.builder.SearchSourceBuilder;
 
-public class ChemicalDao extends DynamoDBDao<Chemical> {
+public class ChemicalDao extends ElasticSearchDao<Chemical> {
+
+    private static final String CHEMICALS_INDEX = "chemicals";
+    private static final String CHEMICALS_TYPE = "chemical";
+    private static final String CHEMICAL_NAME_FIELD = "Name";
 
     private static volatile ChemicalDao instance;
 
@@ -29,76 +35,115 @@ public class ChemicalDao extends DynamoDBDao<Chemical> {
 
     public List<Chemical> searchPartialChemicalName(final List<String> partialNames) {
 
-        final Map<String, String> expressionAttributeNames = new HashMap<>();
-
-        expressionAttributeNames.put("#name", "Name");
-
-        final Map<String, AttributeValue> expressionAttributeValues = new HashMap<>();
-
-        int count = 0;
-        String filterExpression = "";
-        for (String partialName : partialNames) {
-            if (count != 0) {
-                filterExpression += " or ";
-            }
-            filterExpression += "contains (#name, :val" + count + ")";
-            expressionAttributeValues.put(":val" + count, new AttributeValue().withS(partialName));
-            count += 1;
+        final List<Chemical> chemicals = new ArrayList<>();
+        if (partialNames == null || partialNames.isEmpty()) {
+            return chemicals;
         }
 
-        final DynamoDBScanExpression scanRequest = new DynamoDBScanExpression()
-                .withFilterExpression(filterExpression)
-                .withExpressionAttributeNames(expressionAttributeNames)
-                .withExpressionAttributeValues(expressionAttributeValues);
+        final List<String> partials = partialNames.stream()
+                .map(name -> "*" + name + "*").collect(Collectors.toList());
 
 
-        return mapper.scan(Chemical.class, scanRequest);
+        final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        searchSourceBuilder.query(QueryBuilders.matchQuery(CHEMICAL_NAME_FIELD, partials));
+
+        final Search search = new Search.Builder(searchSourceBuilder.toString())
+                .addIndex(CHEMICALS_INDEX)
+                .addType(CHEMICALS_TYPE)
+                .build();
+
+        try {
+            SearchResult result = client.execute(search);
+            return parseChemicals(result);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return chemicals;
     }
 
     public List<Chemical> searchPartialChemicalName(final String partialName) {
 
-        final Map<String, AttributeValue> expressionAttributeValues = new HashMap<>();
-        expressionAttributeValues.put(":val", new AttributeValue().withS(partialName));
+        final List<Chemical> chemicals = new ArrayList<>();
+        if (partialName == null || partialName.isEmpty()) {
+            return chemicals;
+        }
 
-        final Map<String, String> expressionAttributeNames = new HashMap<>();
 
-        expressionAttributeNames.put("#name", "Name");
+        final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        searchSourceBuilder.query(QueryBuilders.matchQuery(CHEMICAL_NAME_FIELD, "*" + partialName + "*"));
 
-        final DynamoDBScanExpression scanRequest = new DynamoDBScanExpression()
-                .withFilterExpression("contains (#name, :val)")
-                .withExpressionAttributeNames(expressionAttributeNames)
-                .withExpressionAttributeValues(expressionAttributeValues);
+        final Search search = new Search.Builder(searchSourceBuilder.toString())
+                .addIndex(CHEMICALS_INDEX)
+                .addType(CHEMICALS_TYPE)
+                .build();
 
-        return mapper.scan(Chemical.class, scanRequest);
+        try {
+            SearchResult result = client.execute(search);
+            return parseChemicals(result);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return chemicals;
     }
 
     public List<Chemical> findByNames(final List<String> names) {
 
+        final List<Chemical> chemicals = new ArrayList<>();
         if (names == null || names.isEmpty()) {
-            return new ArrayList<>();
+            return chemicals;
         }
 
-        final Map<String, String> expressionAttributeNames = new HashMap<>();
-        expressionAttributeNames.put("#name", "Name");
+        final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        searchSourceBuilder.query(QueryBuilders.matchQuery(CHEMICAL_NAME_FIELD, names));
 
-        final Map<String, AttributeValue> expressionAttributeValues = new HashMap<>();
+        final Search search = new Search.Builder(searchSourceBuilder.toString())
+                .addIndex(CHEMICALS_INDEX)
+                .addType(CHEMICALS_TYPE)
+                .build();
 
-        int count = 0;
-        String filterExpression = "";
-        for (String name : names) {
-            if (count != 0) {
-                filterExpression += " or ";
-            }
-            filterExpression += "#name = :val" + count;
-            expressionAttributeValues.put(":val" + count, new AttributeValue().withS(name));
-            count += 1;
+        try {
+            SearchResult result = client.execute(search);
+            return parseChemicals(result);
+
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
-        final DynamoDBScanExpression scanRequest = new DynamoDBScanExpression()
-                .withFilterExpression(filterExpression)
-                .withExpressionAttributeNames(expressionAttributeNames)
-                .withExpressionAttributeValues(expressionAttributeValues);
+        return chemicals;
+    }
 
-        return mapper.scan(Chemical.class, scanRequest);
+    public Chemical find(String name) {
+        if (name == null || name.isEmpty()) {
+            return null;
+        }
+
+        final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
+        searchSourceBuilder.query(QueryBuilders.matchQuery(CHEMICAL_NAME_FIELD, name));
+
+        final Search search = new Search.Builder(searchSourceBuilder.toString())
+                .addIndex(CHEMICALS_INDEX)
+                .addType(CHEMICALS_TYPE)
+                .build();
+
+        try {
+            SearchResult result = client.execute(search);
+            return result.getFirstHit(Chemical.class).source;
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    private List<Chemical> parseChemicals(SearchResult result) {
+        final List<Chemical> chemicals = new ArrayList<>();
+
+        for (SearchResult.Hit<Chemical, Void> hit : result.getHits(Chemical.class)) {
+            chemicals.add(hit.source);
+        }
+
+        return chemicals;
     }
 }

@@ -50,6 +50,8 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-thymeleaf')
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('com.itextpdf:itextpdf:5.0.6')
+	compile('io.searchbox:jest:2.0.0')
+	compile('org.elasticsearch:elasticsearch:2.2.0')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 	providedRuntime('org.springframework.boot:spring-boot-starter-tomcat')
 }

@@ -16,6 +16,13 @@ public class FireDiamond {
         notice = "";
     }
 
+    public FireDiamond(int flammability, int health, int instability, String notice) {
+        this.flammability = flammability;
+        this.health = health;
+        this.instability = instability;
+        this.notice = notice;
+    }
+
     public int getFlammability() {
         return flammability;
     }
