@@ -15,6 +15,7 @@ public class Application extends SpringBootServletInitializer {
 
 	public static void main(String[] args) throws Exception {
 		try {
+			System.out.println("Using LATEST VERSION");
 			SpringApplication.run(Application.class, args);
 		} catch (Exception e) {
 			throw new Exception("Error occured while trying to run application", e);
