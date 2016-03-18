@@ -44,7 +44,7 @@ public class APIUpdateController {
             return new UpdateResponse(UpdateStatus.MISSING_STORAGE_FIELD);
         }
 
-        if (requestType.equals("ADD")) {
+        if (requestType.toUpperCase().equals("ADD")) {
 
             // Check if location already exists
             Location l = inventoryService.getLocation(principal.getName(), request.getLocation());
@@ -58,7 +58,7 @@ public class APIUpdateController {
                 .withID(request.getLocation())
                 .withDescription(" "));
             return new UpdateResponse(UpdateStatus.ADDED_LOCATION);
-        } else if (requestType.equals("REMOVE")) {
+        } else if (requestType.toUpperCase().equals("REMOVE")) {
 
             final Location location = inventoryService.getLocation(principal.getName(), request.getLocation());
             if (location == null) {
@@ -83,32 +83,37 @@ public class APIUpdateController {
             return new UpdateResponse(UpdateStatus.MISSING_STORAGE_FIELD);
         }
 
-        if (requestType.equals("ADD")) {
-            final Location location = inventoryService.getLocation(principal.getName(), request.getLocation());
-            if (location == null) {
-                return new UpdateResponse(UpdateStatus.INVALID_STORAGE);
-            }
 
-            // Check if room already exists
-            Room room = inventoryService.getRoom(principal.getName(), request.getLocation(), request.getRoom());
-            if (room != null) {
-                return new UpdateResponse(UpdateStatus.STORAGE_ALREADY_EXISTS);
-            }
+        switch (requestType.toUpperCase()) {
+            case "ADD": {
+                final Location location = inventoryService.getLocation(principal.getName(), request.getLocation());
+                if (location == null) {
+                    return new UpdateResponse(UpdateStatus.INVALID_STORAGE);
+                }
 
-            inventoryService.addRoom(new Room()
-                .withName(request.getRoom())
-                .withDescription(" ")
-                .withUsername(principal.getName())
-                .withID(UUID.randomUUID().toString()), location.getID());
-            return new UpdateResponse(UpdateStatus.ADDED_ROOM);
-        } else if (requestType.equals("REMOVE")) {
-            final Room room = inventoryService.getRoom(principal.getName(), request.getLocation(), request.getRoom());
-            if (room == null) {
-                return new UpdateResponse(UpdateStatus.INVALID_STORAGE);
+                // Check if room already exists
+                Room room = inventoryService.getRoom(principal.getName(), request.getLocation(), request.getRoom());
+                if (room != null) {
+                    return new UpdateResponse(UpdateStatus.STORAGE_ALREADY_EXISTS);
+                }
+
+                inventoryService.addRoom(new Room()
+                        .withName(request.getRoom())
+                        .withDescription(" ")
+                        .withUsername(principal.getName())
+                        .withID(UUID.randomUUID().toString()), location.getID());
+                return new UpdateResponse(UpdateStatus.ADDED_ROOM);
             }
-            inventoryService.removeRoom(room, request.getLocation());
-            return new UpdateResponse(UpdateStatus.REMOVED_ROOM);
+            case "REMOVE": {
+                final Room room = inventoryService.getRoom(principal.getName(), request.getLocation(), request.getRoom());
+                if (room == null) {
+                    return new UpdateResponse(UpdateStatus.INVALID_STORAGE);
+                }
+                inventoryService.removeRoom(room, request.getLocation());
+                return new UpdateResponse(UpdateStatus.REMOVED_ROOM);
+            }
         }
+
         return new UpdateResponse(UpdateStatus.UNKNOWN_ERROR);
     }
 
@@ -117,7 +122,7 @@ public class APIUpdateController {
 
         final String requestType = request.getRequest();
 
-        if (invalidRequest(requestType) && !requestType.equals("FORK")) {
+        if (invalidRequest(requestType) && !requestType.toUpperCase().equals("FORK")) {
             return new UpdateResponse((UpdateStatus.INVALID_REQUEST_TYPE));
         }
 
@@ -130,7 +135,7 @@ public class APIUpdateController {
             return new UpdateResponse(UpdateStatus.INVALID_STORAGE);
         }
 
-        switch (requestType) {
+        switch (requestType.toUpperCase()) {
             case "ADD": {
 
                 // Check if cabinet already exists
@@ -203,6 +208,7 @@ public class APIUpdateController {
         }
 
         if (missingAuditVersion(request)) {
+            //
             return new UpdateResponse(UpdateStatus.MISSING_AUDIT_VERSION);
         }
 
@@ -215,11 +221,16 @@ public class APIUpdateController {
         final Cabinet cabinet = inventoryService.getCabinet(principal.getName(),
                 request.getLocation(), request.getRoom(), request.getCabinet());
 
-        if (requestType.equals("ADD")) {
-            cabinet.addChemical(request.getAuditVersion(), request.getChemical(), Chemical.PLACEHOLDER_IMAGE_URL); // TODO: add image URL
+        if (requestType.toUpperCase().equals("ADD")) {
+
+            if (missingAuditVersion(request)) {
+                cabinet.addChemical(request.getChemical(), Chemical.PLACEHOLDER_IMAGE_URL);
+            } else {
+                cabinet.addChemical(request.getAuditVersion(), request.getChemical(), Chemical.PLACEHOLDER_IMAGE_URL); // TODO: add image URL
+            }
             inventoryService.updateCabinet(cabinet);
             return new UpdateResponse(UpdateStatus.ADDED_CHEMICAL);
-        } else if (requestType.equals("REMOVE")) {
+        } else if (requestType.toUpperCase().equals("REMOVE")) {
             cabinet.removeChemical(request.getAuditVersion(), request.getChemical());
             inventoryService.updateCabinet(cabinet);
             return new UpdateResponse(UpdateStatus.REMOVED_CHEMICAL);
@@ -229,7 +240,7 @@ public class APIUpdateController {
     }
 
     private boolean invalidRequest(final String request) {
-        return request == null || !request.equals("ADD") && !request.equals("REMOVE");
+        return request == null || !request.toUpperCase().equals("ADD") && !request.toUpperCase().equals("REMOVE");
     }
 
     private boolean missingStorageField(final UpdateRequest request) {

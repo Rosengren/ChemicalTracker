@@ -3,7 +3,6 @@ package com.chemicaltracker.persistence.dao;
 import io.searchbox.client.JestClient;
 import io.searchbox.client.JestClientFactory;
 import io.searchbox.client.config.HttpClientConfig;
-import org.apache.commons.lang.NotImplementedException;
 import org.springframework.core.GenericTypeResolver;
 
 import org.apache.log4j.Logger;
@@ -12,7 +11,7 @@ public abstract class ElasticSearchDao<T> implements GenericDao<T> {
 
     protected Class<T> clazz;
 
-    protected final Logger logger = Logger.getLogger(getClass());
+    protected final Logger LOGGER = Logger.getLogger(getClass());
 
     protected JestClient client;
 
@@ -36,26 +35,30 @@ public abstract class ElasticSearchDao<T> implements GenericDao<T> {
 
     @Override
     public T create(final T t) {
-        throw new NotImplementedException("Create method not implemented");
+        LOGGER.error("Create method not implemented");
+        return null;
     }
 
     @Override
     public T update(final T t)  {
-        throw new NotImplementedException("Update method not implemented");
+        LOGGER.error("Update method not implemented.");
+        return null;
     }
 
     @Override
     public T find(final Object id) {
-        throw new NotImplementedException("Find method not implemented");
+        LOGGER.error("Find method not implemented");
+        return null;
     }
 
     @Override
     public T find(final Object hash, final Object range) {
-        throw new NotImplementedException("Find Hash and Range not implemented");
+        LOGGER.error("Find Hash and Range not implemented");
+        return null;
     }
 
     @Override
     public void delete(final T t) {
-        throw new NotImplementedException("Delete method not implemented");
+        LOGGER.error("Delete method not implemented");
     }
 }

@@ -302,6 +302,13 @@ public class Cabinet extends AbstractStorageComponent implements StorageComponen
     }
 
     @DynamoDBIgnore
+    public void addChemical(final String chemicalID, final String chemicalName) {
+        // Use Latest Audit Version
+        AuditVersion version = getLatestAuditVersion();
+        version.addChemical(chemicalID, chemicalName);
+    }
+
+    @DynamoDBIgnore
     public void removeChemical(final String auditName, final String chemicalID) {
         AuditVersion version = auditVersions.get(auditName);
         if (version != null) {

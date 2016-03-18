@@ -27,7 +27,7 @@ import java.util.Set;
 @Service
 public class InventoryServiceImpl implements InventoryService {
 
-    private static final Logger logger = LoggerFactory.getLogger(InventoryServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(InventoryServiceImpl.class);
 
     private static final LocationDao locationsDB    = LocationDao.getInstance();
     private static final CabinetDao cabinetsDB      = CabinetDao.getInstance();
@@ -123,8 +123,8 @@ public class InventoryServiceImpl implements InventoryService {
     @Override
     public void removeCabinet(final Cabinet cabinet, final String parentID) {
         final Room room = roomsDB.find(cabinet.getUsername(), parentID);
-        logger.info("CABINET ID: " + cabinet.getID());
-        logger.info("Removing cabinet id: " + cabinet.getName() + " from room: " + room.getName());
+        LOGGER.info("CABINET ID: " + cabinet.getID());
+        LOGGER.info("Removing cabinet name: " + cabinet.getName() + " from room: " + room.getName());
         room.removeStoredItem(cabinet.getName());
         roomsDB.update(room);
         cabinetsDB.delete(cabinet);

@@ -1,6 +1,5 @@
 package com.chemicaltracker.controller.api;
 
-import com.chemicaltracker.controller.api.response.CompareCabinetsResponse;
 import com.chemicaltracker.persistence.model.Cabinet;
 import com.chemicaltracker.persistence.model.Location;
 import com.chemicaltracker.persistence.model.Room;
@@ -9,7 +8,6 @@ import com.chemicaltracker.service.InventoryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -131,9 +129,8 @@ public class APIStorageController {
     public ResponseEntity<String> removeRoomHandler(final Principal principal,
                                                     @PathVariable("id") final String id,
                                                     @PathVariable("parentID") final String parentID) {
-        inventoryService.removeRoom(new Room()
-                .withUsername(principal.getName())
-                .withID(id), parentID);
+        inventoryService.removeRoom(
+                inventoryService.getRoom(principal.getName(), id), parentID);
         // TODO: remove image
         return new ResponseEntity<>(HttpStatus.OK);
     }
@@ -181,13 +178,12 @@ public class APIStorageController {
         }
     }
 
-    @RequestMapping(value = "/remove/cabinet/{id}/from/{parentID}", method = GET)
+    @RequestMapping(value = "/remove/cabinet/{name}/from/{parentID}", method = GET)
     public ResponseEntity<String> removeCabinetHandler(final Principal principal,
                                                        @PathVariable("id") final String id,
                                                        @PathVariable("parentID") final String parentID) {
-        inventoryService.removeCabinet(new Cabinet()
-                .withUsername(principal.getName())
-                .withID(id), parentID);
+        inventoryService.removeCabinet(
+                inventoryService.getCabinet(principal.getName(), id), parentID);
         // TODO: remove image
         return new ResponseEntity<>(HttpStatus.OK);
     }
