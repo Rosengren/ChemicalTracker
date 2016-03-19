@@ -348,12 +348,11 @@ $(document).ready(function() {
             },
             apiSettings: {
                 onResponse: function(response) {
-                    // Convert Elasticsearch to
                     var chemicals = [];
                     var source = response.hits.hits;
                     for (var i = 0; i < source.length; i++) {
                         chemicals.push({
-                            name: source[0]._source.name,
+                            name: source[i]._source.name,
                             imageURL: 'https://s3-us-west-2.amazonaws.com/chemical-images/placeholder.png'
                         });
                     }

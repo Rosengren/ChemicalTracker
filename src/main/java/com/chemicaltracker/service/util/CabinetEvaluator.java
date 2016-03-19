@@ -26,9 +26,17 @@ public class CabinetEvaluator {
      */
     public Cabinet evaluate(final Cabinet cabinet) {
 
-        cabinet.setTagNames(new HashSet<>()); // remove all tags
+        cabinet.resetTags(); // remove all tags
 
+        System.out.println("EVALUATING CABINET: " + cabinet.getName());
+        System.out.println("HAS: " + cabinet.getStoredItemNames().toString());
         final List<Chemical> chemicals = chemicalDB.findByNames(cabinet.getStoredItemNames());
+
+        if (chemicals.isEmpty()) {
+            System.out.println("DIDN'T FIND ANY CHEMICALS");
+        } else {
+            System.out.println("FOUND " + Arrays.toString(chemicals.toArray()));
+        }
 
         Cabinet.Metrics metrics = cabinet.getMetrics();
 

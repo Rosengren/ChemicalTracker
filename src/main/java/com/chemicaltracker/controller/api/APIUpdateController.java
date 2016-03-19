@@ -207,11 +207,6 @@ public class APIUpdateController {
             return new UpdateResponse(UpdateStatus.MISSING_STORAGE_FIELD);
         }
 
-        if (missingAuditVersion(request)) {
-            //
-            return new UpdateResponse(UpdateStatus.MISSING_AUDIT_VERSION);
-        }
-
         final Chemical chemical = inventoryService.getChemical(request.getChemical());
 
         if (chemical == null) {
@@ -221,19 +216,27 @@ public class APIUpdateController {
         final Cabinet cabinet = inventoryService.getCabinet(principal.getName(),
                 request.getLocation(), request.getRoom(), request.getCabinet());
 
-        if (requestType.toUpperCase().equals("ADD")) {
+        switch (requestType.toUpperCase()) {
 
-            if (missingAuditVersion(request)) {
-                cabinet.addChemical(request.getChemical(), Chemical.PLACEHOLDER_IMAGE_URL);
-            } else {
-                cabinet.addChemical(request.getAuditVersion(), request.getChemical(), Chemical.PLACEHOLDER_IMAGE_URL); // TODO: add image URL
+            case "ADD": {
+                if (missingAuditVersion(request)) {
+                    cabinet.addChemical(request.getChemical(), Chemical.PLACEHOLDER_IMAGE_URL);
+                } else {
+                    cabinet.addChemical(request.getAuditVersion(), request.getChemical(), Chemical.PLACEHOLDER_IMAGE_URL); // TODO: add image URL
+                }
+                inventoryService.updateCabinet(cabinet);
+                return new UpdateResponse(UpdateStatus.ADDED_CHEMICAL);
             }
-            inventoryService.updateCabinet(cabinet);
-            return new UpdateResponse(UpdateStatus.ADDED_CHEMICAL);
-        } else if (requestType.toUpperCase().equals("REMOVE")) {
-            cabinet.removeChemical(request.getAuditVersion(), request.getChemical());
-            inventoryService.updateCabinet(cabinet);
-            return new UpdateResponse(UpdateStatus.REMOVED_CHEMICAL);
+            case "REMOVE": {
+                if (missingAuditVersion(request)) {
+                    cabinet.removeChemical(request.getChemical());
+                } else {
+                    cabinet.removeChemical(request.getAuditVersion(), request.getChemical());
+
+                }
+                inventoryService.updateCabinet(cabinet);
+                return new UpdateResponse(UpdateStatus.REMOVED_CHEMICAL);
+            }
         }
 
         return new UpdateResponse(UpdateStatus.UNKNOWN_ERROR);

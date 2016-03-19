@@ -100,6 +100,11 @@ public class Cabinet extends AbstractStorageComponent implements StorageComponen
         latest.setMetrics(metrics);
     }
 
+    @DynamoDBIgnore
+    public void resetTags() {
+        getLatestAuditVersion().resetTags();
+    }
+
     @DynamoDBDocument
     public static class Metrics {
 
@@ -190,8 +195,7 @@ public class Cabinet extends AbstractStorageComponent implements StorageComponen
             updateTimestamp();
             chemicalNames = new HashMap<>();
             metrics = new Metrics();
-            tags = new HashSet<>();
-            tags.add(StorageTag.IGNORE);
+            resetTags();
         }
 
         @DynamoDBIgnore
@@ -256,6 +260,11 @@ public class Cabinet extends AbstractStorageComponent implements StorageComponen
             }
         }
 
+        public void resetTags() {
+            tags = new HashSet<>();
+            tags.add(StorageTag.IGNORE);
+        }
+
         @DynamoDBIgnore
         public List<StorageTag> getTags() {
             List<StorageTag> tagList = new ArrayList<>();
@@ -314,6 +323,11 @@ public class Cabinet extends AbstractStorageComponent implements StorageComponen
         if (version != null) {
             version.removeChemical(chemicalID);
         }
+    }
+
+    @DynamoDBIgnore
+    public void removeChemical(final String chemicalID) {
+        getLatestAuditVersion().removeChemical(chemicalID);
     }
 
     @DynamoDBIgnore

@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 import com.chemicaltracker.persistence.model.Chemical;
 import io.searchbox.core.Search;
 import io.searchbox.core.SearchResult;
+import org.apache.lucene.search.Query;
+import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
@@ -96,16 +98,19 @@ public class ChemicalDao extends ElasticSearchDao<Chemical> {
         }
 
         final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        searchSourceBuilder.query(QueryBuilders.matchQuery(CHEMICAL_NAME_FIELD, names));
-
-        final Search search = new Search.Builder(searchSourceBuilder.toString())
-                .addIndex(CHEMICALS_INDEX)
-                .addType(CHEMICALS_TYPE)
-                .build();
 
         try {
-            SearchResult result = client.execute(search);
-            return parseChemicals(result);
+            Search search;
+            for (String name : names) {
+                searchSourceBuilder.query(QueryBuilders.matchPhraseQuery(CHEMICAL_NAME_FIELD, name));
+                search = new Search.Builder(searchSourceBuilder.toString())
+                        .addIndex(CHEMICALS_INDEX)
+                        .addType(CHEMICALS_TYPE)
+                        .build();
+
+                SearchResult result = client.execute(search);
+                chemicals.add(result.getFirstHit(Chemical.class).source);
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -138,12 +143,9 @@ public class ChemicalDao extends ElasticSearchDao<Chemical> {
     }
 
     private List<Chemical> parseChemicals(SearchResult result) {
-        final List<Chemical> chemicals = new ArrayList<>();
-
-        for (SearchResult.Hit<Chemical, Void> hit : result.getHits(Chemical.class)) {
-            chemicals.add(hit.source);
-        }
-
-        return chemicals;
+        return result.getHits(Chemical.class)
+                .stream()
+                .map(hit -> hit.source)
+                .collect(Collectors.toList());
     }
 }
