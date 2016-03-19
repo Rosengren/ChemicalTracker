@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import com.chemicaltracker.controller.api.request.ChemicalQueryRequest;
+import com.chemicaltracker.controller.api.response.ChemicalQueryResponse;
 import com.chemicaltracker.controller.api.response.ChemicalResponse;
 import com.chemicaltracker.controller.api.response.ChemicalSearchResponse;
 import com.chemicaltracker.persistence.dao.ChemicalDao;
@@ -71,7 +72,7 @@ public class QueryController {
     }
 
     @RequestMapping(value="/partialQueries", method=POST)
-    public @ResponseBody ResponseEntity<List<String>> partialQueriesRequest(@RequestBody final ChemicalQueryRequest request) {
+    public @ResponseBody ChemicalQueryResponse partialQueriesRequest(@RequestBody final ChemicalQueryRequest request) {
 
         final List<Chemical> chemicals = inventoryService.searchPartialChemicalName(request.getChemicals());
 
@@ -79,7 +80,7 @@ public class QueryController {
                 .map(Chemical::getName)
                 .collect(Collectors.toList());
 
-        return new ResponseEntity<>(chemicalNames, HttpStatus.OK);
+        return new ChemicalQueryResponse().withMatches(chemicalNames);
     }
 
     @RequestMapping(value="/userTree", method=POST)

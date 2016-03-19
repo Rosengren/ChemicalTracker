@@ -7,10 +7,9 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 import com.chemicaltracker.persistence.model.Chemical;
+import io.searchbox.core.Bulk;
 import io.searchbox.core.Search;
 import io.searchbox.core.SearchResult;
-import org.apache.lucene.search.Query;
-import org.elasticsearch.index.query.MatchQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
 
@@ -42,23 +41,10 @@ public class ChemicalDao extends ElasticSearchDao<Chemical> {
             return chemicals;
         }
 
-        final List<String> partials = partialNames.stream()
-                .map(name -> "*" + name + "*").collect(Collectors.toList());
-
-
-        final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        searchSourceBuilder.query(QueryBuilders.matchQuery(CHEMICAL_NAME_FIELD, partials));
-
-        final Search search = new Search.Builder(searchSourceBuilder.toString())
-                .addIndex(CHEMICALS_INDEX)
-                .addType(CHEMICALS_TYPE)
-                .build();
-
-        try {
-            SearchResult result = client.execute(search);
-            return parseChemicals(result);
-        } catch (IOException e) {
-            e.printStackTrace();
+        // This should be replaced with a single multi-query
+        // Bulk search is not supported as of this writing.
+        for (String partial : partialNames) {
+            chemicals.addAll(searchPartialChemicalName(partial));
         }
 
         return chemicals;
@@ -73,7 +59,7 @@ public class ChemicalDao extends ElasticSearchDao<Chemical> {
 
 
         final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        searchSourceBuilder.query(QueryBuilders.matchQuery(CHEMICAL_NAME_FIELD, "*" + partialName + "*"));
+        searchSourceBuilder.query(QueryBuilders.wildcardQuery(CHEMICAL_NAME_FIELD, "*" + partialName + "*"));
 
         final Search search = new Search.Builder(searchSourceBuilder.toString())
                 .addIndex(CHEMICALS_INDEX)
