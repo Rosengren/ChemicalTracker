@@ -89,6 +89,72 @@
     </form>
 </div>
 
+<div th:fragment="update-location-image" class="content">
+    <form id="updateLocationForm" class="ui form" enctype="multipart/form-data">
+        <div class="field">
+            <label>Photo</label>
+            <input type="file" name="image" />
+        </div>
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <input type="hidden" id="updateLocationImageName" name="location" />
+        <div class="ui error message"></div>
+        <div class="actions">
+            <div class="ui black deny button">
+                Cancel
+            </div>
+            <div class="ui positive submit button">
+                Submit
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<div th:fragment="update-room-image" class="content">
+    <form id="updateRoomForm" class="ui form" enctype="multipart/form-data">
+        <div class="field">
+            <label>Photo</label>
+            <input type="file" name="image" />
+        </div>
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <input type="hidden" name="location" th:value="${location}" />
+        <input type="hidden" id="updateRoomImageName" name="room" />
+        <div class="ui error message"></div>
+        <div class="actions">
+            <div class="ui black deny button">
+                Cancel
+            </div>
+            <div class="ui positive submit button">
+                Submit
+            </div>
+        </div>
+    </form>
+</div>
+
+
+<div th:fragment="update-cabinet-image" class="content">
+    <form id="updateCabinetForm" class="ui form" enctype="multipart/form-data">
+        <div class="field">
+            <label>Photo</label>
+            <input type="file" name="image" />
+        </div>
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <input type="hidden" name="location" th:value="${location}" />
+        <input type="hidden" name="room" th:value="${room}" />
+        <input type="hidden" id="updateCabinetImageName" name="cabinet" />
+        <input type="hidden" name="cabinetID" th:value="${cabinetID}" />
+        <div class="ui error message"></div>
+        <div class="actions">
+            <div class="ui black deny button">
+                Cancel
+            </div>
+            <div class="ui positive submit button">
+                Submit
+            </div>
+        </div>
+    </form>
+</div>
+
 <div th:fragment="confirm-new-version" class="content">
     <form id="forkVersionForm" class="ui form" method="POST">
         <div class="field">

@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -34,7 +35,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RequestMapping(value = "/api")
 public class APIStorageController {
 
-    private static final Logger logger = LoggerFactory.getLogger(APIStorageController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(APIStorageController.class);
 
     private static final String IMAGE_EXTENSION = ".jpg";
     private static final String S3_BASE_URL = "https://s3-us-west-2.amazonaws.com/chemical-images/";
@@ -72,7 +73,7 @@ public class APIStorageController {
 
                 return new ResponseEntity<>(location, HttpStatus.OK);
             } catch (Exception e) {
-                logger.error("Error occurred while adding location", e);
+                LOGGER.error("Error occurred while adding location", e);
                 return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
             }
 
@@ -169,7 +170,7 @@ public class APIStorageController {
 
                 return new ResponseEntity<>(cabinet, HttpStatus.OK);
             } catch (Exception e) {
-                logger.error("An error occurred while adding the cabinet name " + name, e);
+                LOGGER.error("An error occurred while adding the cabinet name " + name, e);
                 return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
             }
 
@@ -178,7 +179,7 @@ public class APIStorageController {
         }
     }
 
-    @RequestMapping(value = "/remove/cabinet/{name}/from/{parentID}", method = GET)
+    @RequestMapping(value = "/remove/cabinet/{id}/from/{parentID}", method = GET)
     public ResponseEntity<String> removeCabinetHandler(final Principal principal,
                                                        @PathVariable("id") final String id,
                                                        @PathVariable("parentID") final String parentID) {
@@ -208,12 +209,102 @@ public class APIStorageController {
                 inventoryService.updateCabinet(cabinet);
                 return new ResponseEntity<>(cabinet, HttpStatus.OK);
             } catch (Exception e) {
-                logger.error("An error occurred while adding the cabinet name " + name, e);
+                LOGGER.error("An error occurred while adding the chemical name " + name, e);
                 return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
             }
         } else {
             return new ResponseEntity<>("The image file was missing", HttpStatus.BAD_REQUEST);
         }
     }
+
+
+    @RequestMapping(value = "/update/location/image", method = POST)
+    public ResponseEntity updateCabinetImageHandler(final Principal principal,
+                                                    @RequestParam("location") final String locationName,
+                                                    @RequestParam("image") final MultipartFile image) {
+
+        if (!image.isEmpty()) {
+
+            final Location location = inventoryService.getLocation(principal.getName(), locationName);
+
+            final String imageName = locationName.toLowerCase().replace(' ', '-') + IMAGE_EXTENSION;
+
+            final String filename = principal.getName() + File.separator + location
+                    + File.separator + imageName;
+
+            try {
+                imageService.add(image, filename, imageName);
+                location.setImageURL(S3_BASE_URL + filename);
+                inventoryService.updateLocation(location);
+                return new ResponseEntity<>(location, HttpStatus.OK);
+            } catch (Exception e) {
+                LOGGER.error("An error occurred while adding the location image to location: " + locationName, e);
+                return new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
+            }
+        } else {
+            return new ResponseEntity<>("The image file was missing", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @RequestMapping(value = "/update/room/image", method = POST)
+    public ResponseEntity updateRoomImageHandler(final Principal principal,
+                                                 @RequestParam("location") final String location,
+                                                 @RequestParam("room") final String roomName,
+                                                 @RequestParam("image") final MultipartFile image) {
+
+        if (!image.isEmpty()) {
+
+            final Room room = inventoryService.getRoom(principal.getName(), location, roomName);
+
+            final String imageName = roomName.toLowerCase().replace(' ', '-') + IMAGE_EXTENSION;
+
+            final String filename = principal.getName() + File.separator + location
+                    + File.separator + roomName + File.separator + imageName;
+
+            try {
+                imageService.add(image, filename, imageName);
+                room.setImageURL(S3_BASE_URL + filename);
+                inventoryService.updateRoom(room);
+                return new ResponseEntity<>(room, HttpStatus.OK);
+            } catch (Exception e) {
+                LOGGER.error("An error occured while adding the image to room: " + roomName, e);
+                return new ResponseEntity<>(e.getMessage(), HttpStatus.EXPECTATION_FAILED);
+            }
+        } else {
+            return new ResponseEntity<>("The image file was missing", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @RequestMapping(value = "/update/cabinet/image", method = POST)
+    public ResponseEntity updateCabinetImageHandler(final Principal principal,
+                                                    @RequestParam("location") final String location,
+                                                    @RequestParam("room") final String room,
+                                                    @RequestParam("cabinet") final String cabinetName,
+                                                    @RequestParam("image") final MultipartFile image) {
+
+        if (!image.isEmpty()) {
+
+            final Cabinet cabinet = inventoryService.getCabinet(principal.getName(), location, room, cabinetName);
+
+            final String imageName = cabinetName.toLowerCase().replace(' ', '-') + IMAGE_EXTENSION;
+
+            final String filename = principal.getName() + File.separator + location
+                    + File.separator + room + File.separator + cabinetName + File.separator + imageName;
+
+            try {
+                imageService.add(image, filename, imageName);
+                cabinet.setImageURL(S3_BASE_URL + filename);
+                inventoryService.updateCabinet(cabinet);
+                return new ResponseEntity<>(room, HttpStatus.OK);
+            } catch (Exception e) {
+                LOGGER.error("An error occurred while adding the image to cabinet: " + cabinetName, e);
+                return new ResponseEntity<>(e.getMessage(), HttpStatus.EXPECTATION_FAILED);
+            }
+        } else {
+            return new ResponseEntity<>("The image file was missing", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+
 
 }

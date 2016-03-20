@@ -33,6 +33,7 @@ public class RoomController {
         roomView.addObject("parentID", inventoryService.getRoom(principal.getName(), locationName, roomName).getID());
         roomView.addObject("addURL", "/add/cabinet/");
         roomView.addObject("location", locationName);
+        roomView.addObject("updateImageURL", "/api/update/cabinet/image");
 
         return roomView;
     }

@@ -36,9 +36,51 @@ $(document).ready(function() {
         $('.ui.small.modal.updateChemicalImage')
             .modal({
                 onShow : function() {
-                    var chemicalName = that.attr('data')
+                    var chemicalName = that.attr('data');
                     $(this).find('.header').text('Update Image for ' + chemicalName);
                     $('#updateChemicalImageName').attr('value', chemicalName);
+                }
+            })
+            .modal('show')
+        ;
+    });
+
+    $('.editLocation').click(function() {
+        var that = $(this);
+        $('.ui.small.modal.updateLocationImage')
+            .modal({
+                onShow : function() {
+                    var locationName = that.attr('data');
+                    $(this).find('.header').text('Update Image for ' + locationName);
+                    $('#updateLocationImageName').attr('value', locationName);
+                }
+            })
+            .modal('show')
+        ;
+    });
+
+    $('.editRoom').click(function() {
+        var that = $(this);
+        $('.ui.small.modal.updateRoomImage')
+            .modal({
+                onShow : function() {
+                    var roomName = that.attr('data');
+                    $(this).find('.header').text('Update Image for ' + roomName);
+                    $('#updateRoomImageName').attr('value', roomName);
+                }
+            })
+            .modal('show')
+        ;
+    });
+
+    $('.editCabinet').click(function() {
+        var that = $(this);
+        $('.ui.small.modal.updateCabinetImage')
+            .modal({
+                onShow : function() {
+                    var cabinetName = that.attr('data');
+                    $(this).find('.header').text('Update Image for ' + cabinetName);
+                    $('#updateCabinetImageName').attr('value', cabinetName);
                 }
             })
             .modal('show')
@@ -283,21 +325,23 @@ $(document).ready(function() {
         })
     ;
 
-    $('#updateChemicalForm')
-        .form({
-            on: 'change',
-            fields : {
-                image : {
-                    identifier : 'image',
-                    rules: [
-                        {
-                            type    : 'empty',
-                            prompt  : 'Please select an image to upload.'
-                        }
-                    ]
-                }
+    var imgUploadForm = {
+        on: 'change',
+        fields : {
+            image : {
+                identifier : 'image',
+                rules: [
+                    {
+                        type    : 'empty',
+                        prompt  : 'Please select an image to upload.'
+                    }
+                ]
             }
-        }).submit(function() {
+        }
+    };
+
+    $('#updateChemicalForm')
+        .form(imgUploadForm).submit(function() {
             var url = $('#update-image-url').attr('value');
             var formData = new FormData($('#updateChemicalForm')[0]);
 
@@ -335,6 +379,129 @@ $(document).ready(function() {
             });
 
         })
+    ;
+
+    $('#updateLocationForm')
+        .form(imgUploadForm).submit(function() {
+        var url = $('#update-image-url').attr('value');
+        var formData = new FormData($('#updateLocationForm')[0]);
+
+        $.ajax({
+            type: 'post',
+            url: url,
+            contentType: false,
+            processData: false,
+            cache: false,
+            data: formData,
+            beforeSend: function() {
+                $('.fixedLoader').addClass('active');
+            },
+            success: function(response) {
+                var $formSubmission = $('#formSubmissionMsg');
+                $formSubmission.find('.header').text("Submission Successful");
+                $formSubmission.find('p').text("The object was successfully created!");
+                $formSubmission.removeClass('error');
+                $formSubmission.addClass("success");
+
+                $('img#' + response.name).attr("src", response.imageURL);
+            },
+            error: function() {
+                var $formSubmission = $('#formSubmissionMsg');
+                $formSubmission.find('.header').text("Submission Failed");
+                $formSubmission.find('p').text("An error occurred while creating object!");
+                $formSubmission.addClass("error");
+                $formSubmission.removeClass("success");
+            },
+            complete: function() {
+                $("#noStorages").hide();
+                $('#formSubmissionMsg').show();
+                $('.fixedLoader').removeClass('active');
+            }
+        });
+
+    })
+    ;
+
+    $('#updateRoomForm')
+        .form(imgUploadForm).submit(function() {
+        var url = $('#update-image-url').attr('value');
+        var formData = new FormData($('#updateRoomForm')[0]);
+
+        $.ajax({
+            type: 'post',
+            url: url,
+            contentType: false,
+            processData: false,
+            cache: false,
+            data: formData,
+            beforeSend: function() {
+                $('.fixedLoader').addClass('active');
+            },
+            success: function(response) {
+                var $formSubmission = $('#formSubmissionMsg');
+                $formSubmission.find('.header').text("Submission Successful");
+                $formSubmission.find('p').text("The object was successfully created!");
+                $formSubmission.removeClass('error');
+                $formSubmission.addClass("success");
+
+                $('img#' + response.name).attr("src", response.imageURL);
+            },
+            error: function() {
+                var $formSubmission = $('#formSubmissionMsg');
+                $formSubmission.find('.header').text("Submission Failed");
+                $formSubmission.find('p').text("An error occurred while creating object!");
+                $formSubmission.addClass("error");
+                $formSubmission.removeClass("success");
+            },
+            complete: function() {
+                $("#noStorages").hide();
+                $('#formSubmissionMsg').show();
+                $('.fixedLoader').removeClass('active');
+            }
+        });
+
+    })
+    ;
+
+    $('#updateCabinetForm')
+        .form(imgUploadForm).submit(function() {
+        var url = $('#update-image-url').attr('value');
+        var formData = new FormData($('#updateCabinetForm')[0]);
+
+        $.ajax({
+            type: 'post',
+            url: url,
+            contentType: false,
+            processData: false,
+            cache: false,
+            data: formData,
+            beforeSend: function() {
+                $('.fixedLoader').addClass('active');
+            },
+            success: function(response) {
+                var $formSubmission = $('#formSubmissionMsg');
+                $formSubmission.find('.header').text("Submission Successful");
+                $formSubmission.find('p').text("The object was successfully created!");
+                $formSubmission.removeClass('error');
+                $formSubmission.addClass("success");
+
+                $('img#' + response.name).attr("src", response.imageURL);
+            },
+            error: function() {
+                var $formSubmission = $('#formSubmissionMsg');
+                $formSubmission.find('.header').text("Submission Failed");
+                $formSubmission.find('p').text("An error occurred while creating object!");
+                $formSubmission.addClass("error");
+                $formSubmission.removeClass("success");
+            },
+            complete: function() {
+                $("#noStorages").hide();
+                $('#formSubmissionMsg').show();
+                $('.fixedLoader').removeClass('active');
+            }
+        });
+
+    })
     ;
 
     $('.ui.search')

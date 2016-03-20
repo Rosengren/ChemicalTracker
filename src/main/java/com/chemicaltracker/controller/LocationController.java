@@ -37,6 +37,7 @@ public class LocationController {
         locationView.addObject("parentID", inventoryService.getLocation(principal.getName(), locationName).getID());
         locationView.addObject("title", locationName);
         locationView.addObject("location", locationName);
+        locationView.addObject("updateImageURL", "/api/update/room/image");
 
         return locationView;
     }

@@ -12,6 +12,7 @@
 </div>
 <div th:replace="fragments/sidebar :: sidebar"></div>
 <div th:replace="fragments/modal :: confirm"></div>
+<div th:replace="fragments/modal :: updateRoomImage"></div>
 <div class="ui small modal">
     <div class="header">
         Add new room
@@ -93,7 +94,7 @@
                                 <i class="dropdown icon"></i>
                                 <div class="menu">
                                     <div class="item remove" th:data="${room.ID}">Remove</div>
-                                    <div class="item" id="editStorage">Edit</div>
+                                    <div class="item editRoom">Edit</div>
                                 </div>
                             </div>
                         </div>
@@ -108,6 +109,7 @@
 <div type="hidden" id="add-url" value="/api/add/room/"></div>
 <div type="hidden" id="remove-url" value="/api/remove/room/"></div>
 <div type="hidden" id="parentID" th:value="${parentID}"></div>
+<div type="hidden" id="update-image-url" th:value="${updateImageURL}"></div>
 <div th:replace="fragments/card :: storageCard"></div>
 </body>
 <script th:replace="fragments/footer :: scripts"></script>

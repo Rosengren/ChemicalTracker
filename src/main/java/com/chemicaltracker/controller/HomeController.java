@@ -27,6 +27,7 @@ public class HomeController {
 
         final ModelAndView home = new ModelAndView("home");
         home.addObject("locations", inventoryService.getLocations(principal.getName()));
+        home.addObject("updateImageURL", "/api/update/location/image");
         return home;
     }
 }
