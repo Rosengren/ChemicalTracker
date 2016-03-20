@@ -11,7 +11,6 @@ public class Chemical extends AbstractStorageComponent implements StorageCompone
     public static final String PLACEHOLDER_IMAGE_URL = "https://s3-us-west-2.amazonaws.com/chemical-images/placeholder.png";
 
     private transient String imageURL;
-    private transient FireDiamond fireDiamond;
     private transient Boolean match;
 
     @SerializedName(value = "Accidental Release Measures")
@@ -64,7 +63,6 @@ public class Chemical extends AbstractStorageComponent implements StorageCompone
 
 
     public Chemical() {
-        this.fireDiamond = new FireDiamond();
         this.name = "";
         this.match = true;
         this.imageURL = PLACEHOLDER_IMAGE_URL;
@@ -77,10 +75,10 @@ public class Chemical extends AbstractStorageComponent implements StorageCompone
 
     @Override
     public String getDescription() {
-        String desc = "Flammability: " + fireDiamond.getFlammability()
-                + ", Health: " + fireDiamond.getHealth()
-                + ", Instability: " + fireDiamond.getInstability()
-                + ", Notice: " + fireDiamond.getNotice();
+        String desc = "Flammability: " + flammability
+                + ", Health: " + health
+                + ", Instability: " + instability
+                + ", Notice: " + notice;
 
         desc += "\n\nStorage:\n" + handlingAndStorage.get("Storage");
         return desc;
@@ -173,17 +171,17 @@ public class Chemical extends AbstractStorageComponent implements StorageCompone
         transportInformation = value;
     }
 
-    public int getFlammability() { return fireDiamond.getFlammability(); }
-    public void setFlammability(int value) { fireDiamond.setFlammability(value); }
+    public int getFlammability() { return flammability; }
+    public void setFlammability(int value) { flammability = value; }
 
-    public int getHealth() { return fireDiamond.getHealth(); }
-    public void setHealth(int value) { fireDiamond.setHealth(value); }
+    public int getHealth() { return health; }
+    public void setHealth(int value) { health = value; }
 
-    public int getInstability() { return fireDiamond.getInstability(); }
-    public void setInstability(int value) { fireDiamond.setInstability(value); }
+    public int getInstability() { return instability; }
+    public void setInstability(int value) { instability = value; }
 
-    public String getNotice() { return fireDiamond.getNotice(); }
-    public void setNotice(String value) { fireDiamond.setNotice(value); }
+    public String getNotice() { return notice; }
+    public void setNotice(String value) { notice = value; }
 
     public String getImageURL() { return this.imageURL; }
     public void setImageURL(final String imageURL) { this.imageURL = imageURL; }

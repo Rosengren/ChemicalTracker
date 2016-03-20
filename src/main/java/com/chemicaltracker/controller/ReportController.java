@@ -55,7 +55,6 @@ public class ReportController {
         final Location location = inventoryService.getLocation(username, locationName);
         final List<Room> rooms = inventoryService.getRoomsByIds(username, location.getStoredItemIDs());
 
-        // TODO: this logic will be moved to the Models
         for (Room room : rooms) {
 
             for (Cabinet cabinet : inventoryService.getCabinetsByIds(username, room.getStoredItemIDs())) {
@@ -84,16 +83,16 @@ public class ReportController {
     private ByteArrayOutputStream convertPDFToByteArrayOutputStream(String fileName) {
 
         InputStream inputStream = null;
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
 
             inputStream = new FileInputStream(fileName);
             byte[] buffer = new byte[1024];
-            baos = new ByteArrayOutputStream();
+            out = new ByteArrayOutputStream();
 
             int bytesRead;
             while ((bytesRead = inputStream.read(buffer)) != -1) {
-                baos.write(buffer, 0, bytesRead);
+                out.write(buffer, 0, bytesRead);
             }
 
         } catch (IOException e) {
@@ -107,7 +106,7 @@ public class ReportController {
                 }
             }
         }
-        return baos;
+        return out;
     }
 
 }

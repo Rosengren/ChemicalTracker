@@ -76,10 +76,11 @@ public class ReportDocument {
         timestamp.setAlignment(Element.ALIGN_RIGHT);
 
         header.add(timestamp);
+
+        createEmptyLine(header, 1);
         header.add(new Paragraph(title, TITLE));
+        createEmptyLine(header, 1);
         header.add(new Paragraph(DEFAULT_SUBTITLE, SUBTITLE));
-
-
         createEmptyLine(header, 1);
 
         document.add(header);

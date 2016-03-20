@@ -9,7 +9,6 @@ import com.chemicaltracker.model.StorageTag;
 public class Cabinet extends AbstractStorageComponent implements StorageComponent {
 
     private String id;
-    private String name;
     private String username;
     private String description;
     private String imageURL;

@@ -15,7 +15,6 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTable;
 public class Room extends AbstractStorageComponent implements StorageComponent {
 
     private String id;
-    private String name;
     private String username;
     private String description;
     private String imageURL;
