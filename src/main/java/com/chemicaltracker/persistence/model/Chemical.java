@@ -74,7 +74,7 @@ public class Chemical extends AbstractStorageComponent implements StorageCompone
     }
 
     @Override
-    public String getDescription() {
+    public String getReportDescription() {
         String desc = "Flammability: " + flammability
                 + ", Health: " + health
                 + ", Instability: " + instability

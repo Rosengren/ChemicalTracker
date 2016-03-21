@@ -29,6 +29,11 @@ public class Room extends AbstractStorageComponent implements StorageComponent {
         tags.add(StorageTag.IGNORE); // can't be empty
     }
 
+    @Override
+    protected String getReportDescription() {
+        return description;
+    }
+
     @DynamoDBHashKey(attributeName="Username")
     public String getUsername() { return this.username; }
     public void setUsername(final String username) { this.username = username; }

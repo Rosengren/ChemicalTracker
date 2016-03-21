@@ -32,7 +32,7 @@ public abstract class AbstractStorageComponent {
         elements = new ArrayList<>();
     }
 
-    abstract protected String getDescription();
+    abstract protected String getReportDescription();
 
     protected void createEmptyLine(final List list, final int number) {
         for (int i = 0; i < number; i++) {
@@ -47,7 +47,8 @@ public abstract class AbstractStorageComponent {
 
         int fontSize = Math.max(DEFAULT_FONT_SIZE - level * SMALLER_FONT_SIZE, SMALLEST_FONT_SIZE);
         header.add(new ListItem(name, new Font(HELVETICA, fontSize, BOLD)));
-        header.add(new ListItem(getDescription(), BODY));
+        header.add(new ListItem(getReportDescription(), BODY));
+        createEmptyLine(header, 1);
 
         content.add(header);
     }

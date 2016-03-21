@@ -24,6 +24,11 @@ public class Location extends AbstractStorageComponent implements StorageCompone
         roomNames = new HashMap<>();
     }
 
+    @Override
+    protected String getReportDescription() {
+        return description;
+    }
+
     @DynamoDBHashKey(attributeName="Username")
     public String getUsername() { return this.username; }
     public void setUsername(final String username) { this.username = username; }

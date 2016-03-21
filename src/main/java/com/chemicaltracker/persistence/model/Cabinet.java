@@ -20,6 +20,25 @@ public class Cabinet extends AbstractStorageComponent implements StorageComponen
         auditVersions = new HashMap<>();
     }
 
+    @Override
+    protected String getReportDescription() {
+        AuditVersion current = getLatestAuditVersion();
+        String desc;
+        if (description != null) {
+            desc = description;
+        } else {
+            desc = "No description.";
+        }
+        desc += "\n\nTags: ";
+        for (StorageTag t : current.getTags()) {
+            if (t.getTitle() != "") {
+                desc += t.getTitle() + ", ";
+            }
+        }
+
+        return desc + "\n";
+    }
+
     @DynamoDBIgnore
     public List<String> getAuditVersionNames() {
         return new ArrayList<>(auditVersions.keySet());
