@@ -68,7 +68,9 @@
 
                 <div th:each="location : ${locations}" class="column">
                     <div class="ui link centered card location">
-                        <div class="blurring dimmable image" th:onclick="'window.location+=\'/'+${location.name}+'\''">
+                        <div class="blurring dimmable image"
+                             th:with='escapedName=${#strings.replace(location.name, "&apos;", "\&apos;")}'
+                             th:onclick="'window.location+=\'/'+${escapedName}+'\''">
                             <div class="ui dimmer">
                                 <div class="content">
                                     <div class="center">

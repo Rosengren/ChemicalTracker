@@ -70,7 +70,9 @@
 
                 <div th:each="room : ${rooms}" class="column">
                     <div class="ui link centered card room" >
-                        <div class="blurring dimmable image" th:onclick="'window.location+=\'/'+${room.name}+'\''">
+                        <div class="blurring dimmable image"
+                             th:with='escapedName=${#strings.replace(room.name, "&apos;", "\&apos;")}'
+                             th:onclick="'window.location+=\'/'+${escapedName}+'\''">
                             <div class="ui dimmer">
                                 <div class="content">
                                     <div class="center">
