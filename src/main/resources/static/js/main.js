@@ -74,6 +74,7 @@ $(document).ready(function() {
     });
 
     $('.editCabinet').click(function() {
+        console.log("EDIT CABINET CLICKED");
         var that = $(this);
         $('.ui.small.modal.updateCabinetImage')
             .modal({
@@ -326,7 +327,7 @@ $(document).ready(function() {
     ;
 
     var imgUploadForm = {
-        on: 'change',
+        on: 'submit',
         fields : {
             image : {
                 identifier : 'image',
@@ -334,6 +335,15 @@ $(document).ready(function() {
                     {
                         type    : 'empty',
                         prompt  : 'Please select an image to upload.'
+                    }
+                ]
+            },
+            name : {
+                identifier : 'name',
+                rules: [
+                    {
+                        type    : 'empty',
+                        prompt  : 'Please select a name.'
                     }
                 ]
             }
@@ -375,6 +385,7 @@ $(document).ready(function() {
                     $("#noStorages").hide();
                     $('#formSubmissionMsg').show();
                     $('.fixedLoader').removeClass('active');
+                    //window.location = window.location.pathname;
                 }
             });
 
@@ -416,6 +427,7 @@ $(document).ready(function() {
                 $("#noStorages").hide();
                 $('#formSubmissionMsg').show();
                 $('.fixedLoader').removeClass('active');
+                window.location = window.location.pathname;
             }
         });
 
@@ -457,6 +469,7 @@ $(document).ready(function() {
                 $("#noStorages").hide();
                 $('#formSubmissionMsg').show();
                 $('.fixedLoader').removeClass('active');
+                window.location = window.location.href.split("?")[0];
             }
         });
 
@@ -498,6 +511,7 @@ $(document).ready(function() {
                 $("#noStorages").hide();
                 $('#formSubmissionMsg').show();
                 $('.fixedLoader').removeClass('active');
+                window.location = window.location.href.split("?")[0];
             }
         });
 
@@ -518,8 +532,12 @@ $(document).ready(function() {
                     var chemicals = [];
                     var source = response.hits.hits;
                     for (var i = 0; i < source.length; i++) {
+                        var n = source[i]._source.name;
+                        if (n === '' && n === null) {
+                            n = source[i]._source['Name'];
+                        }
                         chemicals.push({
-                            name: source[i]._source.name,
+                            name: n,
                             imageURL: 'https://s3-us-west-2.amazonaws.com/chemical-images/placeholder.png'
                         });
                     }

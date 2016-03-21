@@ -220,6 +220,7 @@ public class APIStorageController {
 
     @RequestMapping(value = "/update/location/image", method = POST)
     public ResponseEntity updateCabinetImageHandler(final Principal principal,
+                                                    @RequestParam("name") final String name,
                                                     @RequestParam("location") final String locationName,
                                                     @RequestParam("image") final MultipartFile image) {
 
@@ -235,6 +236,7 @@ public class APIStorageController {
             try {
                 imageService.add(image, filename, imageName);
                 location.setImageURL(S3_BASE_URL + filename);
+
                 inventoryService.updateLocation(location);
                 return new ResponseEntity<>(location, HttpStatus.OK);
             } catch (Exception e) {
@@ -248,6 +250,7 @@ public class APIStorageController {
 
     @RequestMapping(value = "/update/room/image", method = POST)
     public ResponseEntity updateRoomImageHandler(final Principal principal,
+                                                 @RequestParam("name") final String name,
                                                  @RequestParam("location") final String location,
                                                  @RequestParam("room") final String roomName,
                                                  @RequestParam("image") final MultipartFile image) {
@@ -264,10 +267,15 @@ public class APIStorageController {
             try {
                 imageService.add(image, filename, imageName);
                 room.setImageURL(S3_BASE_URL + filename);
+
+//                if (name != null && !name.isEmpty()) {
+//                    room.setName(name);
+//                }
+
                 inventoryService.updateRoom(room);
                 return new ResponseEntity<>(room, HttpStatus.OK);
             } catch (Exception e) {
-                LOGGER.error("An error occured while adding the image to room: " + roomName, e);
+                LOGGER.error("An error occurred while adding the image to room: " + roomName, e);
                 return new ResponseEntity<>(e.getMessage(), HttpStatus.EXPECTATION_FAILED);
             }
         } else {
@@ -277,6 +285,7 @@ public class APIStorageController {
 
     @RequestMapping(value = "/update/cabinet/image", method = POST)
     public ResponseEntity updateCabinetImageHandler(final Principal principal,
+                                                    @RequestParam("name") final String name,
                                                     @RequestParam("location") final String location,
                                                     @RequestParam("room") final String room,
                                                     @RequestParam("cabinet") final String cabinetName,
@@ -294,6 +303,11 @@ public class APIStorageController {
             try {
                 imageService.add(image, filename, imageName);
                 cabinet.setImageURL(S3_BASE_URL + filename);
+//
+//                if (name != null && !name.isEmpty()) {
+//                    cabinet.setName(name);
+//                }
+
                 inventoryService.updateCabinet(cabinet);
                 return new ResponseEntity<>(room, HttpStatus.OK);
             } catch (Exception e) {
