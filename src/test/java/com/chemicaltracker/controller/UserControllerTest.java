@@ -10,6 +10,11 @@ import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.mock;
 
 import org.mockito.Mock;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.security.Principal;
@@ -50,23 +55,36 @@ public class UserControllerTest {
 
     @Test
     public void testValidSignUp() {
-
         User user = new User();
         when(userService.addUser(user))
                 .thenReturn(user);
 
         ModelAndView mav = userController.signUpPost(user);
-        Assert.assertEquals("signup?success=true", mav.getViewName());
+        Assert.assertEquals("signup", mav.getViewName());
+        Assert.assertTrue((boolean)mav.getModel().get("success"));
     }
 
     @Test
     public void testSignupError() {
-
         User user = new User();
         when(userService.addUser(user))
                 .thenReturn(null);
 
         ModelAndView mav = userController.signUpPost(user);
-        Assert.assertEquals("signup?success=false", mav.getViewName());
+        Assert.assertEquals("signup", mav.getViewName());
+        Assert.assertFalse((boolean)mav.getModel().get("success"));
+    }
+
+    @Test
+    public void testLogout() {
+        Authentication authentication = mock(Authentication.class);
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication())
+                .thenReturn(authentication);
+
+        SecurityContextHolder.setContext(securityContext);
+
+        ModelAndView mav = userController.logoutPage(new MockHttpServletRequest(), new MockHttpServletResponse());
+        Assert.assertEquals("welcome", mav.getViewName());
     }
 }

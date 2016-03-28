@@ -48,9 +48,9 @@ public class UserController {
     @RequestMapping(value="/signup", method=POST)
     public ModelAndView signUpPost(@ModelAttribute("userForm") final User user) {
         if (userService.addUser(user) != null) {
-            return new ModelAndView("signup?success=true");
+            return new ModelAndView("signup").addObject("success", true);
         }
-        return new ModelAndView("signup?success=false");
+        return new ModelAndView("signup").addObject("success", false);
     }
 
     @RequestMapping(value="/logout", method=GET)
