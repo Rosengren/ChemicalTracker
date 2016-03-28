@@ -31,11 +31,9 @@ public class ChemicalController {
             @PathVariable("chemicalName") final String chemicalName,
             final Principal principal) {
 
-        final String username = principal.getName();
         final Chemical chemical = inventoryService.getChemical(chemicalName);
         final ModelAndView chemicalView = new ModelAndView("chemical");
 
-        chemicalView.addObject("username", username);
         chemicalView.addObject("chemical", chemical);
         chemicalView.addObject("fireDiamond", chemical.getFireDiamond());
         chemicalView.addObject("location", locationName);
