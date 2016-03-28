@@ -17,7 +17,7 @@ public class WelcomeControllerTest {
     }
 
     @Test
-    public void testWelcomePage() {
+    public void visitWelcomePage() {
         ModelAndView mav = welcomeController.welcome();
         Assert.assertEquals("Welcome page view", WELCOME_PAGE, mav.getViewName());
     }

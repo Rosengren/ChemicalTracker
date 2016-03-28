@@ -35,26 +35,26 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testRedirectUserIfAlreadyLoggedIn() {
+    public void redirectUserToHomeSinceAlreadyLoggedIn() {
         Principal principal = () -> VALID_USER;
         ModelAndView mav = userController.login(principal);
         Assert.assertEquals("redirect:/home", mav.getViewName());
     }
 
     @Test
-    public void testDisplayLoginPageIfNotLoggedIn() {
+    public void displayLoginPageSinceUserNotLoggedIn() {
         ModelAndView mav = userController.login(null);
         Assert.assertEquals("login", mav.getViewName());
     }
 
     @Test
-    public void testSignupPageAccess() {
+    public void visitSignupPage() {
         ModelAndView mav = userController.signUp();
         Assert.assertEquals("signup", mav.getViewName());
     }
 
     @Test
-    public void testValidSignUp() {
+    public void successfullySignUp() {
         User user = new User();
         when(userService.addUser(user))
                 .thenReturn(user);
@@ -65,7 +65,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testSignupError() {
+    public void unsuccessfullySignup() {
         User user = new User();
         when(userService.addUser(user))
                 .thenReturn(null);
@@ -76,7 +76,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testLogout() {
+    public void logoutOfAccount() {
         Authentication authentication = mock(Authentication.class);
         SecurityContext securityContext = mock(SecurityContext.class);
         when(securityContext.getAuthentication())

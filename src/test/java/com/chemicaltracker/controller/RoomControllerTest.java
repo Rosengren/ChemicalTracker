@@ -38,7 +38,7 @@ public class RoomControllerTest {
     }
 
     @Test
-    public void testViewRoom() {
+    public void visitRoomPage() {
 
         final List<Cabinet> cabinets = new ArrayList<>();
         final Room room = new Room().withID(ROOM_ID);
