@@ -1,6 +1,5 @@
 package com.chemicaltracker.controller;
 
-import com.chemicaltracker.persistence.model.Location;
 import com.chemicaltracker.persistence.model.Room;
 import com.chemicaltracker.service.InventoryService;
 import org.springframework.web.servlet.ModelAndView;
@@ -28,14 +27,13 @@ public class LocationController {
     }
 
     @RequestMapping("/{locationName}")
-    public ModelAndView viewLocation(@PathVariable("locationName") final String locationName, final Model model, final Principal principal) {
+    public ModelAndView viewLocation(@PathVariable("locationName") final String locationName, final Principal principal) {
 
         final List<Room> rooms = inventoryService.getRooms(principal.getName(), locationName);
 
         final ModelAndView locationView = new ModelAndView("location");
         locationView.addObject("rooms", rooms);
         locationView.addObject("parentID", inventoryService.getLocation(principal.getName(), locationName).getID());
-        locationView.addObject("title", locationName);
         locationView.addObject("location", locationName);
         locationView.addObject("updateImageURL", "/api/update/room/image");
 
