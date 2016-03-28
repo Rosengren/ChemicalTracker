@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.chemicaltracker.service.UserServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.servlet.ModelAndView;
@@ -23,7 +24,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 @Controller
 public class UserController {
 
-    private final UserService userService = new UserServiceImpl();
+    private final UserService userService;
+
+    @Autowired
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @RequestMapping("/login")
     public ModelAndView login(final Principal principal) {
@@ -41,8 +47,10 @@ public class UserController {
 
     @RequestMapping(value="/signup", method=POST)
     public ModelAndView signUpPost(@ModelAttribute("userForm") final User user) {
-        userService.addUser(user);
-        return new ModelAndView("signup");
+        if (userService.addUser(user) != null) {
+            return new ModelAndView("signup?success=true");
+        }
+        return new ModelAndView("signup?success=false");
     }
 
     @RequestMapping(value="/logout", method=GET)

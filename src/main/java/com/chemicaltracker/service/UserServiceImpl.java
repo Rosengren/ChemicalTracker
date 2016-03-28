@@ -10,7 +10,7 @@ public class UserServiceImpl implements UserService {
     private UserDao userDB = UserDao.getInstance();
 
     @Override
-    public void addUser(User user) {
-        userDB.create(user);
+    public User addUser(User user) {
+        return userDB.create(user);
     }
 }
