@@ -4,7 +4,6 @@ import com.chemicaltracker.persistence.model.Location;
 import com.chemicaltracker.persistence.model.Room;
 import com.chemicaltracker.service.InventoryService;
 import com.chemicaltracker.service.InventoryServiceImpl;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;

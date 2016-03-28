@@ -1,7 +1,6 @@
 package com.chemicaltracker.controller;
 
 import java.security.Principal;
-import java.util.Arrays;
 import org.springframework.web.servlet.ModelAndView;
 import com.chemicaltracker.service.InventoryService;
 
