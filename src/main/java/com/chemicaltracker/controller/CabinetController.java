@@ -61,7 +61,6 @@ public class CabinetController {
         final Map<String, String> chemicalMap = auditVersion.getChemicals();
 
         cabinetView.addObject("title", cabinetName);
-        cabinetView.addObject("username", username);
         cabinetView.addObject("location", locationName);
         cabinetView.addObject("room", roomName);
         cabinetView.addObject("checklist", getChecklist(chemicals));
