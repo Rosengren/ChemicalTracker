@@ -6,15 +6,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
-
-import javax.servlet.ServletOutputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.security.Principal;
 
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class ReportControllerTest {
 
