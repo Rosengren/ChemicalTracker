@@ -12,7 +12,7 @@ import java.security.Principal;
 
 @Controller
 @RequestMapping("/api")
-public class AuthorizeController {
+public class AuthorizeRestController {
 
     @RequestMapping(value="/authorize")
     public @ResponseBody ResponseEntity verifyAuthenticationCredentials(final Principal principal) {

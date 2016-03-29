@@ -30,12 +30,12 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @RequestMapping("/api")
-public class QueryController {
+public class QueryRestController {
 
     private final InventoryService inventoryService;
 
     @Autowired
-    public QueryController(InventoryService inventoryService) {
+    public QueryRestController(InventoryService inventoryService) {
         this.inventoryService = inventoryService;
     }
 
